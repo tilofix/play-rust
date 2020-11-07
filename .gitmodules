@@ -1,0 +1,9 @@
+[submodule "Chapter 3 Data Types"]
+	path = chap03_data_types
+	url = ./chap03_data_types/
+[submodule "Chapter 3 Variables"]
+	path = chap03_variables
+	url = ./chap03_variables/
+[submodule "Chapter 3 Functions"]
+	path = chap03_functions
+	url = ./chap03_functions/
