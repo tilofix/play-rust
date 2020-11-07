@@ -1,0 +1,346 @@
+** Play Rust
+  [2020-11-02 Mo]
+
+Studied several videos and rust embedded,
+two of them were with Steve Klabnik an author of the book:
+- 2019: rust, webassembly, future of serverless (same conference which had Lin Clark for WA+SI) at DevFest
+- 2016: the his-story of rust at ACM
+
+*** Bought Book "The Rust Programming Language (Covers Rust 2018)"
+
+- Concept-Chapters: all other chapters
+  - Chapter 3: covers Rust features similar to those of other programming languages
+    - In Rust by default variables are immutable. 
+      See also "The Value of Values with Rich Hickey",
+      [[https://www.youtube.com/watch?v=-6BsiVyC1kM][keynote speech]] from JaxConf 2012
+    - Constants aren’t just immutable by default—they’re always immutable.
+    - Data Types
+      - Scalar Types: Integer Types, Floating-Point Types, Boolean Type, Character Type
+      - Compound Types: Tuple Type, Array Type
+    - Functions
+      - F. are pervasive in Rust code, 
+        uses /snake case/ as conventional style for function and variable names.
+      - F. bodies are made up of a series of 
+        *statements* optionally ending in an *expression*.
+        See also [[https://programming.guide/statements-vs-expressions.html][Statements vs Expressions]].
+      - Rust is an expression-based language.
+      - Statements (Anweisung) are instructions performing some *action*
+        and do _not return_ a value.
+      - Expressions (Ausdruck) evaluate to some _resulting_ value.
+  - Chapter 4: learn about Rust’s ownership system
+  - Chapter 5: discusses structs and methods
+  - Chapter 6: covers enums, ~match~ expressions, and the ~if let~ control flow construct
+  - Chapter 7: learn about Rust’s module system and about privacy rules for organizing your code
+  - Chapter 8: discusses some common collection data structures that the standard library provides, 
+    such as vectors, strings, and hash maps
+  - Chapter 9: explores Rust’s error-handling philosophy and techniques
+  - Chapter 10: digs into generics, traits, and lifetimes, 
+    which give you the power to define code that applies to multiple types
+  - Chapter 11: is all about testing, 
+    which even with Rust’s safety guarantees is necessary to ensure your program’s logic is correct
+  - Chapter 13: explores closures and iterators, 
+    features of Rust that come from functional programming languages
+- Project-Chapters: 2, 12, 20
+
+*** Installed Rustup
+
+#+BEGIN_EXAMPLE
+Welcome to Rust!
+
+This will download and install the official compiler for the Rust
+programming language, and its package manager, Cargo.
+
+Rustup metadata and toolchains will be installed into the Rustup
+home directory, located at:
+
+  C:\Users\twirkner\.rustup
+
+This can be modified with the RUSTUP_HOME environment variable.
+
+The Cargo home directory located at:
+
+  C:\Users\twirkner\.cargo
+
+This can be modified with the CARGO_HOME environment variable.
+
+The cargo, rustc, rustup and other commands will be added to
+Cargo's bin directory, located at:
+
+  C:\Users\twirkner\.cargo\bin
+
+This path will then be added to your PATH environment variable by
+modifying the HKEY_CURRENT_USER/Environment/PATH registry key.
+
+You can uninstall at any time with rustup self uninstall and
+these changes will be reverted.
+
+Current installation options:
+
+
+   default host triple: x86_64-pc-windows-msvc
+     default toolchain: stable (default)
+               profile: default
+  modify PATH variable: yes
+
+1) Proceed with installation (default)
+2) Customize installation
+3) Cancel installation
+>
+
+info: profile set to 'default'
+info: default host triple is x86_64-pc-windows-msvc
+info: syncing channel updates for 'stable-x86_64-pc-windows-msvc'
+info: latest update on 2020-10-08, rust version 1.47.0 (18bf6b4f0 2020-10-07)
+info: downloading component 'cargo'
+info: downloading component 'clippy'
+info: downloading component 'rust-docs'
+ 12.9 MiB /  12.9 MiB (100 %)   7.0 MiB/s in  1s ETA:  0s
+info: downloading component 'rust-std'
+ 17.8 MiB /  17.8 MiB (100 %)   7.0 MiB/s in  2s ETA:  0s
+info: downloading component 'rustc'
+ 42.6 MiB /  42.6 MiB (100 %)   6.7 MiB/s in  6s ETA:  0s
+info: downloading component 'rustfmt'
+info: installing component 'cargo'
+info: Defaulting to 500.0 MiB unpack ram
+info: installing component 'clippy'
+info: installing component 'rust-docs'
+ 12.9 MiB /  12.9 MiB (100 %)   1.0 MiB/s in 23s ETA:  0s
+info: installing component 'rust-std'
+ 17.8 MiB /  17.8 MiB (100 %)   8.8 MiB/s in  2s ETA:  0s
+info: installing component 'rustc'
+ 42.6 MiB /  42.6 MiB (100 %)   2.7 MiB/s in 18s ETA:  0s
+  8 IO-ops /   8 IO-ops (100 %)   5 IOPS in  1s ETA:  0s
+info: installing component 'rustfmt'
+  2.0 MiB /   2.0 MiB (100 %)   1.1 MiB/s in  2s ETA:  0s
+info: default toolchain set to 'stable'
+
+  stable installed - (timeout reading rustc version)
+
+
+Rust is installed now. Great!
+
+To get started you need Cargo's bin directory (%USERPROFILE%\.cargo\bin) in
+your PATH
+environment variable. Future applications will automatically have the
+correct environment, but you may need to restart your current shell.
+
+Press the Enter key to continue.
+#+END_EXAMPLE
+
+Let's check via Visual Code
+
+#+BEGIN_EXAMPLE
+PS D:\twirkner\Projects\play-rust>
+PS D:\twirkner\Projects\play-rust> rustc --version
+rustc 1.47.0 (18bf6b4f0 2020-10-07)
+PS D:\twirkner\Projects\play-rust> 
+PS D:\twirkner\Projects\play-rust> cargo --version
+cargo 1.47.0 (f3c7e066a 2020-08-28)
+PS D:\twirkner\Projects\play-rust> 
+PS D:\twirkner\Projects\play-rust> rustfmt --version
+rustfmt 1.4.20-stable (48f6c32e 2020-08-09)
+PS D:\twirkner\Projects\play-rust> 
+PS D:\twirkner\Projects\play-rust> rustdoc --version
+rustdoc 1.47.0 (18bf6b4f0 2020-10-07)
+PS D:\twirkner\Projects\play-rust> 
+#+END_EXAMPLE
+
+*** Installed Rust Extension in Visual Code
+
+After installing extension "Rust rust-lang.rust" 
+it asked to install following components via tasks
+
+#+BEGIN_EXAMPLE
+> Executing task in folder play-rust: rustup component add rust-analysis --toolchain stable-x86_64-pc-windows-msvc <
+
+info: downloading component 'rust-analysis'
+info: installing component 'rust-analysis'
+info: Defaulting to 500.0 MiB unpack ram
+
+Terminal will be reused by tasks, press any key to close it.
+
+> Executing task in folder play-rust: rustup component add rust-src --toolchain stable-x86_64-pc-windows-msvc <
+
+info: downloading component 'rust-src'
+info: installing component 'rust-src'
+info: Defaulting to 500.0 MiB unpack ram
+  1.8 MiB /   1.8 MiB (100 %)   1.1 MiB/s in  1s ETA:  0s
+
+Terminal will be reused by tasks, press any key to close it.
+
+> Executing task in folder play-rust: rustup component add rls --toolchain stable-x86_64-pc-windows-msvc <
+
+info: downloading component 'rls'
+info: installing component 'rls'
+info: Defaulting to 500.0 MiB unpack ram
+
+Terminal will be reused by tasks, press any key to close it.
+#+END_EXAMPLE
+*** Debug Rust Programs
+
+Found no description in the book I bought!
+
+Finally got best hint from this Rust's 
+https://users.rust-lang.org/t/error-theres-no-debug-target-with-rust-analyzer-vscode/47177
+
+Change extension from 'rust-lang.rust' to 'rust-analyzer'.
+Let's see if this also solves the issue 
+that I've got not outline after open a source module,
+needed to start changing the file and then outline appeared.
+No, same issue IDE with ~main.rs~ opened an no outline :-(.
+
+Extension CodeLLDB acquiring platform package,
+seems to be a huge download.
+
+Needed to have a Cargo project - means a ~Cargo.toml~ file - in ~${workspaceFolder}~
+to make automatic detection of a cargo project happen 
+when calling "Add Configuration" from "Run" menu.
+
+After first debugging session - already stepped into asm-code!? - it looks
+as if rust-src is already installed, 
+no ~rustup component add rust-src~ necessary, right?:
+
+#+BEGIN_EXAMPLE
+  PS D:\twirkner\Projects\play-rust> 
+  PS D:\twirkner\Projects\play-rust> rustup component list
+  cargo-x86_64-pc-windows-msvc (installed)
+  clippy-x86_64-pc-windows-msvc (installed)
+  llvm-tools-preview-x86_64-pc-windows-msvc
+  rls-x86_64-pc-windows-msvc (installed)
+  rust-analysis-x86_64-pc-windows-msvc (installed)
+  rust-docs-x86_64-pc-windows-msvc (installed)
+  rust-src (installed)
+  rust-std-aarch64-apple-ios
+  rust-std-aarch64-fuchsia
+  rust-std-aarch64-linux-android
+  rust-std-aarch64-pc-windows-msvc
+  rust-std-aarch64-unknown-linux-gnu
+  rust-std-aarch64-unknown-linux-musl
+  rust-std-aarch64-unknown-none
+  rust-std-aarch64-unknown-none-softfloat
+  rust-std-arm-linux-androideabi
+  rust-std-arm-unknown-linux-gnueabi
+  rust-std-arm-unknown-linux-gnueabihf
+  rust-std-arm-unknown-linux-musleabi
+  rust-std-arm-unknown-linux-musleabihf
+  rust-std-armebv7r-none-eabi
+  rust-std-armebv7r-none-eabihf
+  rust-std-armv5te-unknown-linux-gnueabi
+  rust-std-armv5te-unknown-linux-musleabi
+  rust-std-armv7-linux-androideabi
+  rust-std-armv7-unknown-linux-gnueabi
+  rust-std-armv7-unknown-linux-gnueabihf
+  rust-std-armv7-unknown-linux-musleabi
+  rust-std-armv7-unknown-linux-musleabihf
+  rust-std-armv7a-none-eabi
+  rust-std-armv7r-none-eabi
+  rust-std-armv7r-none-eabihf
+  rust-std-asmjs-unknown-emscripten
+  rust-std-i586-pc-windows-msvc
+  rust-std-i586-unknown-linux-gnu
+  rust-std-i586-unknown-linux-musl
+  rust-std-i686-linux-android
+  rust-std-i686-pc-windows-gnu
+  rust-std-i686-pc-windows-msvc
+  rust-std-i686-unknown-freebsd
+  rust-std-i686-unknown-linux-gnu
+  rust-std-i686-unknown-linux-musl
+  rust-std-mips-unknown-linux-gnu
+  rust-std-mips-unknown-linux-musl
+  rust-std-mips64-unknown-linux-gnuabi64
+  rust-std-mips64-unknown-linux-muslabi64
+  rust-std-mips64el-unknown-linux-gnuabi64
+  rust-std-mips64el-unknown-linux-muslabi64
+  rust-std-mipsel-unknown-linux-gnu
+  rust-std-mipsel-unknown-linux-musl
+  rust-std-nvptx64-nvidia-cuda
+  rust-std-powerpc-unknown-linux-gnu
+  rust-std-powerpc64-unknown-linux-gnu
+  rust-std-powerpc64le-unknown-linux-gnu
+  rust-std-riscv32i-unknown-none-elf
+  rust-std-riscv32imac-unknown-none-elf
+  rust-std-riscv32imc-unknown-none-elf
+  rust-std-riscv64gc-unknown-linux-gnu
+  rust-std-riscv64gc-unknown-none-elf
+  rust-std-riscv64imac-unknown-none-elf
+  rust-std-s390x-unknown-linux-gnu
+  rust-std-sparc64-unknown-linux-gnu
+  rust-std-sparcv9-sun-solaris
+  rust-std-thumbv6m-none-eabi
+  rust-std-thumbv7em-none-eabi
+  rust-std-thumbv7em-none-eabihf
+  rust-std-thumbv7m-none-eabi
+  rust-std-thumbv7neon-linux-androideabi
+  rust-std-thumbv7neon-unknown-linux-gnueabihf
+  rust-std-thumbv8m.base-none-eabi
+  rust-std-thumbv8m.main-none-eabi
+  rust-std-thumbv8m.main-none-eabihf
+  rust-std-wasm32-unknown-emscripten
+  rust-std-wasm32-unknown-unknown
+  rust-std-wasm32-wasi
+  rust-std-x86_64-apple-darwin
+  rust-std-x86_64-apple-ios
+  rust-std-x86_64-fortanix-unknown-sgx
+  rust-std-x86_64-fuchsia
+  rust-std-x86_64-linux-android
+  rust-std-x86_64-pc-windows-gnu
+  rust-std-x86_64-pc-windows-msvc (installed)
+  rust-std-x86_64-rumprun-netbsd
+  rust-std-x86_64-sun-solaris
+  rust-std-x86_64-unknown-freebsd
+  rust-std-x86_64-unknown-illumos
+  rust-std-x86_64-unknown-linux-gnu
+  rust-std-x86_64-unknown-linux-gnux32
+  rust-std-x86_64-unknown-linux-musl
+  rust-std-x86_64-unknown-netbsd
+  rust-std-x86_64-unknown-redox
+  rustc-x86_64-pc-windows-msvc (installed)
+  rustc-dev-aarch64-unknown-linux-gnu
+  rustc-dev-arm-unknown-linux-gnueabi
+  rustc-dev-arm-unknown-linux-gnueabihf
+  rustc-dev-armv7-unknown-linux-gnueabihf
+  rustc-dev-i686-pc-windows-gnu
+  rustc-dev-i686-pc-windows-msvc
+  rustc-dev-i686-unknown-linux-gnu
+  rustc-dev-mips-unknown-linux-gnu
+  rustc-dev-mips64-unknown-linux-gnuabi64
+  rustc-dev-mips64el-unknown-linux-gnuabi64
+  rustc-dev-mipsel-unknown-linux-gnu
+  rustc-dev-powerpc-unknown-linux-gnu
+  rustc-dev-powerpc64-unknown-linux-gnu
+  rustc-dev-powerpc64le-unknown-linux-gnu
+  rustc-dev-riscv64gc-unknown-linux-gnu
+  rustc-dev-s390x-unknown-linux-gnu
+  rustc-dev-x86_64-apple-darwin
+  rustc-dev-x86_64-pc-windows-gnu
+  rustc-dev-x86_64-pc-windows-msvc
+  rustc-dev-x86_64-unknown-freebsd
+  rustc-dev-x86_64-unknown-illumos
+  rustc-dev-x86_64-unknown-linux-gnu
+  rustc-dev-x86_64-unknown-linux-musl
+  rustc-dev-x86_64-unknown-netbsd
+  rustc-docs-x86_64-unknown-linux-gnu
+  rustfmt-x86_64-pc-windows-msvc (installed)
+  PS D:\twirkner\Projects\play-rust> 
+#+END_EXAMPLE
+
+You can find the file holding the components in rust home directory (see ~rustup show~):
+~/cygdrive/c/Users/twirkner/.rustup/toolchains/stable-x86_64-pc-windows-msvc/lib/rustlib/components~
+
+*** RUSTC and LLVM
+
+Was not able to use code facilities to ask rustc to emit LLVM's intermediate representation.
+This is the cardo way to do:
+
+#+BEGIN_EXAMPLE
+  PS D:\twirkner\Projects\play-rust>
+  PS D:\twirkner\Projects\play-rust> cargo rustc -v -- --emit="llvm-ir"
+     Compiling debugging v0.1.0 (D:\twirkner\Projects\play-rust)
+       Running `rustc --crate-name debugging --edition=2018 src\main.rs --error-format=json --json=diagnostic-rendered-ansi --crate-type bin --emit=dep-info,link -C embed-bitcode=no -C debuginfo=2 --emit=llvm-ir -C metadata=679686503ee2db9d --out-dir D:\twirkner\Projects\play-rust\target\debug\deps -C incremental=D:\twirkner\Projects\play-rust\target\debug\incremental -L dependency=D:\twirkner\Projects\play-rust\target\debug\deps`    Finished dev [unoptimized + debuginfo] target(s) in 0.84s                                                                                                                                                           
+  PS D:\twirkner\Projects\play-rust>
+#+END_EXAMPLE
+
+Which creates an *.ll file in directory ~./target/debug/deps/debugging.ll~.
+
+For unknown reason I'm not able to have two tasks of type ~cargo~ in tasks.json.
+
