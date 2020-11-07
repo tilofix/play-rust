@@ -7,3 +7,6 @@
 [submodule "Chapter 3 Functions"]
 	path = chap03_functions
 	url = ./chap03_functions/
+[submodule "Intensional Debugging"]
+	path = debugging
+	url = ./debugging/
