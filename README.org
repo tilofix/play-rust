@@ -22,8 +22,8 @@ Rust, WebAssembly, and the future of Serverless.
 I jumped to the next video of Steve:
 The History of Rust.
 And finally my curiosity was enlighted by Steve's project
-intermezzOS, which got me a pointer to Philipp's project.
-His Words: "That’s when I found an awesome link: 
+[[https://intermezzos.github.io/][intermezzOS]], which got me a pointer to Philipp's project.
+His Words from [[http://intermezzos.github.io/book/second-edition/][The intermezzOS Book]]: "That’s when I found an awesome link: 
 Writing an OS in Rust by Philipp Oppermann. 
 I cannot speak enough about how awesome Phil’s tutorial is; ..."
 
@@ -100,14 +100,14 @@ The Standard Library defines many methods for primitive type ~str~,
 a UTF-8 string /slice/.
 Rust ~str~ is typically accessed as immutable reference: ~&str~. 
 Use the /owned/ [[https://doc.rust-lang.org/std/string/struct.String.html][String]] for building and mutating strings.
-For converting to strings use [[https://doc.rust-lang.org/std/macro.format.html][the ~format!~ /macro/]], 
-and for converting from strings use [[https://doc.rust-lang.org/std/str/trait.FromStr.html][the ~FromStr~ /trait/]].
+For converting to strings use [[https://doc.rust-lang.org/std/macro.format.html][the ~format!~ macro]], 
+and for converting from strings use [[https://doc.rust-lang.org/std/str/trait.FromStr.html][the ~FromStr~ trait]].
 
 Data may be shared in a single-threaded setting by placing it 
-in a reference-counted ('Rc') box, [[https://doc.rust-lang.org/std/rc/struct.Rc.html][the Rc<T> /struct/]].
+in a reference-counted ('Rc') box, [[https://doc.rust-lang.org/std/rc/struct.Rc.html][the Rc<T> struct]].
 If the data is further contained in a [[https://doc.rust-lang.org/std/cell/struct.Cell.html][Cell]] or [[https://doc.rust-lang.org/std/cell/struct.RefCell.html][RefCell]], it may be mutated as well.
 In a concurrent stetting data may be shared by placing it
-in a atomically-reference-counted ('Arc') box, [[https://doc.rust-lang.org/std/sync/struct.Arc.html][the Arc<T> /struct/]], 
+in a atomically-reference-counted ('Arc') box, [[https://doc.rust-lang.org/std/sync/struct.Arc.html][the Arc<T> struct]], 
 with a [[https://doc.rust-lang.org/std/sync/struct.Mutex.html][Mutex]] to get the same effect.
 
 The [[https://doc.rust-lang.org/std/collections/index.html][collections]] /module/ defines 
@@ -121,13 +121,17 @@ in common platforms, most notably Windows and Unix derivatives.
 
 Common types of I/O are defined in the modules ~io~, ~fs~, and ~net~.
 
-[[https://doc.rust-lang.org/std/thread/index.html][The ~thread~ /module/]] contains Rust's threading abstractions.
-[[https://doc.rust-lang.org/std/sync/index.html][The ~sync~ /module/]] contains further primitve shared memory types
+[[https://doc.rust-lang.org/std/thread/index.html][The ~thread~ module]] contains Rust's threading abstractions.
+[[https://doc.rust-lang.org/std/sync/index.html][The ~sync~ module]] contains further primitve shared memory types
 and channel types for message passing.
 
 
+*** Footnotes
+
 [1] https://doc.rust-lang.org/book/ch03-02-data-types.html
+
 [2] https://doc.rust-lang.org/book/ch03-05-control-flow.html#looping-through-a-collection-with-for
+
 
 ** The Lucky Couple - Rust and Python
 
