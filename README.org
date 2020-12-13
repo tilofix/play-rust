@@ -1,0 +1,135 @@
+
+#+TITLE: Learning by Playing - Rust
+
+With public announcement of Mozilla's Project Quantum I noticed Rust.
+The new Firefox Web Browser Engine Servo is written in Rust.
+When I'm right than Mozilla implemented stepwise starting with Quantum CSS Engine (Stylo).
+
+Since then I have been a little shy to spent efforts to learn
+a new programming language.
+I started with Basic (Commodore, KC 85/2), Pascal (PC 1750),
+Modular (Novell Network connected IBM-PC),
+C, Java, TCL, C++, (E)Lisp, and finally Python.
+
+Why now, that I start to spent time to lean Rust.
+It is considered a systems programming language,
+and it announced itself being focused on memory savety and concurrency.
+
+Rust got my attention in combination with WebAssembly,
+anthor project I learnt from Mozilla.
+The Web presented me a link to a talk given by Steve Klabnik:
+Rust, WebAssembly, and the future of Serverless.
+I jumped to the next video of Steve:
+The History of Rust.
+And finally my curiosity was enlighted by Steve's project
+intermezzOS, which got me a pointer to Philipp's project.
+His Words: "That’s when I found an awesome link: 
+Writing an OS in Rust by Philipp Oppermann. 
+I cannot speak enough about how awesome Phil’s tutorial is; ..."
+
+Some emedded system projects convinced me to look for Rust
+- Writeing an OS in Rust - [[https://os.phil-opp.com/][Philipp Opperman's project]]
+- [[https://doc.rust-lang.org/embedded-book][The Embedded Rust Book]] with its [[https://github.com/rust-embedded/wg][Embedded devices Working Group]]
+
+
+** The Common Start - Read a Book
+
+   Thanks to Steve Klabnik's talk and to contribute to his personal efforts
+   beside being a Member of Mozilla I bought the book:
+   The Rust Programming Language by Steve Klabnik and Carol Nichols.
+   - [[https://nostarch.com/Rust2018][No Starch Press Link]]
+   - [[https://github.com/rust-lang/book][Github Repository Link]]
+   it is also the [[https://doc.rust-lang.org/book/][book]] referenced by [[https://www.rust-lang.org/learn][Grow with Rust]] page
+     
+
+** The Plumber's Guide to Rust
+
+   Inspired by the preparation material for a talk of Jessy Pelletier-Lemire
+   I stopped studying the book within chapter 3
+   but started to jump through the book by topic's of curiosity.
+
+   What I learnt from Jessy's page: [[http://jadpole.github.io/rust/type-system][Visualizing Rust's type-system]]?
+   "Well, [[https://doc.rust-lang.org/std/keyword.trait.html][traits]] and values are really all there is; 
+   the deeper you go, the more precise you get, 
+   until you reach [[https://doc.rust-lang.org/std/index.html#primitives][types]] which are nothing more than subsets of [[https://doc.rust-lang.org/std/marker/trait.Sized.html][Sized]] 
+   with a special syntax to manipulate the underlying memory 
+   and from where you cannot go deeper.
+
+** The Standard Libraries's Tour
+
+The [[https://github.com/rust-lang/rust/blob/1.48.0/library/std/src/lib.rs][Standard Library 's source module]] is ~std/lib.rs~ 
+which includes 
+- =include!("primitive_docs.rs");= --> [[https://doc.rust-lang.org/std/index.html#primitives][Primitive Types]]
+- =include!("keyword_docs.rs");= --> [[https://doc.rust-lang.org/std/index.html#keywords][Keywords]]
+
+First The Rust Standard Library divided into a number of [[https://doc.rust-lang.org/std/index.html#modules][focused modules]].
+
+For example 
+- the ~option~ and ~result~ modules define optional and error-handling types,
+  ~Option<T>~ and ~Result<T, E>~;
+- the ~iter~ module defines Rust's iterator /trait/, ~Iterator~, 
+  which works with the ~for~ loop [2] to access collections.
+
+Second, The Rust Standard Library documents implicit methods on primitive types [1]
+(implicit because primitives are implemented by the compiler)
+and exports many modules with same name as primitive types.
+
+For example 
+- there is a page [[https://doc.rust-lang.org/std/primitive.i32.html][std/primitive.i32.html]] for primitive type ~i32~,
+- and there is a page [[https://doc.rust-lang.org/std/i32/index.html][std/i32/index.html]] for the module ~std::i32~.
+
+Third, The Standard Library defines the The Rust Prelude,
+a small collection of items - mostly /traits/ - that are imported 
+into every /module/ of every /crate/.
+
+*** Containers and collections
+
+The Standard Library exposes three common ways 
+to deal with contiguous regions of memory:
+- =Vec<T>= - A heap-allocated /vector/ that is resizable at runtime.
+- =[T; n]= - A inline /array/ with a fixed size at compile time.
+- =[T]= - A dynamically sized /[[https://doc.rust-lang.org/std/primitive.slice.html][slice]]/ into any other kind of contiguous storage, 
+  whether heap-allocated or not.
+
+/Slices/ can only be handled through some kind of /pointer/, ...
+- =&[T]= - /shared slice/
+- =&mut [T]= - /mutable slice/
+- =Box<T>= - /owned slice/
+
+The Standard Library defines many methods for primitive type ~str~, 
+a UTF-8 string /slice/.
+Rust ~str~ is typically accessed as immutable reference: ~&str~. 
+Use the /owned/ [[https://doc.rust-lang.org/std/string/struct.String.html][String]] for building and mutating strings.
+For converting to strings use [[https://doc.rust-lang.org/std/macro.format.html][the ~format!~ /macro/]], 
+and for converting from strings use [[https://doc.rust-lang.org/std/str/trait.FromStr.html][the ~FromStr~ /trait/]].
+
+Data may be shared in a single-threaded setting by placing it 
+in a reference-counted ('Rc') box, [[https://doc.rust-lang.org/std/rc/struct.Rc.html][the Rc<T> /struct/]].
+If the data is further contained in a [[https://doc.rust-lang.org/std/cell/struct.Cell.html][Cell]] or [[https://doc.rust-lang.org/std/cell/struct.RefCell.html][RefCell]], it may be mutated as well.
+In a concurrent stetting data may be shared by placing it
+in a atomically-reference-counted ('Arc') box, [[https://doc.rust-lang.org/std/sync/struct.Arc.html][the Arc<T> /struct/]], 
+with a [[https://doc.rust-lang.org/std/sync/struct.Mutex.html][Mutex]] to get the same effect.
+
+The [[https://doc.rust-lang.org/std/collections/index.html][collections]] /module/ defines 
+maps like [[https://doc.rust-lang.org/std/collections/struct.HashMap.html][HashMap]], sets like [[https://doc.rust-lang.org/std/collections/struct.HashSet.html][HashSet]], sequences like [[https://doc.rust-lang.org/std/collections/struct.LinkedList.html][LinkedLists]] 
+and other typical collection types.
+
+*** Platform abstractions and I/O
+
+The Standard Library is largely concerned with abstracting over differences 
+in common platforms, most notably Windows and Unix derivatives.
+
+Common types of I/O are defined in the modules ~io~, ~fs~, and ~net~.
+
+[[https://doc.rust-lang.org/std/thread/index.html][The ~thread~ /module/]] contains Rust's threading abstractions.
+[[https://doc.rust-lang.org/std/sync/index.html][The ~sync~ /module/]] contains further primitve shared memory types
+and channel types for message passing.
+
+
+[1] https://doc.rust-lang.org/book/ch03-02-data-types.html
+[2] https://doc.rust-lang.org/book/ch03-05-control-flow.html#looping-through-a-collection-with-for
+
+** The Lucky Couple - Rust and Python
+
+   Python as glue-code for Rust modules.
+
