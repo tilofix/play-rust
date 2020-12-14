@@ -344,3 +344,42 @@ Which creates an *.ll file in directory ~./target/debug/deps/debugging.ll~.
 
 For unknown reason I'm not able to have two tasks of type ~cargo~ in tasks.json.
 
+
+** Notes on Rust
+
+Statements and Expressions
+
+Rust is primarilly an expression language [2]. 
+Syntax category /expression/ 
+
+evaluation of expressions produces a value and causes an effect.
+
+evaluation of expressions involve specifying both 
+- the value produced by the expression 
+- and the order in which its sub-expressions are themselves evaluated
+
+
+
+Rust defining constructs forming an API,
+and thus determine API compatibility between major and minor version
+- Functions
+- Types
+- Structs
+- Enums
+- Traits
+- Generics
+
+Cargo follows basic rules of [[https://semver.org/][Semantic Versioning]] [1]
+
+** Org-Babel Rust
+
+Cargo's subcommand [[https://crates.io/search?q=cargo-script][cargo-script]] let's you run Rust "scripts",
+also supported is to evaluate expressions and to run filters.
+
+~cargo install cargoscript~
+
+
+** Foodnotes
+
+[1] https://doc.rust-lang.org/cargo/reference/manifest.html#the-package-section
+[2] https://emacs.stackexchange.com/questions/56126/attempting-to-use-org-babel-to-write-literate-rust/56127#56127
