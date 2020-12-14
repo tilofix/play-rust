@@ -55,6 +55,7 @@ Some emedded system projects convinced me to look for Rust
    with a special syntax to manipulate the underlying memory 
    and from where you cannot go deeper.
 
+
 ** The Standard Libraries's Tour
 
 The [[https://github.com/rust-lang/rust/blob/1.48.0/library/std/src/lib.rs][Standard Library 's source module]] is ~std/lib.rs~ 
@@ -126,14 +127,29 @@ Common types of I/O are defined in the modules ~io~, ~fs~, and ~net~.
 and channel types for message passing.
 
 
-*** Footnotes
+** The Servo's Basic Rust
 
-[1] https://doc.rust-lang.org/book/ch03-02-data-types.html
+The quickstart guide for hacking servo lists some basic things 
+one must know to read Servo's code.
 
-[2] https://doc.rust-lang.org/book/ch03-05-control-flow.html#looping-through-a-collection-with-for
+- [[https://doc.rust-lang.org/stable/rust-by-example/flow_control/match.html][Match]] and ~Patterns~ [3]
+- [[https://doc.rust-lang.org/stable/rust-by-example/std/option.html][Options]]
+- [[https://doc.rust-lang.org/stable/rust-by-example/expression.html][Expression]]
+- [[https://doc.rust-lang.org/stable/rust-by-example/trait.html][Traits]]
+- Understand how ~println!()~ works, especially the [[https://doc.rust-lang.org/std/fmt/#formatting-traits][formatting traits]].
 
 
 ** The Lucky Couple - Rust and Python
 
    Python as glue-code for Rust modules.
+
+
+** Footnotes
+
+[1] https://doc.rust-lang.org/book/ch03-02-data-types.html
+
+[2] https://doc.rust-lang.org/book/ch03-05-control-flow.html#looping-through-a-collection-with-for
+
+[3] https://doc.rust-lang.org/book/ch18-00-patterns.html
+
 
