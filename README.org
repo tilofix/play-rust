@@ -144,6 +144,21 @@ one must know to read Servo's code.
    Python as glue-code for Rust modules.
 
 
+** The REPLing Rust
+
+There is a lot of PRO and CONTRA on dynmically typed languages like Python.
+One PRO of such dynamic type system is a Read-Evaluate-Print-Loop,
+which is a great place to learn and to play.
+
+Through my love of Emacs' orgmode I ran over [[https://crates.io/crates/cargo-script/][cargo-script]] 
+and through my interest for JuPyteR I ran over [[https://github.com/google/evcxr/tree/master/evcxr_jupyter][EValuation-ConteXt-for-Rust]].
+
+
+** The Rust Controversy
+
+A hackernoon.com's auther dropped Rust after ported ~nanogui~ to Rust.
+
+
 ** Footnotes
 
 [1] https://doc.rust-lang.org/book/ch03-02-data-types.html
