@@ -379,6 +379,62 @@ also supported is to evaluate expressions and to run filters.
 ~cargo install cargoscript~
 
 
+** Visual Studio Code on Manjaro
+
+   https://snapcraft.io/install/code/manjaro
+
+   Describes to enable snaps on Manjaro Linux and install Visual Studio Code.
+
+   On my Manajaro system I left out step "Enabled snapd"
+   and went straight to "Install Visual Studio Code".
+   But there has been some change made by the system
+   before actual installation procedure has been started.
+
+   #+BEGIN_EXAMPLE
+     [tilo@holm ~]$ 
+     [tilo@holm ~]$ snap help
+     The snap command lets you install, configure, refresh and remove snaps.
+     Snaps are packages that work across many different Linux distributions,
+     enabling secure delivery and operation of the latest apps and utilities.
+
+     Usage: snap <command> [<options>...]
+
+     Commonly used commands can be classified as follows:
+
+              Basics: find, info, install, remove, list
+             ...more: refresh, revert, switch, disable, enable, create-cohort
+             History: changes, tasks, abort, watch
+             Daemons: services, start, stop, restart, logs
+         Permissions: connections, interface, connect, disconnect
+       Configuration: get, set, unset, wait
+         App Aliases: alias, aliases, unalias, prefer
+             Account: login, logout, whoami
+           Snapshots: saved, save, check-snapshot, restore, forget
+              Device: model, reboot, recovery
+           ... Other: warnings, okay, known, ack, version
+         Development: download, pack, run, try
+
+     For more information about a command, run 'snap help <command>'.
+     For a short summary of all commands, run 'snap help --all'.
+     [tilo@holm ~]$ 
+     [tilo@holm ~]$ su hauptb
+     Passwort: 
+     [hauptb@holm tilo]$ 
+     [hauptb@holm tilo]$ 
+     [hauptb@holm tilo]$ sudo snap install code --classic
+     [sudo] Passwort für hauptb: 
+     2020-12-22T14:36:09+01:00 INFO Waiting for automatic snapd restart...
+     code ea3859d4 from Visual Studio Code (vscode✓) installed
+     [hauptb@holm tilo]$ 
+     [hauptb@holm tilo]$ 
+     [hauptb@holm tilo]$ snap list
+     Name  Version   Rev    Tracking       Publisher   Notes
+     code  ea3859d4  52     latest/stable  vscode✓     classic
+     core  16-2.48   10577  latest/stable  canonical✓  core
+     [hauptb@holm tilo]$ 
+   #+END_EXAMPLE
+
+   
 ** Foodnotes
 
 [1] https://doc.rust-lang.org/cargo/reference/manifest.html#the-package-section
