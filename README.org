@@ -151,30 +151,30 @@ After installing extension "Rust rust-lang.rust"
 it asked to install following components via tasks
 
 #+BEGIN_EXAMPLE
-> Executing task in folder play-rust: rustup component add rust-analysis --toolchain stable-x86_64-pc-windows-msvc <
+  > Executing task in folder play-rust: rustup component add rust-analysis --toolchain stable-x86_64-pc-windows-msvc <
 
-info: downloading component 'rust-analysis'
-info: installing component 'rust-analysis'
-info: Defaulting to 500.0 MiB unpack ram
+  info: downloading component 'rust-analysis'
+  info: installing component 'rust-analysis'
+  info: Defaulting to 500.0 MiB unpack ram
 
-Terminal will be reused by tasks, press any key to close it.
+  Terminal will be reused by tasks, press any key to close it.
 
-> Executing task in folder play-rust: rustup component add rust-src --toolchain stable-x86_64-pc-windows-msvc <
+  > Executing task in folder play-rust: rustup component add rust-src --toolchain stable-x86_64-pc-windows-msvc <
 
-info: downloading component 'rust-src'
-info: installing component 'rust-src'
-info: Defaulting to 500.0 MiB unpack ram
-  1.8 MiB /   1.8 MiB (100 %)   1.1 MiB/s in  1s ETA:  0s
+  info: downloading component 'rust-src'
+  info: installing component 'rust-src'
+  info: Defaulting to 500.0 MiB unpack ram
+    1.8 MiB /   1.8 MiB (100 %)   1.1 MiB/s in  1s ETA:  0s
 
-Terminal will be reused by tasks, press any key to close it.
+  Terminal will be reused by tasks, press any key to close it.
 
-> Executing task in folder play-rust: rustup component add rls --toolchain stable-x86_64-pc-windows-msvc <
+  > Executing task in folder play-rust: rustup component add rls --toolchain stable-x86_64-pc-windows-msvc <
 
-info: downloading component 'rls'
-info: installing component 'rls'
-info: Defaulting to 500.0 MiB unpack ram
+  info: downloading component 'rls'
+  info: installing component 'rls'
+  info: Defaulting to 500.0 MiB unpack ram
 
-Terminal will be reused by tasks, press any key to close it.
+  Terminal will be reused by tasks, press any key to close it.
 #+END_EXAMPLE
 
 *** Debug Rust Programs
@@ -382,7 +382,7 @@ Cryptic as Perl isn't it: ='_=, ='_=, ='a=
 
 *** The Plumber
 
-The Difference Between Macros and Functions
+**** The Difference Between Macros and Functions
 
 [3] p. 530 "19 ADVANCED FEATURES":
 
@@ -418,7 +418,58 @@ allows to define code similar to a Rust ~match~ expression.
   - and the matching code associated with each pattern 
     replaces the code passed to the marco.
 
-The Language Sugar 
+[6] gives "a complete and thorough explanation of how the [marco] system works.
+
+Macros are built on /syntax extensions/. 
+There are several forms of syntax extension invocation, here are four examples:
+- =# [ $arg ];= e.g. =#[derive(Clone)]=, =#[no_mangle]=, ...
+- =# ! [ $arg ];= e.g. =#![allow(dead_code)]=, =#![crate_name="blang"]=, ...
+- =$name ! $arg;= e.g. =println!("Hi!")=, =concat!("a", "b")=, ...
+- =$name ! $arg0 $arg1;= e.g. =macro_rules! dummy { () => {}; }=
+
+First two forms are attributes. 
+The third is the one of interest to macros.
+The fourth form is essentially a variation of the third
+which is not available to marcos.
+This from is used /at all/ with =marco_rules!=
+
+The argument of a syntax extension invocation is a single, non-leaf token tree;
+~(...)~, ~[...]~, or ~{...}~- (curly braces behave different)
+
+#+BEGIN_EXAMPLE
+  >> macro_rules! four { () => {1 + 3}}
+  >> four!()
+  4
+  >> four![]
+  4
+  >> four!{}
+                                ^^^^^ expected `()`, found integer
+  mismatched types
+  help: consider using a semicolon here
+  >> 
+  >> let x = 1 + four!{};
+  >> x
+  5
+  >> 
+#+END_EXAMPLE
+
+Patterns can also contain captures. 
+Captures are written as a '$' followed by an identifier by a colon ':',
+and finally the kind of capture, the [[https://doc.rust-lang.org/reference/macros-by-example.html#metavariables][fragment-specifier]], a so called metavariable:
+- ~item~: an [[https://doc.rust-lang.org/reference/items.html][Item]], like a function, struct, module, etc.
+- ~block~: a [[https://doc.rust-lang.org/reference/expressions/block-expr.html][BlockExpression]] (i.e. a block of statements and/or an expression, surrounded by braces)
+- ~stmt~: a [[https://doc.rust-lang.org/reference/statements.html][Statement]] without the trailing semicolon (except for those statements requiring them)
+- ~pat~: a [[https://doc.rust-lang.org/reference/patterns.html][Pattern]]
+- ~expr~: an [[https://doc.rust-lang.org/reference/expressions/block-expr.html][Expression]]
+- ~ty~: a [[https://doc.rust-lang.org/reference/types.html#type-expressions][Type]]
+- ~ident~: an [[https://doc.rust-lang.org/reference/identifiers.html][Identifier]]
+- ~path~: a [[https://doc.rust-lang.org/reference/identifiers.html][Path]] in types (e.g. ~foo~, ~::std::mem::replace~, ~transmute::<_, int>~, ...)
+- ~meta~: a meta item, an [[https://doc.rust-lang.org/reference/attributes.html][Attr]]; the things that go inside #[...] and #![...] attributes
+- ~tt~: a single [[https://doc.rust-lang.org/reference/macros.html#macro-invocation][TokenTree]] (a single token or tokens in matching delimiters ~()~, ~[]~, or ~{}~)
+- and three more in [5]: ~lifetime~, ~vis~, ~literal~
+
+
+**** The Language Sugar 
 
 The Rust's sugar table [4]
 
@@ -438,6 +489,23 @@ Rust language cheat sheet contains clickable links to
 - The Rust Standard Library Docs [[https://doc.rust-lang.org/std][STD]],
 - The Rustonomicon [[https://doc.rust-lang.org/nightly/nomicon/][NOM]],
 - The Rust Reference [[https://doc.rust-lang.org/stable/reference/][REF]].
+
+**** The Eyes Opening Twins
+
+Ownership and Lifetime
+
+https://www.reddit.com/r/rust/comments/4iup0d/i_wish_there_were_a_book_named_thinking_in_rust/d31p65z/?utm_source=reddit&utm_medium=web2x&context=3
+
+**** Treat Types like Characteristic Traits
+
+https://llogiq.github.io/2015/07/30/traits.html
+
+Notes from weblog entry
+- Auto-derived traits create a magically appearing implementation
+  that usually does the right thing.
+- If you wish to implement ~Ord~, 
+  you have to implement ~PartialOrd~ as well, 
+  for the latter is a *trait bound* for the former.
 
 ** Org-Babel Rust
 
@@ -656,7 +724,7 @@ Right, we are done and got expected compilation errors.
    No learning without playing ...
    there is no better tool for learning/playing than a read-evaluate-print-loop.
    As Rust is out for a while it already has not only a REPL but also
-   Jupyter-support, a jupyter kernel created by same project: [[https://github.com/google/evcxr][Evcxr]].
+   Jupyter-support, a jupyter kernel created by same project: [[https://github.com/google/evcxr][EvCxR]].
 
    #+BEGIN_EXAMPLE
      [tilo@holm play-rust]$ 
@@ -1333,3 +1401,5 @@ Right, we are done and got expected compilation errors.
 [3] [[https://doc.rust-lang.org/book][Rust-Book]]
 [4] [[https://cheats.rs/][Rust Language Cheat Sheet]]
 [5] [[https://doc.rust-lang.org/stable/reference/][The Rust Reference]]
+[6] [[https://danielkeep.github.io/tlborm/book/index.html][The Little Book of Rust Macros]]
+[7] [[https://github.com/dtolnay/proc-macro-workshop][dtolnay / proc-macro-workshop]]   
