@@ -468,6 +468,29 @@ and finally the kind of capture, the [[https://doc.rust-lang.org/reference/macro
 - ~tt~: a single [[https://doc.rust-lang.org/reference/macros.html#macro-invocation][TokenTree]] (a single token or tokens in matching delimiters ~()~, ~[]~, or ~{}~)
 - and three more in [5]: ~lifetime~, ~vis~, ~literal~
 
+Debugging macros with
+- ~trace_macros!~ directive in code or 
+  on command-line by adding ~-Z trace-macros~, 
+  which asks the compiler to dump every macro invocation prior to expansion.
+- ~log_syntax~ attribute in source module =#![feature(log_syntax)]=,
+  which asks the compiler to output all tokens passed to it.
+- ~--pretty TYPE~ command option which asks compiler to pretty-print the input instead of compiling;
+  example command line ~cargo rustc -- -Z unstable-options --pretty expanded~
+  (option ~-Z unstable-options~ requires Rust nightly);
+  valid types are:
+  - ~normal~ (un-unnotated source),
+  - ~expanded~ (crates expanded), 
+  - or ~expanded,identified~ (fully parenthesized, AST nodes with IDs)
+
+Install and activate Rust nightly for a project:
+#+BEGIN_EXAMPLE
+$ rustup toolchain install nightly
+$ cd ~/Projects/play-rust
+$ rustup override set nightly
+#+END_EXAMPLE
+
+This somehow enables toolchain nightly by default 
+which would need otherwise be defined with ~cargo +nightly~-
 
 **** The Language Sugar 
 
