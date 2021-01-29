@@ -490,7 +490,12 @@ $ rustup override set nightly
 #+END_EXAMPLE
 
 This somehow enables toolchain nightly by default 
-which would need otherwise be defined with ~cargo +nightly~-
+which would need otherwise be defined with ~cargo +nightly~.
+"somehow" is done by adding following line to file =~/.rustup/settings.toml=:
+#+BEGIN_EXAMPLE
+[overrides]
+"/home/tilo/Projects/play-rust" = "nightly-x86_64-unknown-linux-gnu"
+#+END_EXAMPLE
 
 **** The Language Sugar 
 
