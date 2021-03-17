@@ -3,7 +3,7 @@
 // use M-x 'compile' to get expanded version of the source code
 // use M-x 'rust-compile' to actually compile the source code
 
-fn main() -> () {
+fn main() {
     let x: i32 = 5;
     let c2: char = '❤'; // UTF-8
     let s: &str = "Tilo";
