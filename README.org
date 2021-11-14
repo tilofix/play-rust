@@ -8,6 +8,8 @@ two of them were with Steve Klabnik an author of the book:
 
 *** Bought Book "The Rust Programming Language (Covers Rust 2018)"
 
+Later I found [[https://doc.rust-lang.org/book/][READ THE BOOK!]] online for free, OK, so I supported Rust ;-).
+
 - Concept-Chapters: all other chapters
   - Chapter 3: covers Rust features similar to those of other programming languages
     - In Rust by default variables are immutable. 
@@ -381,7 +383,7 @@ Cryptic as Perl isn't it: ='_=, ='_=, ='a=
 - Go and cheat: Language Sugar 
 
 *** The Plumber
-**** The Difference Between Macros and Functions
+*** The Difference Between Macros and Functions
 
 [3] p. 530 "19 ADVANCED FEATURES":
 
@@ -496,7 +498,7 @@ which would need otherwise be defined with ~cargo +nightly~.
 "/home/tilo/Projects/play-rust" = "nightly-x86_64-unknown-linux-gnu"
 #+END_EXAMPLE
 
-**** The Language Sugar 
+*** The Language Sugar 
 
 The Rust's sugar table [4]
 
@@ -517,7 +519,7 @@ Rust language cheat sheet contains clickable links to
 - The Rustonomicon [[https://doc.rust-lang.org/nightly/nomicon/][NOM]],
 - The Rust Reference [[https://doc.rust-lang.org/stable/reference/][REF]].
 
-**** The Eyes Opening Twins
+*** The Eyes Opening Twins
 
 Ownership and Lifetime
 
@@ -527,28 +529,71 @@ References and Borrowing
 
 https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html
 
-**** Treat Types like Characteristic Traits
+"Ownership is the breakout feature of Rust.
+It allows Rust to be completely memory-safe and efficient, while
+avoiding garbage collection." 
+([[https://doc.rust-lang.org/stable/nomicon/ownership.html][Ownership and Lifetimes]])
+
+"This is why Rust requires any references to freeze the referent and
+its owners." 
+
+[[https://doc.rust-lang.org/stable/nomicon/references.html][References]]
+
+There are two kinds of reference:
+- Shared reference: =&=
+- Mutable reference: =&mut=
+
+Which obey the following rules:
+- A reference cannot outlive its referent
+- A mutable reference cannot be aliased
+That's it. That's the whole model references follow.
+
+Of course, we should probably define what aliased means.
+
+Unfortunately, Rust hasn't actually defined its aliasing model. 
+
+While we wait for the Rust devs to specify the semantics of their
+language, let's use the next section to discuss what aliasing is in 
+general, and why it matters.
+
+[[https://doc.rust-lang.org/stable/nomicon/aliasing.html][Aliasing]]
+
+... here's our working definition: variables and pointers alias if
+they refer to overlapping regions of memory.
+
+[[https://doc.rust-lang.org/stable/nomicon/lifetimes.html][Lifetimes]]
+
+"The lifetime (sometimes called a borrow) is alive from the place it
+is created to its last use." 
+
+*** Treat Types like Characteristic Traits
+
+A Trait defines a Types Ability(ies)
+- a type is addible when it implements [[https://doc.rust-lang.org/std/ops/trait.Add.html][std::ops::Add]]
+- a type is debugable when it implements std::fmt::Debug
+- a type is callable when it implements std::ops::Fn
 
 ***** The Periodic Table of Rust Types
 
 #+CAPTION: http://cosmic.mearie.org/2014/01/periodic-table-of-rust-types/
-|----------+----------------------+-------------------------+--------------------------+----------------------+---------|
-|          | Immutable            | Mutable                 | Owned                    | Bare                 | Unsized |
-|----------+----------------------+-------------------------+--------------------------+----------------------+---------|
-| Raw      | * const ~T~          | *mut ~T~                | N/A                      |                      |         |
-|----------+----------------------+-------------------------+--------------------------+----------------------+---------|
-| Simple   | & ~T~                | &mut ~T~                | Box < ~T~ >              | ~T~                  |         |
-|----------+----------------------+-------------------------+--------------------------+----------------------+---------|
-| Trait    | & ~Trait~            | &mut ~Trait~            | Box < ~Trait~ >          |                      | ~Trait~ |
-|----------+----------------------+-------------------------+--------------------------+----------------------+---------|
-| Array    | & [ ~T~ ]            | &mut [ ~T~ ]            | Box < ~T~ >              | [ ~T~; ~n~ ]         | [ ~T~ ] |
-|          |                      |                         | std::vec::Vector < ~T~ > |                      |         |
-|----------+----------------------+-------------------------+--------------------------+----------------------+---------|
-| String   | & str                | &mut str                | Box < str >              | N/A                  | str     |
-|          |                      |                         | std::string::String      | N/A                  |         |
-|----------+----------------------+-------------------------+--------------------------+----------------------+---------|
-| Callable | Fn ( ~T...~ ) -> ~U~ | FnMut ( ~T...~ ) -> ~U~ | FnOnce ( ~T...~ ) -> ~U~ | fn ( ~T...~ ) -> ~U~ |         |
-|----------+----------------------+-------------------------+--------------------------+----------------------+---------|
+|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
+|          | Immutable Pointer        | Mutable Pointer         | Owned Pointer            | Bare                 | Unsized             |
+|          | (by-immutable-reference) | (by-mutable-reference)  |                          | (by-value)           | (dynamically sized) |
+|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
+| Raw      | * const ~T~              | *mut ~T~                | N/A                      |                      |                     |
+|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
+| Simple   | & ~T~                    | &mut ~T~                | Box < ~T~ >              | ~T~                  |                     |
+|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
+| Array    | & [ ~T~ ]                | &mut [ ~T~ ]            | Box <[ ~T~ ]>            | [ ~T~; ~n~ ]         | [ ~T~ ]             |
+|          |                          |                         | std::vec::Vector < ~T~ > |                      |                     |
+|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
+| String   | & ~str~                  | &mut ~str~              | Box < ~str~ >            | N/A                  | ~str~               |
+|          |                          |                         | std::string::String      | N/A                  |                     |
+|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
+| Trait    | & ~Trait~                | &mut ~Trait~            | Box < ~Trait~ >          |                      | ~Trait~             |
+|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
+| Callable | Fn ( ~T...~ ) -> ~U~     | FnMut ( ~T...~ ) -> ~U~ | FnOnce ( ~T...~ ) -> ~U~ | fn ( ~T...~ ) -> ~U~ |                     |
+|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
 
 
 #+CAPTION: https://doc.rust-lang.org/reference/dynamically-sized-types.html
@@ -558,7 +603,91 @@ https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html
 | implement the trait [[https://doc.rust-lang.org/reference/special-types-and-traits.html#sized][Sized]]            | Pointer types to DSTs have twice the size of pointers to sized types |
 | Sized is implemented by the compiler | - Pointers to slices also store the number of elements of the slice  |
 |                                      | - Pointers to trait objects also store a pointer to a vtable         |
+|--------------------------------------+----------------------------------------------------------------------|
+| ~std::mem::size_of::<T>()~           | when ~T~ has no statically-known size, e.g.,                         |
+| Returns the size of a type in bytes. | a slice ~[T]~ or a [[https://doc.rust-lang.org/book/ch17-02-trait-objects.html][trait object]],                                     |
+|                                      | then ~std::mem::size_of_val(&T)~ can be used                         |
+|                                      | to get the dynamically-known size.                                   |
 
+The  [[https://doc.rust-lang.org/book/ch17-02-trait-objects.html#defining-a-trait-for-common-behavior][BK]], explains trait-object: A trait object points to both 
+- an instance of a type implementing our specified trait 
+- as well as a table used to look up trait methods on that type at
+  runtime.   
+
+Callable(s) for a case when taking a closure as an input parameter of
+a function. [[https://doc.rust-lang.org/stable/rust-by-example/fn/closures/input_parameters.html][EX]] explains that the closure's complete type must be
+annotated using one of the callable ~traits~, in order of decreasing
+restriction: 
+- ~Fn~: the closure captures variables 
+  by reference (~&T~)
+- ~FnMut~: the closure captures variables 
+  by mutable reference (~&mut T~) 
+- ~FnOnce~: the closure captures variables 
+  by value (~T~)
+
+The ~Fn~, ~FnMut~, and ~FnOnce~ traits are implemented by types that
+can be invoked like functions ([[https://doc.rust-lang.org/std/ops/index.html#examples][STD]]). Note that 
+- [[https://doc.rust-lang.org/std/ops/trait.Fn.html][Fn]] takes ~&self~, call-by-reference;
+  The version of the call operator that takes an immutable receiver.
+  This trait (~Fn~) is not to be confused with [[https://doc.rust-lang.org/std/primitive.fn.html][function pointers]]
+  (~fn~). Function pointers are pointers that point to /code/, 
+  not data. 
+- [[https://doc.rust-lang.org/std/ops/trait.FnMut.html][FnMut]] takes ~&mut self~, call-by-mutable-reference;
+  The version of the call operator that takes a mutable receiver.
+- and [[https://doc.rust-lang.org/std/ops/trait.FnOnce.html][FnOnce]] takes ~self~, call-by-value;
+  The version of the call operator that takes a by-value receiver. 
+
+The most common use of these traits is to act as bounds to
+higher-level functions that take functions or closures as arguments. 
+
+Taking a [[https://doc.rust-lang.org/std/ops/trait.Fn.html][Fn]] as an argument
+#+BEGIN_SRC rust
+  fn call_with_one<F>(func: F) -> usize where F: Fn(usize) -> usize
+  {
+      func(1)
+  }
+
+  let double = |x| x * 2;
+  assert_eq!(call_with_one(double), 2);
+#+END_SRC
+
+Taking a [[https://doc.rust-lang.org/std/ops/trait.FnMut.html][FnMut]] as an argument 
+#+BEGIN_SRC rust
+  fn do_twice<F>(mut func: F) where F: FnMut()
+  {
+      func();
+      func();
+  }
+
+  let mut x: usize = 1;
+  {
+      let add_two_to_x = || x += 2;
+      do_twice(add_two_to_x);
+  }
+
+  assert_eq!(x, 5);
+#+END_SRC
+
+Taking a [[https://doc.rust-lang.org/std/ops/trait.FnOnce.html][FnOnce]] as an argument
+#+BEGIN_SRC rust
+  fn consume_with_relish<F>(func: F) where F: FnOnce() -> String
+  {
+      // `func` consumes its captured variables, so it cannot be run more
+      // than once.
+      println!("Consumed: {}", func());
+
+      println!("Delicious!");
+
+      // Attempting to invoke `func()` again will throw a `use of moved
+      // value` error for `func`.
+  }
+
+  let x = String::from("x");
+  let consume_and_return_x = move || x;
+  consume_with_relish(consume_and_return_x);
+
+  // `consume_and_return_x` can no longer be invoked at this point
+#+END_SRC
 
 ***** Rust's Built-in Traits, the When, How & Why
 
@@ -570,7 +699,6 @@ Notes from weblog entry
 - If you wish to implement ~Ord~, 
   you have to implement ~PartialOrd~ as well, 
   for the latter is a *trait bound* for the former.
-
 
 ***** The Ferris Says Hello Example
 
@@ -650,7 +778,6 @@ Our compile error of investigation is caused by Rust's language sugar
 table [4] item: "Method Resolution" --> "Deref or borrow ~x~ until
 ~x.f()~ works" described in "The Rust Reference" as Method-call
 expressions.
-
 
 ***** Desugar Method Calls
 
@@ -818,7 +945,6 @@ For example,
 
 Refer to [[https://github.com/rust-lang/rfcs/blob/master/text/0132-ufcs.md][RFC 132]] for further details and motivations."
 
-
 ***** Visibility & Privacy
 
 - [[https://doc.rust-lang.org/stable/reference/visibility-and-privacy.html][Visibility and Privacy]]
@@ -848,6 +974,171 @@ external crates. Declaring or defining a new module can be thought of
 as inserting a new tree into the hierarchy at the location of the
 definition." 
 
+*** Desugar 
+
+TODO: steal information from
+http://stackoverflow.com/questions/28519997/what-are-rusts-exact-auto-dereferencing-rules/28552082#28552082 
+
+    
+The Rust Reference
+
+[[https://doc.rust-lang.org/stable/reference/expressions/await-expr.html?highlight=desugar#approximate-desugaring][Statements and expressions » Expressions » Await expressions » Approximate desugaring]]
+[[https://doc.rust-lang.org/stable/reference/items/functions.html?highlight=desugar#async-functions][Items » Functions » Async functions]]
+[[https://doc.rust-lang.org/stable/reference/items/functions.html?highlight=desugar#combining-async-and-unsafe][Items » Functions » Combining async and unsafe]]
+[[https://doc.rust-lang.org/stable/reference/expressions/call-expr.html?highlight=desugar#disambiguating-function-calls][Statements and expressions » Expressions » Call expressions » Disambiguating Function Calls]]
+
+The Rustonomicon
+
+[[https://doc.rust-lang.org/stable/nomicon/lifetimes.html?highlight=desugar#lifetimes][Ownership » Lifetimes » Lifetimes]]
+[[https://doc.rust-lang.org/stable/nomicon/dropck.html?highlight=desugar#drop-check][Ownership » Drop Check » Drop Check]]
+[[https://doc.rust-lang.org/stable/nomicon/hrtb.html?highlight=desugar#higher-rank-trait-bounds-hrtbs][Ownership » Higher-Rank Trait Bounds » Higher-Rank Trait Bounds (HRTBs)]]
+[[https://doc.rust-lang.org/stable/nomicon/lifetime-mismatch.html?highlight=desugar#limits-of-lifetimes][Ownership » Limits of Lifetimes » Limits of Lifetimes]]
+[[https://doc.rust-lang.org/stable/nomicon/lifetimes.html?highlight=desugar#example-references-that-outlive-referents][Ownership » Lifetimes » Example: references that outlive referents]]
+
+***** Dot Operator
+      
+[[https://doc.rust-lang.org/stable/nomicon/dot-operator.html][The Dot Operator]]
+
+The dot operator will perform a lot of magic to convert types. It will
+perform auto-referencing, auto-dereferencing, and coercion until types
+match. 
+
+***** Closure
+
+Recently I ran over following page:
+[[https://www.rubyguides.com/2016/02/ruby-procs-and-lambdas/][Ruby Blocks, Procs & Lambdas - The Ultimate Guide!]].
+Oh look, Ruby closures look similar to Rust closures ...
+and indeed [[https://doc.rust-lang.org/book/][BK]] says in chapter 13.1
+    
+     To define a closure, we start with a pair of vertical pipes (~|~),
+     inside which we specify the parameters to the closure; this
+     syntax was chosen because of its similarity to closure
+     definitions in Smalltalk and Ruby.
+     ...
+     if we had more than one parameter, we would separate them with
+     commas, like =|param1, param2|=. 
+
+Unlike functions, closures can capture values from the scope in which
+they’re defined.
+
+With type annotations added, the syntax of closures looks more similar
+to the syntax of functions.
+
+#+BEGIN_SRC rust
+fn  add_one_v1   (x: u32) -> u32 { x + 1 }
+let add_one_v2 = |x: u32| -> u32 { x + 1 };
+let add_one_v3 = |x|             { x + 1 };
+let add_one_v4 = |x|               x + 1  ;
+#+END_SRC
+
+#+RESULTS:
+
+The first line shows a function definition, and the second line shows
+a fully annotated closure definition. The third line removes the type
+annotations from the closure definition, and the fourth line removes
+the brackets, which are optional because the closure body has only one
+expression. These are all valid definitions that will produce the same
+behavior when they’re called. 
+
+The [[https://doc.rust-lang.org/stable/reference/][REF]] speaks on [[https://doc.rust-lang.org/stable/reference/expressions/closure-expr.html][Closure expressions]].
+
+***** Match Expression
+
+A [[https://doc.rust-lang.org/stable/reference/glossary.html#scrutinee][scrutinee]] is the expression that is matched on in ~match~ expressions
+and similar pattern matching constructs. For example,
+in ~match x { A=> 1, B => 2 }~, the expression ~x~ is the scrutinee. 
+
+Sugar on Match-Expression for "better ergonomics for pattern-matching
+on references". [[https://rust-lang.github.io/rfcs/2005-match-ergonomics.html][RFC]] 
+
+The match expression utilizes patterns in its arms. 
+#+BEGIN_EXAMPLE
+match VALUE {
+    PATTERN => EXPRESSION,
+    PATTERN => EXPRESSION,
+    PATTERN => EXPRESSION,
+}
+#+END_EXAMPLE
+- ~match~: keyword of the match expression
+- VALUE: a value to match on
+- PATTERN: one or more match arms with a pattern the value matches on
+  and an expression EXPRESSION to run
+
+"One requirement for match expressions is that they need to be
+exhaustive in the sense that all possibilities for the value in the
+match expression must be accounted for." Chapters 6, and 18.1 in [3]
+
+*** Operator
+
+Rust operators are overloadable when a Trait is defined.
+
+Operators are used in [[https://doc.rust-lang.org/stable/reference/expressions/operator-expr.html#operator-expressions][Operator expressions]].
+Operators are defined for built-in types by the Rust compiler.
+Many Operators are overload-able
+using Traits in [[https://doc.rust-lang.org/std/ops/index.html][std::ops]] (operators) or [[https://doc.rust-lang.org/std/cmp/index.html][std::cmp]] (comparison). 
+- Borrow operators --> cannot be overloaded
+- The dereference operator
+- The question mark operator --> cannot be overloaded
+- Negation operators
+- Arithmetic and Logical Binary Operators
+- Lazy boolean operators (~||~ and ~&&~)
+- Comparison Operators
+- Type cast expressions
+- Assignment expressions --> cannot be overloaded
+- Compound assignment expressions
+
+
+What about call-operator ~()~?
+There is call-expression.
+
+#+BEGIN_EXAMPLE
+[tilo@holm ~]$ evcxr
+Welcome to evcxr. For help, type :help
+>> let three : i32 = add(1,2);
+                     ^^^ not found in this scope
+cannot find function `add` in this scope
+>> let three : i32 = add(1i32,2i32);
+                     ^^^ not found in this scope
+cannot find function `add` in this scope
+>> let three : i32 = std::ops::Add::add(1i32,2i32);
+>> let three : i32 = std::ops::Add::add(1,2);
+>> three
+3
+>> 
+>> let name : & str = (|| "Rust")();
+>> name
+"Rust"
+>> 
+>> let name : & str = (|| "Rust");
+                      ^^^^^^^^^^^ 
+unnecessary parentheses around assigned value
+help: remove these parentheses
+                      ^^^^^^^^^^^ expected `&str`, found closure
+              ^^^^^ expected due to this
+mismatched types
+>> let name : & str = || "Rust";
+                      ^^^^^^^^^ expected `&str`, found closure
+              ^^^^^ expected due to this
+mismatched types
+>> let name : & str = (|()| -> & str {"Rust"})();
+                                              ^^ supplied 0 arguments
+                      ^^^^^^^^^^^^^^^^^^^^^^^^ expected 1 argument
+this function takes 1 argument but 0 arguments were supplied
+>> let name : & str = (|| -> & str {"Rust"})();
+>> let str_rust_funct  = || -> & str {"Rust"};
+Sorry, the type [closure@src/lib.rs:109:23: 109:43] cannot currently be persisted
+>> let str_rust_funct  = || -> &str {"Rust"};
+Sorry, the type [closure@src/lib.rs:109:23: 109:42] cannot currently be persisted
+>> let name : & str = (|()| -> & str {"Rust"})(());
+>> (|()| -> & str {"Rust"})(())
+"Rust"
+>> (|| -> & str {"Rust"})()
+"Rust"
+>> let square = |x| x * x;
+Sorry, the type [closure@src/lib.rs:109:14: 109:23] cannot currently be persisted
+>> 
+[tilo@holm ~]$ 
+#+END_EXAMPLE
 
 ** Org-Babel Rust
 
