@@ -7,7 +7,11 @@
 // cargo +nightly rustc -- -Z unpretty=hir,typed > main_hir_typed.txt
 // cargo +nightly rustc -- -Z unpretty=mir > main_mir.txt
 
-fn main() {
+mod hello;
+
+fn main() -> () {
+    hello::hello();
+
     let x: i32 = 5;
     let c2: char = '❤'; // UTF-8
     let s: &str = "Tilo";
