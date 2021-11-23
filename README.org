@@ -151,30 +151,30 @@ After installing extension "Rust rust-lang.rust"
 it asked to install following components via tasks
 
 #+BEGIN_EXAMPLE
-> Executing task in folder play-rust: rustup component add rust-analysis --toolchain stable-x86_64-pc-windows-msvc <
+  > Executing task in folder play-rust: rustup component add rust-analysis --toolchain stable-x86_64-pc-windows-msvc <
 
-info: downloading component 'rust-analysis'
-info: installing component 'rust-analysis'
-info: Defaulting to 500.0 MiB unpack ram
+  info: downloading component 'rust-analysis'
+  info: installing component 'rust-analysis'
+  info: Defaulting to 500.0 MiB unpack ram
 
-Terminal will be reused by tasks, press any key to close it.
+  Terminal will be reused by tasks, press any key to close it.
 
-> Executing task in folder play-rust: rustup component add rust-src --toolchain stable-x86_64-pc-windows-msvc <
+  > Executing task in folder play-rust: rustup component add rust-src --toolchain stable-x86_64-pc-windows-msvc <
 
-info: downloading component 'rust-src'
-info: installing component 'rust-src'
-info: Defaulting to 500.0 MiB unpack ram
-  1.8 MiB /   1.8 MiB (100 %)   1.1 MiB/s in  1s ETA:  0s
+  info: downloading component 'rust-src'
+  info: installing component 'rust-src'
+  info: Defaulting to 500.0 MiB unpack ram
+    1.8 MiB /   1.8 MiB (100 %)   1.1 MiB/s in  1s ETA:  0s
 
-Terminal will be reused by tasks, press any key to close it.
+  Terminal will be reused by tasks, press any key to close it.
 
-> Executing task in folder play-rust: rustup component add rls --toolchain stable-x86_64-pc-windows-msvc <
+  > Executing task in folder play-rust: rustup component add rls --toolchain stable-x86_64-pc-windows-msvc <
 
-info: downloading component 'rls'
-info: installing component 'rls'
-info: Defaulting to 500.0 MiB unpack ram
+  info: downloading component 'rls'
+  info: installing component 'rls'
+  info: Defaulting to 500.0 MiB unpack ram
 
-Terminal will be reused by tasks, press any key to close it.
+  Terminal will be reused by tasks, press any key to close it.
 #+END_EXAMPLE
 
 *** Debug Rust Programs
@@ -381,8 +381,7 @@ Cryptic as Perl isn't it: ='_=, ='_=, ='a=
 - Go and cheat: Language Sugar 
 
 *** The Plumber
-
-The Difference Between Macros and Functions
+**** The Difference Between Macros and Functions
 
 [3] p. 530 "19 ADVANCED FEATURES":
 
@@ -418,7 +417,86 @@ allows to define code similar to a Rust ~match~ expression.
   - and the matching code associated with each pattern 
     replaces the code passed to the marco.
 
-The Language Sugar 
+[6] gives "a complete and thorough explanation of how the [marco] system works.
+
+Macros are built on /syntax extensions/. 
+There are several forms of syntax extension invocation, here are four examples:
+- =# [ $arg ];= e.g. =#[derive(Clone)]=, =#[no_mangle]=, ...
+- =# ! [ $arg ];= e.g. =#![allow(dead_code)]=, ~![crate_name="blang"]~, ...
+- =$name ! $arg;= e.g. =println!("Hi!")=, =concat!("a", "b")=, ...
+- =$name ! $arg0 $arg1;= e.g. =macro_rules! dummy { () => {}; }=
+
+First two forms are attributes. 
+The third is the one of interest to macros.
+The fourth form is essentially a variation of the third
+which is not available to marcos.
+This from is used /at all/ with =marco_rules!=
+
+The argument of a syntax extension invocation is a single, non-leaf token tree;
+~(...)~, ~[...]~, or ~{...}~- (curly braces behave different)
+
+#+BEGIN_EXAMPLE
+  >> macro_rules! four { () => {1 + 3}}
+  >> four!()
+  4
+  >> four![]
+  4
+  >> four!{}
+                                ^^^^^ expected `()`, found integer
+  mismatched types
+  help: consider using a semicolon here
+  >> 
+  >> let x = 1 + four!{};
+  >> x
+  5
+  >> 
+#+END_EXAMPLE
+
+Patterns can also contain captures. 
+Captures are written as a '$' followed by an identifier by a colon ':',
+and finally the kind of capture, the [[https://doc.rust-lang.org/reference/macros-by-example.html#metavariables][fragment-specifier]], a so called metavariable:
+- ~item~: an [[https://doc.rust-lang.org/reference/items.html][Item]], like a function, struct, module, etc.
+- ~block~: a [[https://doc.rust-lang.org/reference/expressions/block-expr.html][BlockExpression]] (i.e. a block of statements and/or an expression, surrounded by braces)
+- ~stmt~: a [[https://doc.rust-lang.org/reference/statements.html][Statement]] without the trailing semicolon (except for those statements requiring them)
+- ~pat~: a [[https://doc.rust-lang.org/reference/patterns.html][Pattern]]
+- ~expr~: an [[https://doc.rust-lang.org/reference/expressions/block-expr.html][Expression]]
+- ~ty~: a [[https://doc.rust-lang.org/reference/types.html#type-expressions][Type]]
+- ~ident~: an [[https://doc.rust-lang.org/reference/identifiers.html][Identifier]]
+- ~path~: a [[https://doc.rust-lang.org/reference/identifiers.html][Path]] in types (e.g. ~foo~, ~::std::mem::replace~, ~transmute::<_, int>~, ...)
+- ~meta~: a meta item, an [[https://doc.rust-lang.org/reference/attributes.html][Attr]]; the things that go inside #[...] and #![...] attributes
+- ~tt~: a single [[https://doc.rust-lang.org/reference/macros.html#macro-invocation][TokenTree]] (a single token or tokens in matching delimiters ~()~, ~[]~, or ~{}~)
+- and three more in [5]: ~lifetime~, ~vis~, ~literal~
+
+Debugging macros with
+- ~trace_macros!~ directive in code or 
+  on command-line by adding ~-Z trace-macros~, 
+  which asks the compiler to dump every macro invocation prior to expansion.
+- ~log_syntax~ attribute in source module =#![feature(log_syntax)]=,
+  which asks the compiler to output all tokens passed to it.
+- ~--pretty TYPE~ command option which asks compiler to pretty-print the input instead of compiling;
+  example command line ~cargo rustc -- -Z unstable-options --pretty expanded~
+  (option ~-Z unstable-options~ requires Rust nightly);
+  valid types are:
+  - ~normal~ (un-unnotated source),
+  - ~expanded~ (crates expanded), 
+  - or ~expanded,identified~ (fully parenthesized, AST nodes with IDs)
+
+Install and activate Rust nightly for a project:
+#+BEGIN_EXAMPLE
+$ rustup toolchain install nightly
+$ cd ~/Projects/play-rust
+$ rustup override set nightly
+#+END_EXAMPLE
+
+This somehow enables toolchain nightly by default 
+which would need otherwise be defined with ~cargo +nightly~.
+"somehow" is done by adding following line to file =~/.rustup/settings.toml=:
+#+BEGIN_EXAMPLE
+[overrides]
+"/home/tilo/Projects/play-rust" = "nightly-x86_64-unknown-linux-gnu"
+#+END_EXAMPLE
+
+**** The Language Sugar 
 
 The Rust's sugar table [4]
 
@@ -438,6 +516,338 @@ Rust language cheat sheet contains clickable links to
 - The Rust Standard Library Docs [[https://doc.rust-lang.org/std][STD]],
 - The Rustonomicon [[https://doc.rust-lang.org/nightly/nomicon/][NOM]],
 - The Rust Reference [[https://doc.rust-lang.org/stable/reference/][REF]].
+
+**** The Eyes Opening Twins
+
+Ownership and Lifetime
+
+https://www.reddit.com/r/rust/comments/4iup0d/i_wish_there_were_a_book_named_thinking_in_rust/d31p65z/?utm_source=reddit&utm_medium=web2x&context=3
+
+References and Borrowing
+
+https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html
+
+**** Treat Types like Characteristic Traits
+
+***** The Periodic Table of Rust Types
+
+#+CAPTION: http://cosmic.mearie.org/2014/01/periodic-table-of-rust-types/
+|----------+----------------------+-------------------------+--------------------------+----------------------+---------|
+|          | Immutable            | Mutable                 | Owned                    | Bare                 | Unsized |
+|----------+----------------------+-------------------------+--------------------------+----------------------+---------|
+| Raw      | * const ~T~          | *mut ~T~                | N/A                      |                      |         |
+|----------+----------------------+-------------------------+--------------------------+----------------------+---------|
+| Simple   | & ~T~                | &mut ~T~                | Box < ~T~ >              | ~T~                  |         |
+|----------+----------------------+-------------------------+--------------------------+----------------------+---------|
+| Trait    | & ~Trait~            | &mut ~Trait~            | Box < ~Trait~ >          |                      | ~Trait~ |
+|----------+----------------------+-------------------------+--------------------------+----------------------+---------|
+| Array    | & [ ~T~ ]            | &mut [ ~T~ ]            | Box < ~T~ >              | [ ~T~; ~n~ ]         | [ ~T~ ] |
+|          |                      |                         | std::vec::Vector < ~T~ > |                      |         |
+|----------+----------------------+-------------------------+--------------------------+----------------------+---------|
+| String   | & str                | &mut str                | Box < str >              | N/A                  | str     |
+|          |                      |                         | std::string::String      | N/A                  |         |
+|----------+----------------------+-------------------------+--------------------------+----------------------+---------|
+| Callable | Fn ( ~T...~ ) -> ~U~ | FnMut ( ~T...~ ) -> ~U~ | FnOnce ( ~T...~ ) -> ~U~ | fn ( ~T...~ ) -> ~U~ |         |
+|----------+----------------------+-------------------------+--------------------------+----------------------+---------|
+
+
+#+CAPTION: https://doc.rust-lang.org/reference/dynamically-sized-types.html
+| Sized Types                          | Unsized Types (dynamically sized types - DSTs)                       |
+|--------------------------------------+----------------------------------------------------------------------|
+| size known at compile-time           | size only known at run-time                                          |
+| implement the trait [[https://doc.rust-lang.org/reference/special-types-and-traits.html#sized][Sized]]            | Pointer types to DSTs have twice the size of pointers to sized types |
+| Sized is implemented by the compiler | - Pointers to slices also store the number of elements of the slice  |
+|                                      | - Pointers to trait objects also store a pointer to a vtable         |
+
+
+***** Rust's Built-in Traits, the When, How & Why
+
+https://llogiq.github.io/2015/07/30/traits.html
+
+Notes from weblog entry
+- Auto-derived traits create a magically appearing implementation
+  that usually does the right thing.
+- If you wish to implement ~Ord~, 
+  you have to implement ~PartialOrd~ as well, 
+  for the latter is a *trait bound* for the former.
+
+
+***** The Ferris Says Hello Example
+
+Let's try to understand following error:
+when I - for learning purpose - omit the ~use~ statement 
+then rustc cannot resolve method ~flush()~ for receiver ~writer~
+even though trait [[https://doc.rust-lang.org/std/io/trait.Write.html][std::io::Write]] is implemented 
+by ~writer~'s type [[https://doc.rust-lang.org/std/io/struct.BufWriter.html#impl-Write][std::io::BufWriter]].
+
+#+BEGIN_SRC rust :tangle no
+  // stdout : a handle to a shared global buffer whose access is synchronized via a mutex
+  let stdout: std::io::Stdout = std::io::stdout();
+  // lock(&self) : locks this handle to the standard output stream,
+  //   returning a guard implementing the Write trait for writing data.
+  // The lock is released when the returned lock goes out of scope.
+  let mut writer: std::io::BufWriter<std::io::StdoutLock<'_>> =
+      std::io::BufWriter::new(stdout.lock());
+
+  let ref_array_u8_message: &[u8] = "Hello, fellow Rustaceans!".as_bytes();
+
+  ferris_says::say(
+      ref_array_u8_message,
+      ref_array_u8_message.len(),
+      &mut writer,
+  )
+  .unwrap();
+  // writer.flush().unwrap();
+  //        ^^^^^ method not found in `BufWriter<StdoutLock<'_>>`
+  //
+  // help: items from traits can only be used if the trait is in scope
+  // help: the following trait is implemented but not in scope; perhaps add a `use` for it:
+  // use std::io::Write;
+  //
+  // Call a trait method as a function, my own idea ;-)
+  std::io::Write::flush(&mut writer).unwrap();
+#+END_SRC
+
+#+RESULTS:
+
+Rustc says that trait ~std::io::Write~ "is implemented but not in
+scope; perhaps add a ~use~ for it".
+
+#+BEGIN_EXAMPLE
+  cargo build
+     Compiling hello-rust v0.1.0 (/home/tilo/Projects/play-rust/hello-rust)
+  error[E0599]: no method named `flush` found for struct `BufWriter<StdoutLock<'_>>` in the current scope
+      --> src/main.rs:21:12
+       |
+  21   |     writer.flush().unwrap();
+       |            ^^^^^ method not found in `BufWriter<StdoutLock<'_>>`
+       | 
+      ::: /home/tilo/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/io/mod.rs:1348:8
+       |
+  1348 |     fn flush(&mut self) -> Result<()>;
+       |        ----- the method is available for `Box<BufWriter<StdoutLock<'_>>>` here
+       |
+       = help: items from traits can only be used if the trait is in scope
+  help: the following trait is implemented but not in scope; perhaps add a `use` for it:
+       |
+  4    | use std::io::Write;
+       |
+
+  error: aborting due to previous error
+
+  For more information about this error, try `rustc --explain E0599`.
+#+END_EXAMPLE
+
+Does the [[https://doc.rust-lang.org/stable/reference/items/use-declarations.html][Use declaration]] bring the path to method ~flush()~ in scope
+of our crate ~hello-rust~?
+
+"Usually a ~use~ declaration is used to shorten the path required to
+refer to a module item."
+Which I would like to aviod when learning to see which module
+~writer~'s type ~std::io::BufWriter~ is imported from. 
+
+Our compile error of investigation is caused by Rust's language sugar
+table [4] item: "Method Resolution" --> "Deref or borrow ~x~ until
+~x.f()~ works" described in "The Rust Reference" as Method-call
+expressions.
+
+
+***** Desugar Method Calls
+
+- [[https://doc.rust-lang.org/stable/reference/expressions/method-call-expr.html][Method-call expressions]] (also [[https://doc.rust-lang.org/stable/reference/expressions/call-expr.html][Call expressions]])
+- [[https://doc.rust-lang.org/stable/reference/expressions/operator-expr.html#the-dereference-operator][The dereference operator]] (in [[https://doc.rust-lang.org/stable/reference/expressions/operator-expr.html][Operator expressions]])
+- [[https://doc.rust-lang.org/stable/reference/type-coercions.html#unsized-coercions][Unsized Coercions]] (in [[https://doc.rust-lang.org/stable/reference/type-coercions.html][Type coercions]])
+- [[https://doc.rust-lang.org/stable/reference/paths.html#qualified-paths][Qualified paths]] (in [[https://doc.rust-lang.org/stable/reference/paths.html][Paths]])
+
+"Method calls are resolved to associated [[https://doc.rust-lang.org/stable/reference/items/associated-items.html#methods][methods]] on specific traits,
+either statically dispatching to a method if the exact ~self~-type of
+the left-hand-side is known, or dynamically dispatching if the
+left-hand-side expression is an indirect [[https://doc.rust-lang.org/stable/reference/types/trait-object.html][trait object]]. 
+
+...
+
+When looking up a method call, the receiver may be automatically
+dereferenced or borrowed in order to call a method. This requires a
+more complex lookup process than for other functions, since there may
+be a number of possible methods to call. The following procedure is
+used: 
+
+The first step is to build a list of candidate receiver types. Obtain
+these by repeatedly [[https://doc.rust-lang.org/stable/reference/expressions/operator-expr.html#the-dereference-operator][dereferencing]] the receiver expression's type,
+adding each type encountered to the list, then finally attempting an
+[[https://doc.rust-lang.org/stable/reference/type-coercions.html#unsized-coercions][unsized coercion]] at the end, and adding the result type if that is
+successful. Then, for each candidate ~T~, add ~& T~ and ~&mut T~ to
+the list immediately after ~T~."
+
+An example list of candidate types when a receiver is of type ~Box<[i32;2]>~:
+- ~Box<[i32; 2]>~
+  - ~&Box<[i32; 2]>~
+  - ~&mut Box<[i32; 2]>~
+- ~[i32; 2]~ (by dereferencing)
+  - ~&[i32; 2]~
+  - ~&mut [i32; 2]~
+- ~[i32]~ (by unsized coercion)
+  - ~&[i32]~
+  - ~&mut [i32]~
+
+"Then, for each candidate type ~T~, search for a [[https://doc.rust-lang.org/stable/reference/visibility-and-privacy.html][visible]] method with a
+receiver of that type in the following places: 
+1. ~T~'s inherent methods (methods implemented directly on ~T~).
+2. Any of the methods provided by a [[https://doc.rust-lang.org/stable/reference/visibility-and-privacy.html][visible]] trait implemented by ~T~.
+   If ~T~ is a type parameter, methods provided by trait bounds on ~T~
+   are looked up first. Then all remaining methods in scope are looked
+   up.
+
+Note: the lookup is done for each type in order, which can
+occasionally lead to surprising results. The below code will print "In
+trait impl!", because ~& self~ methods are looked up first, the trait
+method is found before the struct's ~&mut self~ method is found."
+
+#+BEGIN_SRC rust
+  struct Foo {}
+
+  trait Bar { fn bar(& self); }
+
+  impl Foo { fn bar(&mut self) { println!("In struct impl!") } }
+
+  impl Bar for Foo { fn bar(& self) { println!("In trait impl!") } }
+
+  let f: Foo = Foo{};
+  f.bar();
+#+END_SRC
+
+#+RESULTS:
+: In trait impl!
+
+"If this results in multiple possible candidates, then it is an error,
+and the receiver must be [[https://doc.rust-lang.org/stable/reference/expressions/call-expr.html#disambiguating-function-calls][converted]] to an appropriate receiver type to
+make the method call. 
+
+This process does not take into account the mutability or lifetime of
+the receiver, or whether a method is unsafe. Once a method is looked
+up, if it can't be called for one (or more) of those reasons, the
+result is a compiler error. 
+
+If a step is reached where there is more than one possible method,
+such as where generic methods or traits are considered the same, then
+it is a compiler error. These cases require a disambiguating function
+call syntax for method and function invocation." 
+
+[TILO-NOTE] Sieht so aus als ob ich über den Link oben "converted"
+([[https://doc.rust-lang.org/stable/reference/expressions/call-expr.html#disambiguating-function-calls][Disambiguating Function Calls]]) auf diese seltsame Notation gestoßen
+bin, die mir ~cargo +nightly rustc -- -Z unpretty=hir,typed~ ausgibt.
+Dabei musste ich feststellen, dass diese Ausgabe ~typed~ nicht
+kompilierbar ist. Hier wird die [[https://doc.rust-lang.org/stable/reference/paths.html#qualified-paths][fully-qualified path syntax]] mit der
+Notation "~<~ Type (~as~ TypePath)? ~>~" verwendet. 
+
+#+BEGIN_SRC rust
+  struct S;
+  impl S { fn f() { println!("S"); } }
+
+  trait T1 { fn f() { println!("T1 f"); } }
+  impl T1 for S {}
+
+  trait T2 { fn f() { println!("T2 f"); } }
+  impl T2 for S {}
+
+  S::f();  // Calls the inherent impl.
+  <S as T1>::f();  // Calls the T1 trait function.
+  <S as T2>::f();  // Calls the T2 trait function.
+#+END_SRC
+
+#+RESULTS:
+: S
+: T1 f
+: T2 f
+
+"Rust treats all function calls as sugar for a more explicit,
+[[https://doc.rust-lang.org/stable/reference/paths.html#qualified-paths][fully-qualified]] syntax. Upon compilation, Rust will desugar all
+function calls into the explicit form. Rust may sometimes require you
+to qualify function calls with trait, depending on the ambiguity of a
+call in light of in-scope items.
+
+...
+
+Several situations often occur which result in ambiguities about the
+receiver or referent of method or associated function calls. These
+situations may include: 
+- Multiple in-scope traits define methods with the same name for the
+  same types 
+- Auto-~deref~ is undesirable; for example, distinguishing between
+  methods on a smart pointer itself and the pointer's referent 
+- Methods which take no arguments, like [[https://doc.rust-lang.org/stable/std/default/trait.Default.html#tymethod.default][default()]], and return
+  properties of a type, like [[https://doc.rust-lang.org/stable/std/mem/fn.size_of.html][size_of()]] 
+
+To resolve the ambiguity, the programmer may refer to their desired
+method or function using more specific paths, types, or traits."
+
+For example,
+#+BEGIN_SRC rust
+  trait Pretty { fn print(& self); }
+  trait Ugly   { fn print(& self); }
+  struct Foo; 
+  struct Bar; 
+
+  impl Pretty for Foo { fn print(& self) { println!("Pretty for Foo") } }
+
+  impl Pretty for Bar { fn print(& self) { println!("Pretty for Bar") } }
+  impl Ugly   for Bar { fn print(& self) { println!("Ugly for Bar") } }
+
+  let f = Foo;
+  let b = Bar;
+
+  // we can do this because we only have one item called `print` for `Foo`s
+  f.print();
+  // more explicit, and, in the case of `Foo`, not necessary
+  Foo::print(&f);
+  // if you're not into the whole brevity thing
+  <Foo as Pretty>::print(&f);
+
+  // b.print(); // Error: multiple 'print' found
+  // Bar::print(&b); // Still an error: multiple `print` found
+
+  // necessary because of in-scope items defining `print`
+  <Bar as Pretty>::print(&b);
+#+END_SRC
+
+#+RESULTS:
+: Pretty for Foo
+: Pretty for Foo
+: Pretty for Foo
+: Pretty for Bar
+
+Refer to [[https://github.com/rust-lang/rfcs/blob/master/text/0132-ufcs.md][RFC 132]] for further details and motivations."
+
+
+***** Visibility & Privacy
+
+- [[https://doc.rust-lang.org/stable/reference/visibility-and-privacy.html][Visibility and Privacy]]
+
+Interchangeably terms to answer the question:
+"Can this item be used at this location?"
+
+"By default, everything in Rust is private, with two exceptions:
+Associated items in a pub Trait are public by default; 
+Enum variants in a pub enum are also public by default." 
+
+/Visibility/ :
+- pub
+- | pub ( in [[https://doc.rust-lang.org/stable/reference/paths.html#simple-paths][SimplePath]] ) :: makes an item visible within the provided
+  ~path~. ~path~ must be an ancestor module of the item whose visibility
+  is being declared. 
+- | pub ( crate ) :: makes an item visible within the current crate.
+- | pub ( super ) :: makes an item visible to the parent module. This
+  is equivalent to ~pub(in super)~. 
+- | pub ( self ) :: makes an item visible to the current module. This
+  is equivalent to ~pub(in self)~ or not using ~pub~ at all. 
+
+"Rust's name resolution operates on a global hierarchy of
+namespaces. Each level in the hierarchy can be thought of as some
+item. The items are one of those mentioned above, but also include
+external crates. Declaring or defining a new module can be thought of
+as inserting a new tree into the hierarchy at the location of the
+definition." 
+
 
 ** Org-Babel Rust
 
@@ -656,7 +1066,7 @@ Right, we are done and got expected compilation errors.
    No learning without playing ...
    there is no better tool for learning/playing than a read-evaluate-print-loop.
    As Rust is out for a while it already has not only a REPL but also
-   Jupyter-support, a jupyter kernel created by same project: [[https://github.com/google/evcxr][Evcxr]].
+   Jupyter-support, a jupyter kernel created by same project: [[https://github.com/google/evcxr][EvCxR]].
 
    #+BEGIN_EXAMPLE
      [tilo@holm play-rust]$ 
@@ -1493,3 +1903,5 @@ Available options:
 [3] [[https://doc.rust-lang.org/book][Rust-Book]]
 [4] [[https://cheats.rs/][Rust Language Cheat Sheet]]
 [5] [[https://doc.rust-lang.org/stable/reference/][The Rust Reference]]
+[6] [[https://danielkeep.github.io/tlborm/book/index.html][The Little Book of Rust Macros]]
+[7] [[https://github.com/dtolnay/proc-macro-workshop][dtolnay / proc-macro-workshop]]   
