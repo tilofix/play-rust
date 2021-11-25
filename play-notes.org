@@ -1,0 +1,956 @@
+#+TITLE: Rust's Play-Notes
+
+* My Notes on Rust
+
+Statements and Expressions
+
+Rust is primarilly an expression language. [5]
+
+Syntax category /expression/ 
+
+evaluation of expressions produces a value and causes an effect.
+
+evaluation of expressions involve specifying both 
+- the value produced by the expression 
+- and the order in which its sub-expressions are themselves evaluated
+
+Statements in Rust serve mostly to contain and explicitly sequence expression evaluation.
+
+
+Rust defining constructs forming an API,
+and thus determine API compatibility between major and minor version
+- Functions
+- Types
+- Structs
+- Enums
+- Traits
+- Generics
+
+Cargo follows basic rules of [[https://semver.org/][Semantic Versioning]] [1]
+
+Something to be studied:
+- Output format: ={:?}= 
+
+Cryptic as Perl isn't it: ='_=, ='_=, ='a=
+- Go and cheat: References & Pointers
+- Go and cheat: Language Sugar 
+
+** The Plumber
+** The Difference Between Macros and Functions
+
+[3] p. 530 "19 ADVANCED FEATURES":
+
+Macro! 
+  a way of writing code that writes other code
+
+In Appendix C the book discusses the /derive/ attribute,
+which generates an implementation of various traits for you. 
+
+A function signature has to declare the number and type of parameters.
+A function gets called at runtime and a trait needs to be implemented at compile time.
+A function can be defined anywhere and can be called anywhere.
+
+A macro can take a variable number of parameters.
+A macro can implement a trait on a given type.
+Macros are expanded before the compiler interprets the code.
+A macro needs to be brought into scope before it is called in a source file.
+
+A macro definition is more complex than a function definition 
+because the in a macro defined Rust code writes Rust code.
+
+The Similarity between Macros and Matches
+
+A Rust ~macro~ (or " macros by example ", " ~macro_rules!~ macros ") 
+allows to define code similar to a Rust ~match~ expression. 
+- a ~match~ control structure (during runtime) takes result of an expression, 
+  compares the resulting value to a pattern, 
+  and then run the code associated with the matching pattern.
+- a ~macro~ definiton (during compiletime) compares a value to a pattern 
+  that is associated with code:
+  - the value is the literal Rust source code passed to the marco;
+  - the patterns are compared with the structure of that source code;
+  - and the matching code associated with each pattern 
+    replaces the code passed to the marco.
+
+[6] gives "a complete and thorough explanation of how the [marco] system works.
+
+Macros are built on /syntax extensions/. 
+There are several forms of syntax extension invocation, here are four examples:
+- =# [ $arg ];= e.g. =#[derive(Clone)]=, =#[no_mangle]=, ...
+- =# ! [ $arg ];= e.g. =#![allow(dead_code)]=, ~![crate_name="blang"]~, ...
+- =$name ! $arg;= e.g. =println!("Hi!")=, =concat!("a", "b")=, ...
+- =$name ! $arg0 $arg1;= e.g. =macro_rules! dummy { () => {}; }=
+
+First two forms are attributes. 
+The third is the one of interest to macros.
+The fourth form is essentially a variation of the third
+which is not available to marcos.
+This from is used /at all/ with =marco_rules!=
+
+The argument of a syntax extension invocation is a single, non-leaf token tree;
+~(...)~, ~[...]~, or ~{...}~- (curly braces behave different)
+
+#+BEGIN_EXAMPLE
+  >> macro_rules! four { () => {1 + 3}}
+  >> four!()
+  4
+  >> four![]
+  4
+  >> four!{}
+                                ^^^^^ expected `()`, found integer
+  mismatched types
+  help: consider using a semicolon here
+  >> 
+  >> let x = 1 + four!{};
+  >> x
+  5
+  >> 
+#+END_EXAMPLE
+
+Patterns can also contain captures. 
+Captures are written as a '$' followed by an identifier by a colon ':',
+and finally the kind of capture, the [[https://doc.rust-lang.org/reference/macros-by-example.html#metavariables][fragment-specifier]], a so called metavariable:
+- ~item~: an [[https://doc.rust-lang.org/reference/items.html][Item]], like a function, struct, module, etc.
+- ~block~: a [[https://doc.rust-lang.org/reference/expressions/block-expr.html][BlockExpression]] (i.e. a block of statements and/or an expression, surrounded by braces)
+- ~stmt~: a [[https://doc.rust-lang.org/reference/statements.html][Statement]] without the trailing semicolon (except for those statements requiring them)
+- ~pat~: a [[https://doc.rust-lang.org/reference/patterns.html][Pattern]]
+- ~expr~: an [[https://doc.rust-lang.org/reference/expressions/block-expr.html][Expression]]
+- ~ty~: a [[https://doc.rust-lang.org/reference/types.html#type-expressions][Type]]
+- ~ident~: an [[https://doc.rust-lang.org/reference/identifiers.html][Identifier]]
+- ~path~: a [[https://doc.rust-lang.org/reference/identifiers.html][Path]] in types (e.g. ~foo~, ~::std::mem::replace~, ~transmute::<_, int>~, ...)
+- ~meta~: a meta item, an [[https://doc.rust-lang.org/reference/attributes.html][Attr]]; the things that go inside #[...] and #![...] attributes
+- ~tt~: a single [[https://doc.rust-lang.org/reference/macros.html#macro-invocation][TokenTree]] (a single token or tokens in matching delimiters ~()~, ~[]~, or ~{}~)
+- and three more in [5]: ~lifetime~, ~vis~, ~literal~
+
+Debugging macros with
+- ~trace_macros!~ directive in code or 
+  on command-line by adding ~-Z trace-macros~, 
+  which asks the compiler to dump every macro invocation prior to expansion.
+- ~log_syntax~ attribute in source module =#![feature(log_syntax)]=,
+  which asks the compiler to output all tokens passed to it.
+- ~--pretty TYPE~ command option which asks compiler to pretty-print the input instead of compiling;
+  example command line ~cargo rustc -- -Z unstable-options --pretty expanded~
+  (option ~-Z unstable-options~ requires Rust nightly);
+  valid types are:
+  - ~normal~ (un-unnotated source),
+  - ~expanded~ (crates expanded), 
+  - or ~expanded,identified~ (fully parenthesized, AST nodes with IDs)
+
+Install and activate Rust nightly for a project:
+#+BEGIN_EXAMPLE
+$ rustup toolchain install nightly
+$ cd ~/Projects/play-rust
+$ rustup override set nightly
+#+END_EXAMPLE
+
+This somehow enables toolchain nightly by default 
+which would need otherwise be defined with ~cargo +nightly~.
+"somehow" is done by adding following line to file =~/.rustup/settings.toml=:
+#+BEGIN_EXAMPLE
+[overrides]
+"/home/tilo/Projects/play-rust" = "nightly-x86_64-unknown-linux-gnu"
+#+END_EXAMPLE
+
+** The Language Sugar 
+
+The Rust's sugar table [4]
+
+| Name                          | Description                                                               |
+|-------------------------------+---------------------------------------------------------------------------|
+| Coercions [[https://doc.rust-lang.org/nightly/nomicon/coercions.html][NOM]]                 | 'Weaken' types to match signature, e.g., ~&mut T~ to ~&T~.                |
+| Deref [[https://doc.rust-lang.org/nightly/nomicon/vec-deref.html#deref][NOM]], [[https://stackoverflow.com/questions/28519997/what-are-rusts-exact-auto-dereferencing-rules][SvF]]                | [[https://doc.rust-lang.org/std/ops/trait.Deref.html][Deref]] ~x: T~ until ~*x~, ~**x~, ... compatible with some target ~S~.      |
+| Prelude [[https://doc.rust-lang.org/std/prelude/index.html][STD]]                   | Automatic import of basic types.                                          |
+| Reborrow                      | Since ~x: &mut T~ can't be copied; move new ~&mut *x~ instead.            |
+| Lifetime Elision [[https://doc.rust-lang.org/book/ch10-03-lifetime-syntax.html#lifetime-elision][BK]], [[https://doc.rust-lang.org/nightly/nomicon/lifetime-elision.html#lifetime-elision][NOM]], [[https://doc.rust-lang.org/stable/reference/lifetime-elision.html#lifetime-elision][REF]] | Automatically annotate ~f(x: &T)~ to ~f<'a>(x: &'a T)~.                   |
+| Method Resolution [[https://doc.rust-lang.org/stable/reference/expressions/method-call-expr.html][REF]]         | Deref or borrow ~x~ until ~x.f()~ works.                                  |
+| Match Ergonomics [[https://rust-lang.github.io/rfcs/2005-match-ergonomics.html][RFC]]          | Repeatedly dereference [[https://doc.rust-lang.org/stable/reference/glossary.html#scrutinee][scrutinee]] and add ~ref~ and ~ref mut~ to bindings. |
+
+Rust language cheat sheet contains clickable links to
+- The Rust Programming Language Book [[https://doc.rust-lang.org/book/][BK]],
+- Rust by Example [[https://doc.rust-lang.org/stable/rust-by-example/][EX]],
+- The Rust Standard Library Docs [[https://doc.rust-lang.org/std][STD]],
+- The Rustonomicon [[https://doc.rust-lang.org/nightly/nomicon/][NOM]],
+- The Rust Reference [[https://doc.rust-lang.org/stable/reference/][REF]].
+
+** The Eyes Opening Twins
+
+Ownership and Lifetime
+
+https://www.reddit.com/r/rust/comments/4iup0d/i_wish_there_were_a_book_named_thinking_in_rust/d31p65z/?utm_source=reddit&utm_medium=web2x&context=3
+
+References and Borrowing
+
+https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html
+
+"Ownership is the breakout feature of Rust.
+It allows Rust to be completely memory-safe and efficient, while
+avoiding garbage collection." 
+([[https://doc.rust-lang.org/stable/nomicon/ownership.html][Ownership and Lifetimes]])
+
+"This is why Rust requires any references to freeze the referent and
+its owners." 
+
+[[https://doc.rust-lang.org/stable/nomicon/references.html][References]]
+
+There are two kinds of reference:
+- Shared reference: =&=
+- Mutable reference: =&mut=
+
+Which obey the following rules:
+- A reference cannot outlive its referent
+- A mutable reference cannot be aliased
+That's it. That's the whole model references follow.
+
+Of course, we should probably define what aliased means.
+
+Unfortunately, Rust hasn't actually defined its aliasing model. 
+
+While we wait for the Rust devs to specify the semantics of their
+language, let's use the next section to discuss what aliasing is in 
+general, and why it matters.
+
+[[https://doc.rust-lang.org/stable/nomicon/aliasing.html][Aliasing]]
+
+... here's our working definition: variables and pointers alias if
+they refer to overlapping regions of memory.
+
+[[https://doc.rust-lang.org/stable/nomicon/lifetimes.html][Lifetimes]]
+
+"The lifetime (sometimes called a borrow) is alive from the place it
+is created to its last use." 
+
+** Treat Types like Characteristic Traits
+
+A Trait defines a Types Ability(ies)
+- a type is addible when it implements [[https://doc.rust-lang.org/std/ops/trait.Add.html][std::ops::Add]]
+- a type is debugable when it implements std::fmt::Debug
+- a type is callable when it implements std::ops::Fn
+
+**** The Periodic Table of Rust Types
+
+#+CAPTION: http://cosmic.mearie.org/2014/01/periodic-table-of-rust-types/
+|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
+|          | Immutable Pointer        | Mutable Pointer         | Owned Pointer            | Bare                 | Unsized             |
+|          | (by-immutable-reference) | (by-mutable-reference)  |                          | (by-value)           | (dynamically sized) |
+|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
+| Raw      | * const ~T~              | *mut ~T~                | N/A                      |                      |                     |
+|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
+| Simple   | & ~T~                    | &mut ~T~                | Box < ~T~ >              | ~T~                  |                     |
+|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
+| Array    | & [ ~T~ ]                | &mut [ ~T~ ]            | Box <[ ~T~ ]>            | [ ~T~; ~n~ ]         | [ ~T~ ]             |
+|          |                          |                         | std::vec::Vector < ~T~ > |                      |                     |
+|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
+| String   | & ~str~                  | &mut ~str~              | Box < ~str~ >            | N/A                  | ~str~               |
+|          |                          |                         | std::string::String      | N/A                  |                     |
+|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
+| Trait    | & ~Trait~                | &mut ~Trait~            | Box < ~Trait~ >          |                      | ~Trait~             |
+|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
+| Callable | Fn ( ~T...~ ) -> ~U~     | FnMut ( ~T...~ ) -> ~U~ | FnOnce ( ~T...~ ) -> ~U~ | fn ( ~T...~ ) -> ~U~ |                     |
+|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
+
+
+#+CAPTION: https://doc.rust-lang.org/reference/dynamically-sized-types.html
+| Sized Types                          | Unsized Types (dynamically sized types - DSTs)                       |
+|--------------------------------------+----------------------------------------------------------------------|
+| size known at compile-time           | size only known at run-time                                          |
+| implement the trait [[https://doc.rust-lang.org/reference/special-types-and-traits.html#sized][Sized]]            | Pointer types to DSTs have twice the size of pointers to sized types |
+| Sized is implemented by the compiler | - Pointers to slices also store the number of elements of the slice  |
+|                                      | - Pointers to trait objects also store a pointer to a vtable         |
+|--------------------------------------+----------------------------------------------------------------------|
+| ~std::mem::size_of::<T>()~           | when ~T~ has no statically-known size, e.g.,                         |
+| Returns the size of a type in bytes. | a slice ~[T]~ or a [[https://doc.rust-lang.org/book/ch17-02-trait-objects.html][trait object]],                                     |
+|                                      | then ~std::mem::size_of_val(&T)~ can be used                         |
+|                                      | to get the dynamically-known size.                                   |
+
+The  [[https://doc.rust-lang.org/book/ch17-02-trait-objects.html#defining-a-trait-for-common-behavior][BK]], explains trait-object: A trait object points to both 
+- an instance of a type implementing our specified trait 
+- as well as a table used to look up trait methods on that type at
+  runtime.   
+
+Callable(s) for a case when taking a closure as an input parameter of
+a function. [[https://doc.rust-lang.org/stable/rust-by-example/fn/closures/input_parameters.html][EX]] explains that the closure's complete type must be
+annotated using one of the callable ~traits~, in order of decreasing
+restriction: 
+- ~Fn~: the closure captures variables 
+  by reference (~&T~)
+- ~FnMut~: the closure captures variables 
+  by mutable reference (~&mut T~) 
+- ~FnOnce~: the closure captures variables 
+  by value (~T~)
+
+The ~Fn~, ~FnMut~, and ~FnOnce~ traits are implemented by types that
+can be invoked like functions ([[https://doc.rust-lang.org/std/ops/index.html#examples][STD]]). Note that 
+- [[https://doc.rust-lang.org/std/ops/trait.Fn.html][Fn]] takes ~&self~, call-by-reference;
+  The version of the call operator that takes an immutable receiver.
+  This trait (~Fn~) is not to be confused with [[https://doc.rust-lang.org/std/primitive.fn.html][function pointers]]
+  (~fn~). Function pointers are pointers that point to /code/, 
+  not data. 
+- [[https://doc.rust-lang.org/std/ops/trait.FnMut.html][FnMut]] takes ~&mut self~, call-by-mutable-reference;
+  The version of the call operator that takes a mutable receiver.
+- and [[https://doc.rust-lang.org/std/ops/trait.FnOnce.html][FnOnce]] takes ~self~, call-by-value;
+  The version of the call operator that takes a by-value receiver. 
+
+The most common use of these traits is to act as bounds to
+higher-level functions that take functions or closures as arguments. 
+
+Taking a [[https://doc.rust-lang.org/std/ops/trait.Fn.html][Fn]] as an argument
+#+BEGIN_SRC rust
+  fn call_with_one<F>(func: F) -> usize where F: Fn(usize) -> usize
+  {
+      func(1)
+  }
+
+  let double = |x| x * 2;
+  assert_eq!(call_with_one(double), 2);
+#+END_SRC
+
+Taking a [[https://doc.rust-lang.org/std/ops/trait.FnMut.html][FnMut]] as an argument 
+#+BEGIN_SRC rust
+  fn do_twice<F>(mut func: F) where F: FnMut()
+  {
+      func();
+      func();
+  }
+
+  let mut x: usize = 1;
+  {
+      let add_two_to_x = || x += 2;
+      do_twice(add_two_to_x);
+  }
+
+  assert_eq!(x, 5);
+#+END_SRC
+
+Taking a [[https://doc.rust-lang.org/std/ops/trait.FnOnce.html][FnOnce]] as an argument
+#+BEGIN_SRC rust
+  fn consume_with_relish<F>(func: F) where F: FnOnce() -> String
+  {
+      // `func` consumes its captured variables, so it cannot be run more
+      // than once.
+      println!("Consumed: {}", func());
+
+      println!("Delicious!");
+
+      // Attempting to invoke `func()` again will throw a `use of moved
+      // value` error for `func`.
+  }
+
+  let x = String::from("x");
+  let consume_and_return_x = move || x;
+  consume_with_relish(consume_and_return_x);
+
+  // `consume_and_return_x` can no longer be invoked at this point
+#+END_SRC
+
+**** Rust's Built-in Traits, the When, How & Why
+
+https://llogiq.github.io/2015/07/30/traits.html
+
+Notes from weblog entry
+- Auto-derived traits create a magically appearing implementation
+  that usually does the right thing.
+- If you wish to implement ~Ord~, 
+  you have to implement ~PartialOrd~ as well, 
+  for the latter is a *trait bound* for the former.
+
+**** The Ferris Says Hello Example
+
+Let's try to understand following error:
+when I - for learning purpose - omit the ~use~ statement 
+then rustc cannot resolve method ~flush()~ for receiver ~writer~
+even though trait [[https://doc.rust-lang.org/std/io/trait.Write.html][std::io::Write]] is implemented 
+by ~writer~'s type [[https://doc.rust-lang.org/std/io/struct.BufWriter.html#impl-Write][std::io::BufWriter]].
+
+#+BEGIN_SRC rust :tangle no
+  // stdout : a handle to a shared global buffer whose access is synchronized via a mutex
+  let stdout: std::io::Stdout = std::io::stdout();
+  // lock(&self) : locks this handle to the standard output stream,
+  //   returning a guard implementing the Write trait for writing data.
+  // The lock is released when the returned lock goes out of scope.
+  let mut writer: std::io::BufWriter<std::io::StdoutLock<'_>> =
+      std::io::BufWriter::new(stdout.lock());
+
+  let ref_array_u8_message: &[u8] = "Hello, fellow Rustaceans!".as_bytes();
+
+  ferris_says::say(
+      ref_array_u8_message,
+      ref_array_u8_message.len(),
+      &mut writer,
+  )
+  .unwrap();
+  // writer.flush().unwrap();
+  //        ^^^^^ method not found in `BufWriter<StdoutLock<'_>>`
+  //
+  // help: items from traits can only be used if the trait is in scope
+  // help: the following trait is implemented but not in scope; perhaps add a `use` for it:
+  // use std::io::Write;
+  //
+  // Call a trait method as a function, my own idea ;-)
+  std::io::Write::flush(&mut writer).unwrap();
+#+END_SRC
+
+#+RESULTS:
+
+Rustc says that trait ~std::io::Write~ "is implemented but not in
+scope; perhaps add a ~use~ for it".
+
+#+BEGIN_EXAMPLE
+  cargo build
+     Compiling hello-rust v0.1.0 (/home/tilo/Projects/play-rust/hello-rust)
+  error[E0599]: no method named `flush` found for struct `BufWriter<StdoutLock<'_>>` in the current scope
+      --> src/main.rs:21:12
+       |
+  21   |     writer.flush().unwrap();
+       |            ^^^^^ method not found in `BufWriter<StdoutLock<'_>>`
+       | 
+      ::: /home/tilo/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/io/mod.rs:1348:8
+       |
+  1348 |     fn flush(&mut self) -> Result<()>;
+       |        ----- the method is available for `Box<BufWriter<StdoutLock<'_>>>` here
+       |
+       = help: items from traits can only be used if the trait is in scope
+  help: the following trait is implemented but not in scope; perhaps add a `use` for it:
+       |
+  4    | use std::io::Write;
+       |
+
+  error: aborting due to previous error
+
+  For more information about this error, try `rustc --explain E0599`.
+#+END_EXAMPLE
+
+Does the [[https://doc.rust-lang.org/stable/reference/items/use-declarations.html][Use declaration]] bring the path to method ~flush()~ in scope
+of our crate ~hello-rust~?
+
+"Usually a ~use~ declaration is used to shorten the path required to
+refer to a module item."
+Which I would like to aviod when learning to see which module
+~writer~'s type ~std::io::BufWriter~ is imported from. 
+
+Our compile error of investigation is caused by Rust's language sugar
+table [4] item: "Method Resolution" --> "Deref or borrow ~x~ until
+~x.f()~ works" described in "The Rust Reference" as Method-call
+expressions.
+
+**** Desugar Method Calls
+
+- [[https://doc.rust-lang.org/stable/reference/expressions/method-call-expr.html][Method-call expressions]] (also [[https://doc.rust-lang.org/stable/reference/expressions/call-expr.html][Call expressions]])
+- [[https://doc.rust-lang.org/stable/reference/expressions/operator-expr.html#the-dereference-operator][The dereference operator]] (in [[https://doc.rust-lang.org/stable/reference/expressions/operator-expr.html][Operator expressions]])
+- [[https://doc.rust-lang.org/stable/reference/type-coercions.html#unsized-coercions][Unsized Coercions]] (in [[https://doc.rust-lang.org/stable/reference/type-coercions.html][Type coercions]])
+- [[https://doc.rust-lang.org/stable/reference/paths.html#qualified-paths][Qualified paths]] (in [[https://doc.rust-lang.org/stable/reference/paths.html][Paths]])
+
+"Method calls are resolved to associated [[https://doc.rust-lang.org/stable/reference/items/associated-items.html#methods][methods]] on specific traits,
+either statically dispatching to a method if the exact ~self~-type of
+the left-hand-side is known, or dynamically dispatching if the
+left-hand-side expression is an indirect [[https://doc.rust-lang.org/stable/reference/types/trait-object.html][trait object]]. 
+
+...
+
+When looking up a method call, the receiver may be automatically
+dereferenced or borrowed in order to call a method. This requires a
+more complex lookup process than for other functions, since there may
+be a number of possible methods to call. The following procedure is
+used: 
+
+The first step is to build a list of candidate receiver types. Obtain
+these by repeatedly [[https://doc.rust-lang.org/stable/reference/expressions/operator-expr.html#the-dereference-operator][dereferencing]] the receiver expression's type,
+adding each type encountered to the list, then finally attempting an
+[[https://doc.rust-lang.org/stable/reference/type-coercions.html#unsized-coercions][unsized coercion]] at the end, and adding the result type if that is
+successful. Then, for each candidate ~T~, add ~& T~ and ~&mut T~ to
+the list immediately after ~T~."
+
+An example list of candidate types when a receiver is of type ~Box<[i32;2]>~:
+- ~Box<[i32; 2]>~
+  - ~&Box<[i32; 2]>~
+  - ~&mut Box<[i32; 2]>~
+- ~[i32; 2]~ (by dereferencing)
+  - ~&[i32; 2]~
+  - ~&mut [i32; 2]~
+- ~[i32]~ (by unsized coercion)
+  - ~&[i32]~
+  - ~&mut [i32]~
+
+"Then, for each candidate type ~T~, search for a [[https://doc.rust-lang.org/stable/reference/visibility-and-privacy.html][visible]] method with a
+receiver of that type in the following places: 
+1. ~T~'s inherent methods (methods implemented directly on ~T~).
+2. Any of the methods provided by a [[https://doc.rust-lang.org/stable/reference/visibility-and-privacy.html][visible]] trait implemented by ~T~.
+   If ~T~ is a type parameter, methods provided by trait bounds on ~T~
+   are looked up first. Then all remaining methods in scope are looked
+   up.
+
+Note: the lookup is done for each type in order, which can
+occasionally lead to surprising results. The below code will print "In
+trait impl!", because ~& self~ methods are looked up first, the trait
+method is found before the struct's ~&mut self~ method is found."
+
+#+BEGIN_SRC rust
+  struct Foo {}
+
+  trait Bar { fn bar(& self); }
+
+  impl Foo { fn bar(&mut self) { println!("In struct impl!") } }
+
+  impl Bar for Foo { fn bar(& self) { println!("In trait impl!") } }
+
+  let f: Foo = Foo{};
+  f.bar();
+#+END_SRC
+
+#+RESULTS:
+: In trait impl!
+
+"If this results in multiple possible candidates, then it is an error,
+and the receiver must be [[https://doc.rust-lang.org/stable/reference/expressions/call-expr.html#disambiguating-function-calls][converted]] to an appropriate receiver type to
+make the method call. 
+
+This process does not take into account the mutability or lifetime of
+the receiver, or whether a method is unsafe. Once a method is looked
+up, if it can't be called for one (or more) of those reasons, the
+result is a compiler error. 
+
+If a step is reached where there is more than one possible method,
+such as where generic methods or traits are considered the same, then
+it is a compiler error. These cases require a disambiguating function
+call syntax for method and function invocation." 
+
+[TILO-NOTE] Sieht so aus als ob ich über den Link oben "converted"
+([[https://doc.rust-lang.org/stable/reference/expressions/call-expr.html#disambiguating-function-calls][Disambiguating Function Calls]]) auf diese seltsame Notation gestoßen
+bin, die mir ~cargo +nightly rustc -- -Z unpretty=hir,typed~ ausgibt.
+Dabei musste ich feststellen, dass diese Ausgabe ~typed~ nicht
+kompilierbar ist. Hier wird die [[https://doc.rust-lang.org/stable/reference/paths.html#qualified-paths][fully-qualified path syntax]] mit der
+Notation "~<~ Type (~as~ TypePath)? ~>~" verwendet. 
+
+#+BEGIN_SRC rust
+  struct S;
+  impl S { fn f() { println!("S"); } }
+
+  trait T1 { fn f() { println!("T1 f"); } }
+  impl T1 for S {}
+
+  trait T2 { fn f() { println!("T2 f"); } }
+  impl T2 for S {}
+
+  S::f();  // Calls the inherent impl.
+  <S as T1>::f();  // Calls the T1 trait function.
+  <S as T2>::f();  // Calls the T2 trait function.
+#+END_SRC
+
+#+RESULTS:
+: S
+: T1 f
+: T2 f
+
+"Rust treats all function calls as sugar for a more explicit,
+[[https://doc.rust-lang.org/stable/reference/paths.html#qualified-paths][fully-qualified]] syntax. Upon compilation, Rust will desugar all
+function calls into the explicit form. Rust may sometimes require you
+to qualify function calls with trait, depending on the ambiguity of a
+call in light of in-scope items.
+
+...
+
+Several situations often occur which result in ambiguities about the
+receiver or referent of method or associated function calls. These
+situations may include: 
+- Multiple in-scope traits define methods with the same name for the
+  same types 
+- Auto-~deref~ is undesirable; for example, distinguishing between
+  methods on a smart pointer itself and the pointer's referent 
+- Methods which take no arguments, like [[https://doc.rust-lang.org/stable/std/default/trait.Default.html#tymethod.default][default()]], and return
+  properties of a type, like [[https://doc.rust-lang.org/stable/std/mem/fn.size_of.html][size_of()]] 
+
+To resolve the ambiguity, the programmer may refer to their desired
+method or function using more specific paths, types, or traits."
+
+For example,
+#+BEGIN_SRC rust
+  trait Pretty { fn print(& self); }
+  trait Ugly   { fn print(& self); }
+  struct Foo; 
+  struct Bar; 
+
+  impl Pretty for Foo { fn print(& self) { println!("Pretty for Foo") } }
+
+  impl Pretty for Bar { fn print(& self) { println!("Pretty for Bar") } }
+  impl Ugly   for Bar { fn print(& self) { println!("Ugly for Bar") } }
+
+  let f = Foo;
+  let b = Bar;
+
+  // we can do this because we only have one item called `print` for `Foo`s
+  f.print();
+  // more explicit, and, in the case of `Foo`, not necessary
+  Foo::print(&f);
+  // if you're not into the whole brevity thing
+  <Foo as Pretty>::print(&f);
+
+  // b.print(); // Error: multiple 'print' found
+  // Bar::print(&b); // Still an error: multiple `print` found
+
+  // necessary because of in-scope items defining `print`
+  <Bar as Pretty>::print(&b);
+#+END_SRC
+
+#+RESULTS:
+: Pretty for Foo
+: Pretty for Foo
+: Pretty for Foo
+: Pretty for Bar
+
+Refer to [[https://github.com/rust-lang/rfcs/blob/master/text/0132-ufcs.md][RFC 132]] for further details and motivations."
+
+**** Visibility & Privacy
+
+- [[https://doc.rust-lang.org/stable/reference/visibility-and-privacy.html][Visibility and Privacy]]
+
+Interchangeably terms to answer the question:
+"Can this item be used at this location?"
+
+"By default, everything in Rust is private, with two exceptions:
+Associated items in a pub Trait are public by default; 
+Enum variants in a pub enum are also public by default." 
+
+/Visibility/ :
+- pub
+- | pub ( in [[https://doc.rust-lang.org/stable/reference/paths.html#simple-paths][SimplePath]] ) :: makes an item visible within the provided
+  ~path~. ~path~ must be an ancestor module of the item whose visibility
+  is being declared. 
+- | pub ( crate ) :: makes an item visible within the current crate.
+- | pub ( super ) :: makes an item visible to the parent module. This
+  is equivalent to ~pub(in super)~. 
+- | pub ( self ) :: makes an item visible to the current module. This
+  is equivalent to ~pub(in self)~ or not using ~pub~ at all. 
+
+"Rust's name resolution operates on a global hierarchy of
+namespaces. Each level in the hierarchy can be thought of as some
+item. The items are one of those mentioned above, but also include
+external crates. Declaring or defining a new module can be thought of
+as inserting a new tree into the hierarchy at the location of the
+definition." 
+
+** Desugar 
+
+TODO: steal information from
+http://stackoverflow.com/questions/28519997/what-are-rusts-exact-auto-dereferencing-rules/28552082#28552082 
+
+    
+The Rust Reference
+
+[[https://doc.rust-lang.org/stable/reference/expressions/await-expr.html?highlight=desugar#approximate-desugaring][Statements and expressions » Expressions » Await expressions » Approximate desugaring]]
+[[https://doc.rust-lang.org/stable/reference/items/functions.html?highlight=desugar#async-functions][Items » Functions » Async functions]]
+[[https://doc.rust-lang.org/stable/reference/items/functions.html?highlight=desugar#combining-async-and-unsafe][Items » Functions » Combining async and unsafe]]
+[[https://doc.rust-lang.org/stable/reference/expressions/call-expr.html?highlight=desugar#disambiguating-function-calls][Statements and expressions » Expressions » Call expressions » Disambiguating Function Calls]]
+
+The Rustonomicon
+
+[[https://doc.rust-lang.org/stable/nomicon/lifetimes.html?highlight=desugar#lifetimes][Ownership » Lifetimes » Lifetimes]]
+[[https://doc.rust-lang.org/stable/nomicon/dropck.html?highlight=desugar#drop-check][Ownership » Drop Check » Drop Check]]
+[[https://doc.rust-lang.org/stable/nomicon/hrtb.html?highlight=desugar#higher-rank-trait-bounds-hrtbs][Ownership » Higher-Rank Trait Bounds » Higher-Rank Trait Bounds (HRTBs)]]
+[[https://doc.rust-lang.org/stable/nomicon/lifetime-mismatch.html?highlight=desugar#limits-of-lifetimes][Ownership » Limits of Lifetimes » Limits of Lifetimes]]
+[[https://doc.rust-lang.org/stable/nomicon/lifetimes.html?highlight=desugar#example-references-that-outlive-referents][Ownership » Lifetimes » Example: references that outlive referents]]
+
+**** Dot Operator
+      
+[[https://doc.rust-lang.org/stable/nomicon/dot-operator.html][The Dot Operator]]
+
+The dot operator will perform a lot of magic to convert types. It will
+perform auto-referencing, auto-dereferencing, and coercion until types
+match. 
+
+**** Closure
+
+Recently I ran over following page:
+[[https://www.rubyguides.com/2016/02/ruby-procs-and-lambdas/][Ruby Blocks, Procs & Lambdas - The Ultimate Guide!]].
+Oh look, Ruby closures look similar to Rust closures ...
+and indeed [[https://doc.rust-lang.org/book/][BK]] says in chapter 13.1
+    
+     To define a closure, we start with a pair of vertical pipes (~|~),
+     inside which we specify the parameters to the closure; this
+     syntax was chosen because of its similarity to closure
+     definitions in Smalltalk and Ruby.
+     ...
+     if we had more than one parameter, we would separate them with
+     commas, like =|param1, param2|=. 
+
+Unlike functions, closures can capture values from the scope in which
+they’re defined.
+
+With type annotations added, the syntax of closures looks more similar
+to the syntax of functions.
+
+#+BEGIN_SRC rust
+fn  add_one_v1   (x: u32) -> u32 { x + 1 }
+let add_one_v2 = |x: u32| -> u32 { x + 1 };
+let add_one_v3 = |x|             { x + 1 };
+let add_one_v4 = |x|               x + 1  ;
+#+END_SRC
+
+#+RESULTS:
+
+The first line shows a function definition, and the second line shows
+a fully annotated closure definition. The third line removes the type
+annotations from the closure definition, and the fourth line removes
+the brackets, which are optional because the closure body has only one
+expression. These are all valid definitions that will produce the same
+behavior when they’re called. 
+
+The [[https://doc.rust-lang.org/stable/reference/][REF]] speaks on [[https://doc.rust-lang.org/stable/reference/expressions/closure-expr.html][Closure expressions]].
+
+**** Match Expression
+
+A [[https://doc.rust-lang.org/stable/reference/glossary.html#scrutinee][scrutinee]] is the expression that is matched on in ~match~ expressions
+and similar pattern matching constructs. For example,
+in ~match x { A=> 1, B => 2 }~, the expression ~x~ is the scrutinee. 
+
+Sugar on Match-Expression for "better ergonomics for pattern-matching
+on references". [[https://rust-lang.github.io/rfcs/2005-match-ergonomics.html][RFC]] 
+
+The match expression utilizes patterns in its arms. 
+#+BEGIN_EXAMPLE
+match VALUE {
+    PATTERN => EXPRESSION,
+    PATTERN => EXPRESSION,
+    PATTERN => EXPRESSION,
+}
+#+END_EXAMPLE
+- ~match~: keyword of the match expression
+- VALUE: a value to match on
+- PATTERN: one or more match arms with a pattern the value matches on
+  and an expression EXPRESSION to run
+
+"One requirement for match expressions is that they need to be
+exhaustive in the sense that all possibilities for the value in the
+match expression must be accounted for." Chapters 6, and 18.1 in [3]
+
+** Operator
+
+Rust operators are overloadable when a Trait is defined.
+
+Operators are used in [[https://doc.rust-lang.org/stable/reference/expressions/operator-expr.html#operator-expressions][Operator expressions]].
+Operators are defined for built-in types by the Rust compiler.
+Many Operators are overload-able
+using Traits in [[https://doc.rust-lang.org/std/ops/index.html][std::ops]] (operators) or [[https://doc.rust-lang.org/std/cmp/index.html][std::cmp]] (comparison). 
+- Borrow operators --> cannot be overloaded
+- The dereference operator
+- The question mark operator --> cannot be overloaded
+- Negation operators
+- Arithmetic and Logical Binary Operators
+- Lazy boolean operators (~||~ and ~&&~)
+- Comparison Operators
+- Type cast expressions
+- Assignment expressions --> cannot be overloaded
+- Compound assignment expressions
+
+
+What about call-operator ~()~?
+There is call-expression.
+
+#+BEGIN_EXAMPLE
+[tilo@holm ~]$ evcxr
+Welcome to evcxr. For help, type :help
+>> let three : i32 = add(1,2);
+                     ^^^ not found in this scope
+cannot find function `add` in this scope
+>> let three : i32 = add(1i32,2i32);
+                     ^^^ not found in this scope
+cannot find function `add` in this scope
+>> let three : i32 = std::ops::Add::add(1i32,2i32);
+>> let three : i32 = std::ops::Add::add(1,2);
+>> three
+3
+>> 
+>> let name : & str = (|| "Rust")();
+>> name
+"Rust"
+>> 
+>> let name : & str = (|| "Rust");
+                      ^^^^^^^^^^^ 
+unnecessary parentheses around assigned value
+help: remove these parentheses
+                      ^^^^^^^^^^^ expected `&str`, found closure
+              ^^^^^ expected due to this
+mismatched types
+>> let name : & str = || "Rust";
+                      ^^^^^^^^^ expected `&str`, found closure
+              ^^^^^ expected due to this
+mismatched types
+>> let name : & str = (|()| -> & str {"Rust"})();
+                                              ^^ supplied 0 arguments
+                      ^^^^^^^^^^^^^^^^^^^^^^^^ expected 1 argument
+this function takes 1 argument but 0 arguments were supplied
+>> let name : & str = (|| -> & str {"Rust"})();
+>> let str_rust_funct  = || -> & str {"Rust"};
+Sorry, the type [closure@src/lib.rs:109:23: 109:43] cannot currently be persisted
+>> let str_rust_funct  = || -> &str {"Rust"};
+Sorry, the type [closure@src/lib.rs:109:23: 109:42] cannot currently be persisted
+>> let name : & str = (|()| -> & str {"Rust"})(());
+>> (|()| -> & str {"Rust"})(())
+"Rust"
+>> (|| -> & str {"Rust"})()
+"Rust"
+>> let square = |x| x * x;
+Sorry, the type [closure@src/lib.rs:109:14: 109:23] cannot currently be persisted
+>> 
+[tilo@holm ~]$ 
+#+END_EXAMPLE
+
+
+* Rust-Compiler under the hood
+
+#+BEGIN_EXAMPLE
+PS D:\twirkner\Projects\play-rust> rustc +nightly -Z help
+
+Available options:
+
+    -Z                 allow-features=val -- only allow the listed language features to be enabled in code (space separated)
+    -Z              always-encode-mir=val -- encode MIR of all functions into the crate metadata (default: no)
+    -Z                   asm-comments=val -- generate comments into the assembly (may change behavior) (default: no)
+    -Z                       ast-json=val -- print the AST as JSON and halt (default: no)
+    -Z              ast-json-noexpand=val -- print the pre-expansion AST as JSON and halt (default: no)
+    -Z             binary-dep-depinfo=val -- include artifacts (sysroot, crate dependencies) used during compilation in dep-info (default: no)
+    -Z                       borrowck=val -- select which borrowck is used (`mir` or `migrate`) (default: `migrate`)
+    -Z                 borrowck-stats=val -- gather borrowck statistics (default: no)
+    -Z      cgu-partitioning-strategy=val -- the codegen unit partitioning strategy to use
+    -Z                          chalk=val -- enable the experimental Chalk-based trait solving engine
+    -Z                codegen-backend=val -- the backend to use
+    -Z                    combine-cgu=val -- combine CGUs into a single one
+    -Z                     crate-attr=val -- inject the given attribute in the crate
+    -Z                   debug-macros=val -- emit line numbers debug info inside macros (default: no)
+    -Z        deduplicate-diagnostics=val -- deduplicate identical diagnostics (default: yes)
+    -Z         dep-info-omit-d-target=val -- in dep-info output, omit targets for tracking dependencies of the dep-info files themselves (default: no)
+    -Z                      dep-tasks=val -- print tasks that execute and the color their dep node gets (requires debug build) (default: no)
+    -Z        dont-buffer-diagnostics=val -- emit diagnostics rather than buffering (breaks NLL error downgrading, sorting) (default: no)
+    -Z               dual-proc-macros=val -- load proc macros for both target and host, but only link to the target (default: no)
+    -Z                 dump-dep-graph=val -- dump the dependency graph to $RUST_DEP_GRAPH (default: /tmp/dep_graph.gv) (default: no)
+    -Z                       dump-mir=val -- dump MIR state to file.
+        `val` is used to select which passes and functions to dump. For example:
+        `all` matches all passes and functions,
+        `foo` matches all passes for functions whose name contains 'foo',
+        `foo & ConstProp` only the 'ConstProp' pass for function names containing 'foo',
+        `foo | bar` all passes for function names containing 'foo' or 'bar'.
+    -Z              dump-mir-dataflow=val -- in addition to `.mir` files, create graphviz `.dot` files with dataflow results (default: no)
+    -Z                   dump-mir-dir=val -- the directory the MIR is dumped into (default: `mir_dump`)
+    -Z   dump-mir-exclude-pass-number=val -- exclude the pass number when dumping MIR (used in tests) (default: no)
+    -Z              dump-mir-graphviz=val -- in addition to `.mir` files, create graphviz `.dot` files (and with `-Z instrument-coverage`, also create a `.dot` file for the MIR-derived coverage graph) (default: no)
+    -Z              dump-mir-spanview=val -- in addition to `.mir` files, create `.html` files to view spans for all `statement`s (including terminators), only `terminator` spans, or computed `block` spans (one span encompassing a block's terminator and all statements). If `-Z instrument-coverage` is also enabled, create an additional `.html` file showing the computed coverage spans.
+    -Z    emit-future-incompat-report=val -- emits a future-incompatibility report for lints (RFC 2834)
+    -Z               emit-stack-sizes=val -- emit a section containing stack size metadata (default: no)
+    -Z                    fewer-names=val -- reduce memory use by retaining fewer names within compilation artifacts (LLVM-IR) (default: no)
+    -Z          force-overflow-checks=val -- force overflow checks on or off
+    -Z     force-unstable-if-unmarked=val -- force all crates to be `rustc_private` unstable (default: no)
+    -Z                           fuel=val -- set the optimization fuel quota for a crate
+    -Z              function-sections=val -- whether each function should go in its own section
+    -Z             graphviz-dark-mode=val -- use dark-themed colors in graphviz output (default: no)
+    -Z                  graphviz-font=val -- use the given `fontname` in graphviz output; can be overridden by setting environment variable `RUSTC_GRAPHVIZ_FONT` (default: `Courier, monospace`)      
+    -Z                      hir-stats=val -- print some statistics about AST and HIR (default: no)
+    -Z       human-readable-cgu-names=val -- generate human-readable, predictable names for codegen units (default: no)
+    -Z               identify-regions=val -- display unnamed regions as `'<id>`, using a non-ident unique id (default: no)
+    -Z       incremental-ignore-spans=val -- ignore spans during ICH computation -- used for testing (default: no)
+    -Z               incremental-info=val -- print high-level information about incremental reuse (or the lack thereof) (default: no)
+    -Z         incremental-verify-ich=val -- verify incr. comp. hashes of green query instances (default: no)
+    -Z           inline-mir-threshold=val -- a default MIR inlining threshold (default: 50)
+    -Z      inline-mir-hint-threshold=val -- inlining threshold for functions with inline hint (default: 100)
+    -Z             inline-in-all-cgus=val -- control whether `#[inline]` functions are in all CGUs
+    -Z                    input-stats=val -- gather statistics about the input (default: no)
+    -Z              insert-sideeffect=val -- fix undefined behavior when a thread doesn't eventually make progress (such as entering an empty infinite loop) by inserting llvm.sideeffect (default: no)    -Z            instrument-coverage=val -- instrument the generated code to support LLVM source-based code coverage reports (note, the compiler build config must include `profiler = true`, and is mutually exclusive with `-C profile-generate`/`-C profile-use`); implies `-Z symbol-mangling-version=v0`; disables/overrides some Rust optimizations (default: no)
+    -Z              instrument-mcount=val -- insert function instrument code for mcount-based tracing (default: no)
+    -Z              keep-hygiene-data=val -- keep hygiene data after analysis (default: no)
+    -Z          link-native-libraries=val -- link native libraries in the linker invocation (default: yes)
+    -Z                      link-only=val -- link the `.rlink` file generated by `-Z no-link` (default: no)
+    -Z                llvm-time-trace=val -- generate JSON tracing data file from LLVM data (default: no)
+    -Z                             ls=val -- list the symbols defined by a library crate (default: no)
+    -Z                macro-backtrace=val -- show macro backtraces (default: no)
+    -Z                merge-functions=val -- control the operation of the MergeFunctions LLVM pass, taking the same values as the target option of the same name
+    -Z                     meta-stats=val -- gather metadata statistics (default: no)
+    -Z                 mir-emit-retag=val -- emit Retagging MIR statements, interpreted e.g., by miri; implies -Zmir-opt-level=0 (default: no)
+    -Z                  mir-opt-level=val -- MIR optimization level (0-3; default: 1)
+    -Z                mutable-noalias=val -- emit noalias metadata for mutable references (default: no)
+    -Z          new-llvm-pass-manager=val -- use new LLVM pass manager (default: no)
+    -Z                      nll-facts=val -- dump facts from NLL analysis into side files (default: no)
+    -Z                  nll-facts-dir=val -- the directory the NLL facts are dumped into (default: `nll-facts`)
+    -Z                    no-analysis=val -- parse and expand the source, but run no analysis
+    -Z                     no-codegen=val -- run all passes except codegen; no output
+    -Z     no-generate-arange-section=val -- omit DWARF address ranges that give faster lookups
+    -Z            no-interleave-lints=val -- execute lints separately; allows benchmarking individual lints
+    -Z                  no-leak-check=val -- disable the 'leak check' for subtyping; unsound, but useful for tests
+    -Z                        no-link=val -- compile without linking
+    -Z               no-parallel-llvm=val -- run LLVM in non-parallel mode (while keeping codegen-units and ThinLTO)
+    -Z            no-profiler-runtime=val -- prevent automatic injection of the profiler_builtins crate
+    -Z                 normalize-docs=val -- normalize associated items in rustdoc when generating documentation
+    -Z         osx-rpath-install-name=val -- pass `-install_name @rpath/...` to the macOS linker (default: no)
+    -Z              panic-abort-tests=val -- support compiling tests with panic=abort (default: no)
+    -Z                     parse-only=val -- parse only; do not compile, assemble, or link (default: no)
+    -Z                     perf-stats=val -- print some performance-related statistics (default: no)
+    -Z                            plt=val -- whether to use the PLT when calling into shared libraries;
+        only has effect for PIC code on systems with ELF binaries
+        (default: PLT is disabled if full relro is enabled)
+    -Z                       polonius=val -- enable polonius-based borrow-checker (default: no)
+    -Z                   polymorphize=val -- perform polymorphization analysis
+    -Z                   pre-link-arg=val -- a single extra argument to prepend the linker invocation (can be used several times)
+    -Z                  pre-link-args=val -- extra arguments to prepend to the linker invocation (space separated)
+    -Z  precise-enum-drop-elaboration=val -- use a more precise version of drop elaboration for matches on enums (default: yes). This results in better codegen, but has caused miscompilations on some tier 2 platforms. See #77382 and #74551.
+    -Z                     print-fuel=val -- make rustc print the total optimization fuel used by a crate
+    -Z                print-link-args=val -- print the arguments passed to the linker (default: no)
+    -Z              print-llvm-passes=val -- print the LLVM optimization passes being run (default: no)
+    -Z               print-mono-items=val -- print the result of the monomorphization collection pass
+    -Z               print-type-sizes=val -- print layout information for each type encountered (default: no)
+    -Z           proc-macro-backtrace=val -- show backtraces for panics during proc-macro execution (default: no)
+    -Z                        profile=val -- insert profiling code (default: no)
+    -Z                   profile-emit=val -- file path to emit profiling data at runtime when using 'profile' (default based on relative source path)
+    -Z                query-dep-graph=val -- enable queries of the dependency graph for regression testing (default: no)
+    -Z                    query-stats=val -- print some statistics about the query system (default: no)
+    -Z          relax-elf-relocations=val -- whether ELF relocations can be relaxed
+    -Z                    relro-level=val -- choose which RELRO level to use
+    -Z            report-delayed-bugs=val -- immediately print bugs registered with `delay_span_bug` (default: no)
+    -Z                   run-dsymutil=val -- if on Mac, run `dsymutil` and delete intermediate object files (default: yes)
+    -Z                      sanitizer=val -- use a sanitizer
+    -Z sanitizer-memory-track-origins=val -- enable origins tracking in MemorySanitizer
+    -Z              sanitizer-recover=val -- enable recovery for selected sanitizers
+    -Z         saturating-float-casts=val -- make float->int casts UB-free: numbers outside the integer type's range are clipped to the max/min integer respectively, and NaN is mapped to 0 (default: yes)
+    -Z                  save-analysis=val -- write syntax and type analysis (in JSON format) information, in addition to normal output (default: no)
+    -Z                   self-profile=val -- run the self profiler and output the raw event data
+    -Z            self-profile-events=val -- specify the events recorded by the self profiler;
+        for example: `-Z self-profile-events=default,query-keys`
+        all options: none, all, default, generic-activity, query-provider, query-cache-hit
+                     query-blocked, incr-cache-load, query-keys, function-args, args, llvm
+    -Z                 share-generics=val -- make the current crate share its generic instantiations
+    -Z                      show-span=val -- show spans for compiler debugging (expr|pat|ty)
+    -Z                     span-debug=val -- forward proc_macro::Span's `Debug` impl to `Span`
+    -Z              span-free-formats=val -- exclude spans when debug-printing compiler state (default: no)
+    -Z             src-hash-algorithm=val -- hash algorithm of source files in debug info (`md5`, `sha1`, or `sha256`)
+    -Z                          strip=val -- tell the linker which information to strip (`none` (default), `debuginfo` or `symbols`)
+    -Z                    split-dwarf=val -- enable generation of split dwarf
+    -Z           split-dwarf-inlining=val -- provide minimal debug info in the object/executable to facilitate online symbolication/stack traces in the absence of .dwo/.dwp files when using Split DWARF
+    -Z        symbol-mangling-version=val -- which mangling version to use for symbol names ('legacy' (default) or 'v0')
+    -Z                          teach=val -- show extended diagnostic help (default: no)
+    -Z                 terminal-width=val -- set the current terminal width
+    -Z                       tune-cpu=val -- select processor to schedule for (`rustc --print target-cpus` for details)
+    -Z                        thinlto=val -- enable ThinLTO when possible
+    -Z                        threads=val -- use a thread pool with N threads
+    -Z                           time=val -- measure time of rustc processes (default: no)
+    -Z               time-llvm-passes=val -- measure time of each LLVM pass (default: no)
+    -Z                    time-passes=val -- measure time of each rustc pass (default: no)
+    -Z                      tls-model=val -- choose the TLS model to use (`rustc --print tls-models` for details)
+    -Z                   trace-macros=val -- for every macro invocation, print its name and arguments (default: no)
+    -Z               trap-unreachable=val -- generate trap instructions for unreachable intrinsics (default: use target setting, usually yes)
+    -Z               treat-err-as-bug=val -- treat error number `val` that occurs as bug
+    -Z          trim-diagnostic-paths=val -- in diagnostics, use heuristics to shorten paths referring to items
+    -Z                     ui-testing=val -- emit compiler diagnostics in a form suitable for UI testing (default: no)
+    -Z unleash-the-miri-inside-of-you=val -- take the brakes off const evaluation. NOTE: this is unsound (default: no)
+    -Z                       unpretty=val -- present the input source, unstable (and less-pretty) variants;
+        valid types are any of the types for `--pretty`, as well as:
+        `expanded`, `expanded,identified`,
+        `expanded,hygiene` (with internal representations),
+        `everybody_loops` (all function bodies replaced with `loop {}`),
+        `hir` (the HIR), `hir,identified`,
+        `hir,typed` (HIR with types for each node),
+        `hir-tree` (dump the raw HIR),
+        `mir` (the MIR), or `mir-cfg` (graphviz formatted MIR)
+    -Z               unsound-mir-opts=val -- enable unsound and buggy MIR optimizations (default: no)
+    -Z               unstable-options=val -- adds unstable command line options to rustc interface (default: no)
+    -Z              use-ctors-section=val -- use legacy .ctors section for initializers rather than .init_array
+    -Z                   validate-mir=val -- validate MIR after each transformation
+    -Z                        verbose=val -- in general, enable more debug printouts (default: no)
+    -Z                 verify-llvm-ir=val -- verify LLVM IR (default: no)
+    -Z                wasi-exec-model=val -- whether to build a wasi command or reactor
+#+END_EXAMPLE
+

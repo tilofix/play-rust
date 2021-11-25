@@ -1,0 +1,1210 @@
+#+TITLE: Rust's Play-Ground
+
+Rust hat wirklich einen [[https://play.rust-lang.org/][Playground]],
+den man auch in der Quellkode-Dokumentation verwenden kann.
+
+* Playground for Rust
+ [2020-11-02 Mo]
+
+** Installed Rustup
+
+#+BEGIN_EXAMPLE
+Welcome to Rust!
+
+This will download and install the official compiler for the Rust
+programming language, and its package manager, Cargo.
+
+Rustup metadata and toolchains will be installed into the Rustup
+home directory, located at:
+
+  C:\Users\twirkner\.rustup
+
+This can be modified with the RUSTUP_HOME environment variable.
+
+The Cargo home directory located at:
+
+  C:\Users\twirkner\.cargo
+
+This can be modified with the CARGO_HOME environment variable.
+
+The cargo, rustc, rustup and other commands will be added to
+Cargo's bin directory, located at:
+
+  C:\Users\twirkner\.cargo\bin
+
+This path will then be added to your PATH environment variable by
+modifying the HKEY_CURRENT_USER/Environment/PATH registry key.
+
+You can uninstall at any time with rustup self uninstall and
+these changes will be reverted.
+
+Current installation options:
+
+
+   default host triple: x86_64-pc-windows-msvc
+     default toolchain: stable (default)
+               profile: default
+  modify PATH variable: yes
+
+1) Proceed with installation (default)
+2) Customize installation
+3) Cancel installation
+>
+
+info: profile set to 'default'
+info: default host triple is x86_64-pc-windows-msvc
+info: syncing channel updates for 'stable-x86_64-pc-windows-msvc'
+info: latest update on 2020-10-08, rust version 1.47.0 (18bf6b4f0 2020-10-07)
+info: downloading component 'cargo'
+info: downloading component 'clippy'
+info: downloading component 'rust-docs'
+ 12.9 MiB /  12.9 MiB (100 %)   7.0 MiB/s in  1s ETA:  0s
+info: downloading component 'rust-std'
+ 17.8 MiB /  17.8 MiB (100 %)   7.0 MiB/s in  2s ETA:  0s
+info: downloading component 'rustc'
+ 42.6 MiB /  42.6 MiB (100 %)   6.7 MiB/s in  6s ETA:  0s
+info: downloading component 'rustfmt'
+info: installing component 'cargo'
+info: Defaulting to 500.0 MiB unpack ram
+info: installing component 'clippy'
+info: installing component 'rust-docs'
+ 12.9 MiB /  12.9 MiB (100 %)   1.0 MiB/s in 23s ETA:  0s
+info: installing component 'rust-std'
+ 17.8 MiB /  17.8 MiB (100 %)   8.8 MiB/s in  2s ETA:  0s
+info: installing component 'rustc'
+ 42.6 MiB /  42.6 MiB (100 %)   2.7 MiB/s in 18s ETA:  0s
+  8 IO-ops /   8 IO-ops (100 %)   5 IOPS in  1s ETA:  0s
+info: installing component 'rustfmt'
+  2.0 MiB /   2.0 MiB (100 %)   1.1 MiB/s in  2s ETA:  0s
+info: default toolchain set to 'stable'
+
+  stable installed - (timeout reading rustc version)
+
+
+Rust is installed now. Great!
+
+To get started you need Cargo's bin directory (%USERPROFILE%\.cargo\bin) in
+your PATH
+environment variable. Future applications will automatically have the
+correct environment, but you may need to restart your current shell.
+
+Press the Enter key to continue.
+#+END_EXAMPLE
+
+Let's check via Visual Code
+
+#+BEGIN_EXAMPLE
+PS D:\twirkner\Projects\play-rust>
+PS D:\twirkner\Projects\play-rust> rustc --version
+rustc 1.47.0 (18bf6b4f0 2020-10-07)
+PS D:\twirkner\Projects\play-rust> 
+PS D:\twirkner\Projects\play-rust> cargo --version
+cargo 1.47.0 (f3c7e066a 2020-08-28)
+PS D:\twirkner\Projects\play-rust> 
+PS D:\twirkner\Projects\play-rust> rustfmt --version
+rustfmt 1.4.20-stable (48f6c32e 2020-08-09)
+PS D:\twirkner\Projects\play-rust> 
+PS D:\twirkner\Projects\play-rust> rustdoc --version
+rustdoc 1.47.0 (18bf6b4f0 2020-10-07)
+PS D:\twirkner\Projects\play-rust> 
+#+END_EXAMPLE
+
+** Installed Rust Extension in Visual Code
+
+After installing extension "Rust rust-lang.rust" 
+it asked to install following components via tasks
+
+#+BEGIN_EXAMPLE
+  > Executing task in folder play-rust: rustup component add rust-analysis --toolchain stable-x86_64-pc-windows-msvc <
+
+  info: downloading component 'rust-analysis'
+  info: installing component 'rust-analysis'
+  info: Defaulting to 500.0 MiB unpack ram
+
+  Terminal will be reused by tasks, press any key to close it.
+
+  > Executing task in folder play-rust: rustup component add rust-src --toolchain stable-x86_64-pc-windows-msvc <
+
+  info: downloading component 'rust-src'
+  info: installing component 'rust-src'
+  info: Defaulting to 500.0 MiB unpack ram
+    1.8 MiB /   1.8 MiB (100 %)   1.1 MiB/s in  1s ETA:  0s
+
+  Terminal will be reused by tasks, press any key to close it.
+
+  > Executing task in folder play-rust: rustup component add rls --toolchain stable-x86_64-pc-windows-msvc <
+
+  info: downloading component 'rls'
+  info: installing component 'rls'
+  info: Defaulting to 500.0 MiB unpack ram
+
+  Terminal will be reused by tasks, press any key to close it.
+#+END_EXAMPLE
+
+** Debug Rust Programs
+
+Found no description in the book I bought!
+
+Finally got best hint from this Rust's 
+https://users.rust-lang.org/t/error-theres-no-debug-target-with-rust-analyzer-vscode/47177
+
+Change extension from 'rust-lang.rust' to 'rust-analyzer'.
+Let's see if this also solves the issue 
+that I've got not outline after open a source module,
+needed to start changing the file and then outline appeared.
+No, same issue IDE with ~main.rs~ opened an no outline :-(.
+
+Extension CodeLLDB acquiring platform package,
+seems to be a huge download.
+
+Needed to have a Cargo project - means a ~Cargo.toml~ file - in ~${workspaceFolder}~
+to make automatic detection of a cargo project happen 
+when calling "Add Configuration" from "Run" menu.
+
+After first debugging session - already stepped into asm-code!? - it looks
+as if rust-src is already installed, 
+no ~rustup component add rust-src~ necessary, right?:
+
+#+BEGIN_EXAMPLE
+  PS D:\twirkner\Projects\play-rust> 
+  PS D:\twirkner\Projects\play-rust> rustup component list
+  cargo-x86_64-pc-windows-msvc (installed)
+  clippy-x86_64-pc-windows-msvc (installed)
+  llvm-tools-preview-x86_64-pc-windows-msvc
+  rls-x86_64-pc-windows-msvc (installed)
+  rust-analysis-x86_64-pc-windows-msvc (installed)
+  rust-docs-x86_64-pc-windows-msvc (installed)
+  rust-src (installed)
+  rust-std-aarch64-apple-ios
+  rust-std-aarch64-fuchsia
+  rust-std-aarch64-linux-android
+  rust-std-aarch64-pc-windows-msvc
+  rust-std-aarch64-unknown-linux-gnu
+  rust-std-aarch64-unknown-linux-musl
+  rust-std-aarch64-unknown-none
+  rust-std-aarch64-unknown-none-softfloat
+  rust-std-arm-linux-androideabi
+  rust-std-arm-unknown-linux-gnueabi
+  rust-std-arm-unknown-linux-gnueabihf
+  rust-std-arm-unknown-linux-musleabi
+  rust-std-arm-unknown-linux-musleabihf
+  rust-std-armebv7r-none-eabi
+  rust-std-armebv7r-none-eabihf
+  rust-std-armv5te-unknown-linux-gnueabi
+  rust-std-armv5te-unknown-linux-musleabi
+  rust-std-armv7-linux-androideabi
+  rust-std-armv7-unknown-linux-gnueabi
+  rust-std-armv7-unknown-linux-gnueabihf
+  rust-std-armv7-unknown-linux-musleabi
+  rust-std-armv7-unknown-linux-musleabihf
+  rust-std-armv7a-none-eabi
+  rust-std-armv7r-none-eabi
+  rust-std-armv7r-none-eabihf
+  rust-std-asmjs-unknown-emscripten
+  rust-std-i586-pc-windows-msvc
+  rust-std-i586-unknown-linux-gnu
+  rust-std-i586-unknown-linux-musl
+  rust-std-i686-linux-android
+  rust-std-i686-pc-windows-gnu
+  rust-std-i686-pc-windows-msvc
+  rust-std-i686-unknown-freebsd
+  rust-std-i686-unknown-linux-gnu
+  rust-std-i686-unknown-linux-musl
+  rust-std-mips-unknown-linux-gnu
+  rust-std-mips-unknown-linux-musl
+  rust-std-mips64-unknown-linux-gnuabi64
+  rust-std-mips64-unknown-linux-muslabi64
+  rust-std-mips64el-unknown-linux-gnuabi64
+  rust-std-mips64el-unknown-linux-muslabi64
+  rust-std-mipsel-unknown-linux-gnu
+  rust-std-mipsel-unknown-linux-musl
+  rust-std-nvptx64-nvidia-cuda
+  rust-std-powerpc-unknown-linux-gnu
+  rust-std-powerpc64-unknown-linux-gnu
+  rust-std-powerpc64le-unknown-linux-gnu
+  rust-std-riscv32i-unknown-none-elf
+  rust-std-riscv32imac-unknown-none-elf
+  rust-std-riscv32imc-unknown-none-elf
+  rust-std-riscv64gc-unknown-linux-gnu
+  rust-std-riscv64gc-unknown-none-elf
+  rust-std-riscv64imac-unknown-none-elf
+  rust-std-s390x-unknown-linux-gnu
+  rust-std-sparc64-unknown-linux-gnu
+  rust-std-sparcv9-sun-solaris
+  rust-std-thumbv6m-none-eabi
+  rust-std-thumbv7em-none-eabi
+  rust-std-thumbv7em-none-eabihf
+  rust-std-thumbv7m-none-eabi
+  rust-std-thumbv7neon-linux-androideabi
+  rust-std-thumbv7neon-unknown-linux-gnueabihf
+  rust-std-thumbv8m.base-none-eabi
+  rust-std-thumbv8m.main-none-eabi
+  rust-std-thumbv8m.main-none-eabihf
+  rust-std-wasm32-unknown-emscripten
+  rust-std-wasm32-unknown-unknown
+  rust-std-wasm32-wasi
+  rust-std-x86_64-apple-darwin
+  rust-std-x86_64-apple-ios
+  rust-std-x86_64-fortanix-unknown-sgx
+  rust-std-x86_64-fuchsia
+  rust-std-x86_64-linux-android
+  rust-std-x86_64-pc-windows-gnu
+  rust-std-x86_64-pc-windows-msvc (installed)
+  rust-std-x86_64-rumprun-netbsd
+  rust-std-x86_64-sun-solaris
+  rust-std-x86_64-unknown-freebsd
+  rust-std-x86_64-unknown-illumos
+  rust-std-x86_64-unknown-linux-gnu
+  rust-std-x86_64-unknown-linux-gnux32
+  rust-std-x86_64-unknown-linux-musl
+  rust-std-x86_64-unknown-netbsd
+  rust-std-x86_64-unknown-redox
+  rustc-x86_64-pc-windows-msvc (installed)
+  rustc-dev-aarch64-unknown-linux-gnu
+  rustc-dev-arm-unknown-linux-gnueabi
+  rustc-dev-arm-unknown-linux-gnueabihf
+  rustc-dev-armv7-unknown-linux-gnueabihf
+  rustc-dev-i686-pc-windows-gnu
+  rustc-dev-i686-pc-windows-msvc
+  rustc-dev-i686-unknown-linux-gnu
+  rustc-dev-mips-unknown-linux-gnu
+  rustc-dev-mips64-unknown-linux-gnuabi64
+  rustc-dev-mips64el-unknown-linux-gnuabi64
+  rustc-dev-mipsel-unknown-linux-gnu
+  rustc-dev-powerpc-unknown-linux-gnu
+  rustc-dev-powerpc64-unknown-linux-gnu
+  rustc-dev-powerpc64le-unknown-linux-gnu
+  rustc-dev-riscv64gc-unknown-linux-gnu
+  rustc-dev-s390x-unknown-linux-gnu
+  rustc-dev-x86_64-apple-darwin
+  rustc-dev-x86_64-pc-windows-gnu
+  rustc-dev-x86_64-pc-windows-msvc
+  rustc-dev-x86_64-unknown-freebsd
+  rustc-dev-x86_64-unknown-illumos
+  rustc-dev-x86_64-unknown-linux-gnu
+  rustc-dev-x86_64-unknown-linux-musl
+  rustc-dev-x86_64-unknown-netbsd
+  rustc-docs-x86_64-unknown-linux-gnu
+  rustfmt-x86_64-pc-windows-msvc (installed)
+  PS D:\twirkner\Projects\play-rust> 
+#+END_EXAMPLE
+
+You can find the file holding the components in rust home directory (see ~rustup show~):
+~/cygdrive/c/Users/twirkner/.rustup/toolchains/stable-x86_64-pc-windows-msvc/lib/rustlib/components~
+
+** RUSTC and LLVM
+
+Was not able to use code facilities to ask rustc to emit LLVM's intermediate representation.
+This is the cargo way to do:
+
+#+BEGIN_EXAMPLE
+  PS D:\twirkner\Projects\play-rust>
+  PS D:\twirkner\Projects\play-rust> cargo rustc -v -- --emit="llvm-ir"
+     Compiling debugging v0.1.0 (D:\twirkner\Projects\play-rust)
+       Running `rustc --crate-name debugging --edition=2018 src\main.rs --error-format=json --json=diagnostic-rendered-ansi --crate-type bin --emit=dep-info,link -C embed-bitcode=no -C debuginfo=2 --emit=llvm-ir -C metadata=679686503ee2db9d --out-dir D:\twirkner\Projects\play-rust\target\debug\deps -C incremental=D:\twirkner\Projects\play-rust\target\debug\incremental -L dependency=D:\twirkner\Projects\play-rust\target\debug\deps`    Finished dev [unoptimized + debuginfo] target(s) in 0.84s
+  PS D:\twirkner\Projects\play-rust>
+#+END_EXAMPLE
+
+Which creates an *.ll file in directory ~./target/debug/deps/debugging.ll~.
+
+For unknown reason I'm not able to have two tasks of type ~cargo~ in tasks.json.
+
+
+* Org-Babel Rust
+
+Cargo's subcommand [[https://crates.io/search?q=cargo-script][cargo-script]] let's you run Rust "scripts",
+also supported is to evaluate expressions and to run filters.
+
+From  [2]: "... all I had to do was run"
+~cargo install cargo-script~
+and bam you'll be off and org-babel-ing. If you've got ~Cargo.el~ installed in your profile,
+you can evaluate pretty quick using Cargo-run.
+
+
+#+BEGIN_SRC rust
+  use std::string::String as String; // not required, part of Prelude
+
+  pub struct User {username: String}
+
+  let user: User = User {username: String::from("tilo")};
+  println!("{}", user);
+  user
+#+END_SRC
+
+#+RESULTS:
+
+: Evaluate this rust code block on your system? (y or n) y
+: org-babel-execute-src-block: No org-babel-execute function for rust!
+
+Installed Emacs' Org-Babel support for evaluating [[https://github.com/micanzhang/ob-rust][Rust code]] ~ob-rust~,
+which requires the Rust/Cargo ecosystem (=sh.rustup.rs=)
+and =cargo-script= installed.
+
+: Evaluate this rust code block on your system? (y or n) y
+: error: no such subcommand: `script`
+
+Looks as if I did not install cargo-script yet.
+
+#+BEGIN_EXAMPLE
+  [tilo@holm play-rust]$ 
+  [tilo@holm play-rust]$ which cargo
+  /usr/bin/cargo
+  [tilo@holm play-rust]$ 
+  [tilo@holm play-rust]$ cargo list
+  Installed Commands:
+      b                    alias: build
+      bench                Execute all benchmarks of a local package
+      build                Compile a local package and all of its dependencies
+      c                    alias: check
+      check                Check a local package and all of its dependencies for errors
+      clean                Remove artifacts that cargo has generated in the past
+      doc                  Build a package's documentation
+      fetch                Fetch dependencies of a package from the network
+      fix                  Automatically fix lint warnings reported by rustc
+      generate-lockfile    Generate the lockfile for a package
+      git-checkout         This subcommand has been removed
+      init                 Create a new cargo package in an existing directory
+      install              Install a Rust binary. Default location is $HOME/.cargo/bin
+      locate-project       Print a JSON representation of a Cargo.toml file's location
+      login                Save an api token from the registry locally. If token is not specified, it will be read from stdin.
+      metadata             Output the resolved dependencies of a package, the concrete used versions including overrides, in machine-readable format
+      new                  Create a new cargo package at <path>
+      owner                Manage the owners of a crate on the registry
+      package              Assemble the local package into a distributable tarball
+      pkgid                Print a fully qualified package specification
+      publish              Upload a package to the registry
+      r                    alias: run
+      read-manifest        Print a JSON representation of a Cargo.toml manifest.
+      run                  Run a binary or example of the local package
+      rustc                Compile a package, and pass extra options to the compiler
+      rustdoc              Build a package's documentation, using specified custom flags.
+      search               Search packages in crates.io
+      t                    alias: test
+      test                 Execute all unit and integration tests and build examples of a local package
+      tree                 Display a tree visualization of a dependency graph
+      uninstall            Remove a Rust binary
+      update               Update dependencies as recorded in the local lock file
+      vendor               Vendor all dependencies for a project locally
+      verify-project       Check correctness of crate manifest
+      version              Show version information
+      yank                 Remove a pushed crate from the index
+      clippy
+      fmt
+      miri
+  [tilo@holm play-rust]$ 
+  [tilo@holm play-rust]$ which rustup
+  /usr/bin/rustup
+  [tilo@holm play-rust]$ 
+  [tilo@holm play-rust]$ rustup component list --installed
+  cargo-x86_64-unknown-linux-gnu
+  clippy-x86_64-unknown-linux-gnu
+  rls-x86_64-unknown-linux-gnu
+  rust-analysis-x86_64-unknown-linux-gnu
+  rust-docs-x86_64-unknown-linux-gnu
+  rust-src
+  rust-std-x86_64-unknown-linux-gnu
+  rustc-x86_64-unknown-linux-gnu
+  rustfmt-x86_64-unknown-linux-gnu
+  [tilo@holm play-rust]$ 
+  [tilo@holm play-rust]$ ls ~/.cargo/ 
+  bin  registry
+  [tilo@holm play-rust]$ 
+  [tilo@holm play-rust]$ ls -l ~/.cargo/bin/
+  insgesamt 29064
+  -rwxr-xr-x 1 tilo tilo 23252536 27. Dez 16:19 evcxr
+  -rwxr-xr-x 1 tilo tilo  6507304 11. Dez 22:59 rustlings
+  [tilo@holm play-rust]$ 
+  [tilo@holm play-rust]$ cargo install cargo-script
+      Updating crates.io index
+   Downloading crates ...
+    Downloaded cargo-script v0.2.8
+    Installing cargo-script v0.2.8
+   Downloading crates ...
+    Downloaded getrandom v0.2.0
+    Downloaded open v1.4.0
+    Downloaded lazy_static v0.2.11
+    Downloaded rand_chacha v0.3.0
+    Downloaded rand v0.3.23
+    Downloaded rustc-serialize v0.3.24
+    Downloaded gcc v0.3.55
+    Downloaded bitflags v0.5.0
+    Downloaded env_logger v0.4.3
+    Downloaded aho-corasick v0.5.3
+    Downloaded rand v0.8.0
+    Downloaded chan v0.1.23
+    Downloaded kernel32-sys v0.2.2
+    Downloaded winapi-build v0.1.1
+    Downloaded itertools v0.5.10
+    Downloaded toml v0.2.1
+    Downloaded thread_local v0.2.7
+    Downloaded rand_core v0.6.0
+    Downloaded regex v0.1.80
+    Downloaded rand v0.4.6
+    Downloaded rustc_version v0.1.7
+    Downloaded regex-syntax v0.3.9
+    Downloaded semver v0.1.20
+    Downloaded thread_local v0.3.6
+    Downloaded log v0.3.9
+    Downloaded ucd-util v0.1.8
+    Downloaded utf8-ranges v1.0.4
+    Downloaded aho-corasick v0.6.10
+    Downloaded regex v0.2.11
+    Downloaded regex-syntax v0.5.6
+    Downloaded utf8-ranges v0.1.3
+    Downloaded thread-id v2.0.0
+    Downloaded memchr v0.1.11
+    Downloaded winapi v0.2.8
+    Downloaded semver-parser v0.6.2
+    Downloaded hoedown v6.0.0
+    Downloaded semver v0.5.1
+    Downloaded shaman v0.1.0
+     Compiling libc v0.2.81
+     Compiling cfg-if v0.1.10
+     Compiling winapi-build v0.1.1
+     Compiling getrandom v0.2.0
+     Compiling winapi v0.2.8
+     Compiling memchr v2.3.4
+     Compiling log v0.4.11
+     Compiling gcc v0.3.55
+     Compiling regex-syntax v0.3.9
+     Compiling regex v0.2.11
+     Compiling utf8-ranges v0.1.3
+     Compiling bitflags v1.2.1
+     Compiling ppv-lite86 v0.2.10
+     Compiling lazy_static v1.4.0
+     Compiling ucd-util v0.1.8
+     Compiling semver v0.1.20
+     Compiling rustc-serialize v0.3.24
+     Compiling utf8-ranges v1.0.4
+     Compiling unicode-width v0.1.8
+     Compiling lazy_static v0.2.11
+     Compiling ansi_term v0.11.0
+     Compiling strsim v0.8.0
+     Compiling either v1.6.1
+     Compiling bitflags v0.5.0
+     Compiling vec_map v0.8.2
+     Compiling open v1.4.0
+     Compiling kernel32-sys v0.2.2
+     Compiling thread_local v0.3.6
+     Compiling regex-syntax v0.5.6
+     Compiling textwrap v0.11.0
+     Compiling rustc_version v0.1.7
+     Compiling itertools v0.5.10
+     Compiling hoedown v6.0.0
+     Compiling cargo-script v0.2.8
+     Compiling log v0.3.9
+     Compiling aho-corasick v0.6.10
+     Compiling memchr v0.1.11
+     Compiling thread-id v2.0.0
+     Compiling rand v0.4.6
+     Compiling atty v0.2.14
+     Compiling time v0.1.44
+     Compiling toml v0.2.1
+     Compiling thread_local v0.2.7
+     Compiling aho-corasick v0.5.3
+     Compiling clap v2.33.3
+     Compiling rand_core v0.6.0
+     Compiling regex v0.1.80
+     Compiling rand v0.3.23
+     Compiling rand_chacha v0.3.0
+     Compiling chan v0.1.23
+     Compiling rand v0.8.0
+     Compiling semver-parser v0.6.2
+     Compiling env_logger v0.4.3
+     Compiling semver v0.5.1
+     Compiling shaman v0.1.0
+      Finished release [optimized] target(s) in 59.20s
+    Installing /home/tilo/.cargo/bin/cargo-script
+    Installing /home/tilo/.cargo/bin/run-cargo-script
+     Installed package `cargo-script v0.2.8` (executables `cargo-script`, `run-cargo-script`)
+  [tilo@holm play-rust]$ 
+#+END_EXAMPLE
+
+Right, we are done and got expected compilation errors.
+
+
+* The REPLing Rust
+
+There is a lot of PRO and CONTRA on dynmically typed languages like Python.
+One PRO of such dynamic type system is a Read-Evaluate-Print-Loop,
+which is a great place to learn and to play.
+
+Through my love of Emacs' orgmode I ran over [[https://crates.io/crates/cargo-script/][cargo-script]] 
+and through my interest for JuPyteR I ran over [[https://github.com/google/evcxr/tree/master/evcxr_jupyter][EValuation-ConteXt-for-Rust]].
+
+
+   No learning without playing ...
+   there is no better tool for learning/playing than a read-evaluate-print-loop.
+   As Rust is out for a while it already has not only a REPL but also
+   Jupyter-support, a jupyter kernel created by same project: [[https://github.com/google/evcxr][EvCxR]].
+
+   #+BEGIN_EXAMPLE
+     [tilo@holm play-rust]$ 
+     [tilo@holm play-rust]$ cargo install evcxr_repl
+         Updating crates.io index
+       Downloaded evcxr_repl v0.6.0
+       Downloaded 1 crate (30.1 KB) in 0.36s
+       Installing evcxr_repl v0.6.0
+       Downloaded anymap v0.12.1
+       Downloaded evcxr_input v1.0.0
+       Downloaded cargo_metadata v0.12.1
+       Downloaded dirs-sys-next v0.1.1
+       Downloaded arrayvec v0.5.2
+       Downloaded parking_lot_core v0.8.2
+       Downloaded evcxr v0.6.0
+       Downloaded ra_ap_cfg v0.0.22
+       Downloaded rowan v0.10.0
+       Downloaded which v4.0.2
+       Downloaded pulldown-cmark-to-cmark v6.0.0
+       Downloaded pest_generator v2.1.3
+       Downloaded rustyline v6.3.0
+       Downloaded ansi_term v0.12.1
+       Downloaded memoffset v0.6.1
+       Downloaded heck v0.3.2
+       Downloaded dirs-sys v0.3.5
+       Downloaded chalk-solve v0.36.0
+       Downloaded inotify v0.8.3
+       Downloaded chalk-ir v0.36.0
+       Downloaded maplit v1.0.2
+       Downloaded json v0.12.4
+       Downloaded pest_derive v2.1.0
+       Downloaded perf-event v0.4.6
+       Downloaded pest_meta v2.1.3
+       Downloaded ra_ap_arena v0.0.22
+       Downloaded const_fn v0.4.4
+       Downloaded ra_ap_test_utils v0.0.22
+       Downloaded ra_ap_toolchain v0.0.22
+       Downloaded ra_ap_profile v0.0.22
+       Downloaded ra_ap_proc_macro_api v0.0.22
+       Downloaded ra_ap_ssr v0.0.22
+       Downloaded rustc-hash v1.1.0
+       Downloaded tinyvec_macros v0.1.0
+       Downloaded ra_ap_tt v0.0.22
+       Downloaded url v2.2.0
+       Downloaded tinyvec v1.1.0
+       Downloaded cc v1.0.66
+       Downloaded smol_str v0.1.17
+       Downloaded tempfile v3.1.0
+       Downloaded chalk-derive v0.36.0
+       Downloaded ra_ap_parser v0.0.22
+       Downloaded rustc-ap-rustc_lexer v685.0.0
+       Downloaded oorandom v11.1.3
+       Downloaded crossbeam-epoch v0.9.1
+       Downloaded salsa-macros v0.16.0
+       Downloaded tracing-tree v0.1.6
+       Downloaded ra_ap_ide_db v0.0.22
+       Downloaded unicase v2.6.0
+       Downloaded chalk-recursive v0.36.0
+       Downloaded termcolor v1.1.2
+       Downloaded crossbeam-utils v0.8.1
+       Downloaded ra_ap_project_model v0.0.22
+       Downloaded proc-macro-error-attr v1.0.4
+       Downloaded home v0.5.3
+       Downloaded itertools v0.9.0
+       Downloaded ryu v1.0.5
+       Downloaded itoa v0.4.6
+       Downloaded anyhow v1.0.36
+       Downloaded once_cell v1.5.2
+       Downloaded semver-parser v0.10.0
+       Downloaded text-size v1.0.0
+       Downloaded ra_ap_hir_ty v0.0.22
+       Downloaded crossbeam-channel v0.5.0
+       Downloaded dirs-next v1.0.2
+       Downloaded gimli v0.23.0
+       Downloaded utf8parse v0.2.0
+       Downloaded ra_ap_stdx v0.0.22
+       Downloaded ra_ap_hir v0.0.22
+       Downloaded ra_ap_base_db v0.0.22
+       Downloaded jod-thread v0.1.2
+       Downloaded ena v0.14.0
+       Downloaded unicode-segmentation v1.7.1
+       Downloaded sig v1.0.0
+       Downloaded dirs v3.0.1
+       Downloaded perf-event-open-sys v1.0.1
+       Downloaded ra_ap_vfs-notify v0.0.22
+       Downloaded ra_ap_vfs v0.0.22
+       Downloaded semver v0.11.0
+       Downloaded pest v2.1.3
+       Downloaded backtrace v0.3.55
+       Downloaded thiserror-impl v1.0.23
+       Downloaded ra_ap_paths v0.0.22
+       Downloaded structopt-derive v0.4.14
+       Downloaded thin-dst v1.1.0
+       Downloaded byte-tools v0.3.1
+       Downloaded block-padding v0.1.5
+       Downloaded ra_ap_mbe v0.0.22
+       Downloaded fake-simd v0.1.2
+       Downloaded block-buffer v0.7.3
+       Downloaded drop_bomb v0.1.5
+       Downloaded generic-array v0.12.3
+       Downloaded thiserror v1.0.23
+       Downloaded getrandom v0.1.15
+       Downloaded adler v0.2.3
+       Downloaded form_urlencoded v1.0.0
+       Downloaded byteorder v1.3.4
+       Downloaded maybe-uninit v2.0.0
+       Downloaded either v1.6.1
+       Downloaded fixedbitset v0.2.0
+       Downloaded num-integer v0.1.44
+       Downloaded opaque-debug v0.2.3
+       Downloaded indexmap v1.6.1
+       Downloaded scoped-tls v1.0.0
+       Downloaded notify v5.0.0-pre.4
+       Downloaded matches v0.1.8
+       Downloaded percent-encoding v2.1.0
+       Downloaded regex-automata v0.1.9
+       Downloaded num_cpus v1.13.0
+       Downloaded miniz_oxide v0.4.3
+       Downloaded quote v1.0.8
+       Downloaded tracing-attributes v0.1.11
+       Downloaded time v0.1.44
+       Downloaded tracing-core v0.1.17
+       Downloaded tracing-subscriber v0.2.15
+       Downloaded proc-macro-error v1.0.4
+       Downloaded pin-project-lite v0.2.0
+       Downloaded digest v0.8.1
+       Downloaded crossbeam-deque v0.8.0
+       Downloaded sha-1 v0.8.2
+       Downloaded sharded-slab v0.1.0
+       Downloaded libloading v0.5.2
+       Downloaded tracing-log v0.1.1
+       Downloaded synstructure v0.12.4
+       Downloaded structopt v0.3.21
+       Downloaded ra_ap_text_edit v0.0.22
+       Downloaded version_check v0.9.2
+       Downloaded typenum v1.12.0
+       Downloaded tracing-serde v0.1.2
+       Downloaded crossbeam-utils v0.7.2
+       Downloaded ucd-trie v0.1.3
+       Downloaded rayon-core v1.9.0
+       Downloaded rand_chacha v0.2.2
+       Downloaded unicode-normalization v0.1.16
+       Downloaded ra_ap_completion v0.0.22
+       Downloaded hashbrown v0.9.1
+       Downloaded rand v0.7.3
+       Downloaded serde_json v1.0.60
+       Downloaded rand_core v0.5.1
+       Downloaded remove_dir_all v0.5.3
+       Downloaded ra_ap_hir_expand v0.0.22
+       Downloaded object v0.22.0
+       Downloaded unicode-bidi v0.3.4
+       Downloaded tracing v0.1.22
+       Downloaded rustc-demangle v0.1.18
+       Downloaded ra_ap_assists v0.0.22
+       Downloaded ra_ap_hir_def v0.0.22
+       Downloaded pulldown-cmark v0.8.0
+       Downloaded ra_ap_ide v0.0.22
+       Downloaded ra_ap_syntax v0.0.22
+       Downloaded matchers v0.0.1
+       Downloaded petgraph v0.5.1
+       Downloaded crossbeam-channel v0.4.4
+       Downloaded rayon v1.5.0
+       Downloaded idna v0.2.0
+       Downloaded chrono v0.4.19
+       Downloaded nix v0.18.0
+       Downloaded difference v2.0.0
+       Downloaded syn v1.0.56
+       Downloaded salsa v0.16.0
+       Downloaded fst v0.4.5
+       Downloaded addr2line v0.14.0
+       Downloaded ppv-lite86 v0.2.10
+       Downloaded colored v2.0.0
+       Downloaded 164 crates (9.1 MB) in 2.83s (largest was `fst` at 1.6 MB)
+        Compiling libc v0.2.81
+        Compiling proc-macro2 v1.0.24
+        Compiling autocfg v1.0.1
+        Compiling syn v1.0.56
+        Compiling unicode-xid v0.2.1
+        Compiling lazy_static v1.4.0
+        Compiling cfg-if v0.1.10
+        Compiling cfg-if v1.0.0
+        Compiling serde_derive v1.0.118
+        Compiling serde v1.0.118
+        Compiling log v0.4.11
+        Compiling ryu v1.0.5
+        Compiling serde_json v1.0.60
+        Compiling rustc-hash v1.1.0
+        Compiling itoa v0.4.6
+        Compiling smallvec v1.5.1
+        Compiling scopeguard v1.1.0
+        Compiling hashbrown v0.9.1
+        Compiling ra_ap_stdx v0.0.22
+        Compiling either v1.6.1
+        Compiling text-size v1.0.0
+        Compiling unicode-segmentation v1.7.1
+        Compiling byteorder v1.3.4
+        Compiling fst v0.4.5
+        Compiling once_cell v1.5.2
+        Compiling thin-dst v1.1.0
+        Compiling version_check v0.9.2
+        Compiling regex-syntax v0.6.21
+        Compiling drop_bomb v0.1.5
+        Compiling difference v2.0.0
+        Compiling arrayvec v0.5.2
+        Compiling ra_ap_paths v0.0.22
+        Compiling pin-project-lite v0.2.0
+        Compiling ra_ap_arena v0.0.22
+        Compiling bitflags v1.2.1
+        Compiling oorandom v11.1.3
+        Compiling const_fn v0.4.4
+        Compiling ansi_term v0.12.1
+        Compiling anymap v0.12.1
+        Compiling termcolor v1.1.2
+        Compiling fixedbitset v0.2.0
+        Compiling rayon-core v1.9.0
+        Compiling ucd-trie v0.1.3
+        Compiling maplit v1.0.2
+        Compiling scoped-tls v1.0.0
+        Compiling getrandom v0.1.15
+        Compiling memchr v2.3.4
+        Compiling matches v0.1.8
+        Compiling tinyvec_macros v0.1.0
+        Compiling maybe-uninit v2.0.0
+        Compiling slab v0.4.2
+        Compiling pulldown-cmark v0.8.0
+        Compiling cc v1.0.66
+        Compiling same-file v1.0.6
+        Compiling unicode-width v0.1.8
+        Compiling lazycell v1.3.0
+        Compiling percent-encoding v2.1.0
+        Compiling anyhow v1.0.36
+        Compiling jod-thread v0.1.2
+        Compiling ppv-lite86 v0.2.10
+        Compiling nix v0.18.0
+        Compiling gimli v0.23.0
+        Compiling adler v0.2.3
+        Compiling home v0.5.3
+        Compiling rustc-demangle v0.1.18
+        Compiling vec_map v0.8.2
+        Compiling ansi_term v0.11.0
+        Compiling strsim v0.8.0
+        Compiling object v0.22.0
+        Compiling remove_dir_all v0.5.3
+        Compiling evcxr_input v1.0.0
+        Compiling utf8parse v0.2.0
+        Compiling json v0.12.4
+        Compiling instant v0.1.9
+        Compiling tracing-core v0.1.17
+        Compiling thread_local v1.0.1
+        Compiling sharded-slab v0.1.0
+        Compiling lock_api v0.4.2
+        Compiling crossbeam-utils v0.8.1
+        Compiling indexmap v1.6.1
+        Compiling num-traits v0.2.14
+        Compiling num-integer v0.1.44
+        Compiling memoffset v0.6.1
+        Compiling rayon v1.5.0
+        Compiling crossbeam-utils v0.7.2
+        Compiling miniz_oxide v0.4.3
+        Compiling rustc-ap-rustc_lexer v685.0.0
+        Compiling ra_ap_text_edit v0.0.22
+        Compiling itertools v0.9.0
+        Compiling heck v0.3.2
+        Compiling ra_ap_parser v0.0.22
+        Compiling unicase v2.6.0
+        Compiling proc-macro-error-attr v1.0.4
+        Compiling proc-macro-error v1.0.4
+        Compiling pest v2.1.3
+        Compiling tinyvec v1.1.0
+        Compiling unicode-bidi v0.3.4
+        Compiling walkdir v2.3.1
+        Compiling textwrap v0.11.0
+        Compiling form_urlencoded v1.0.0
+        Compiling ra_ap_toolchain v0.0.22
+        Compiling regex v1.4.2
+        Compiling libloading v0.5.2
+        Compiling addr2line v0.14.0
+        Compiling unicode-normalization v0.1.16
+        Compiling pest_meta v2.1.3
+        Compiling tracing-log v0.1.1
+        Compiling ena v0.14.0
+        Compiling quote v1.0.8
+        Compiling atty v0.2.14
+        Compiling parking_lot_core v0.8.2
+        Compiling perf-event-open-sys v1.0.1
+        Compiling time v0.1.44
+        Compiling num_cpus v1.13.0
+        Compiling iovec v0.1.4
+        Compiling net2 v0.2.37
+        Compiling inotify-sys v0.1.4
+        Compiling filetime v0.2.13
+        Compiling dirs-sys v0.3.5
+        Compiling dirs-sys-next v0.1.1
+        Compiling sig v1.0.0
+        Compiling regex-automata v0.1.9
+        Compiling ra_ap_vfs v0.0.22
+        Compiling idna v0.2.0
+        Compiling crossbeam-channel v0.5.0
+        Compiling crossbeam-epoch v0.9.1
+        Compiling petgraph v0.5.1
+        Compiling clap v2.33.3
+        Compiling colored v2.0.0
+        Compiling crossbeam-channel v0.4.4
+        Compiling backtrace v0.3.55
+        Compiling parking_lot v0.11.1
+        Compiling perf-event v0.4.6
+        Compiling inotify v0.8.3
+        Compiling rand_core v0.5.1
+        Compiling mio v0.6.23
+        Compiling dirs v3.0.1
+        Compiling dirs-next v1.0.2
+        Compiling matchers v0.0.1
+        Compiling url v2.2.0
+        Compiling crossbeam-deque v0.8.0
+        Compiling synstructure v0.12.4
+        Compiling pest_generator v2.1.3
+        Compiling chrono v0.4.19
+        Compiling ra_ap_profile v0.0.22
+        Compiling rand_chacha v0.2.2
+        Compiling rustyline v6.3.0
+        Compiling mio-extras v2.0.6
+        Compiling pulldown-cmark-to-cmark v6.0.0
+        Compiling tracing-attributes v0.1.11
+        Compiling salsa-macros v0.16.0
+        Compiling thiserror-impl v1.0.23
+        Compiling chalk-derive v0.36.0
+        Compiling structopt-derive v0.4.14
+        Compiling pest_derive v2.1.0
+        Compiling rand v0.7.3
+        Compiling notify v5.0.0-pre.4
+        Compiling tracing v0.1.22
+        Compiling salsa v0.16.0
+        Compiling chalk-ir v0.36.0
+        Compiling thiserror v1.0.23
+        Compiling ra_ap_vfs-notify v0.0.22
+        Compiling semver-parser v0.10.0
+        Compiling tempfile v3.1.0
+        Compiling structopt v0.3.21
+        Compiling which v4.0.2
+        Compiling smol_str v0.1.17
+        Compiling tracing-serde v0.1.2
+        Compiling semver v0.11.0
+        Compiling ra_ap_tt v0.0.22
+        Compiling rowan v0.10.0
+        Compiling ra_ap_cfg v0.0.22
+        Compiling ra_ap_test_utils v0.0.22
+        Compiling tracing-subscriber v0.2.15
+        Compiling cargo_metadata v0.12.1
+        Compiling ra_ap_proc_macro_api v0.0.22
+        Compiling ra_ap_syntax v0.0.22
+        Compiling tracing-tree v0.1.6
+        Compiling chalk-solve v0.36.0
+        Compiling ra_ap_base_db v0.0.22
+        Compiling ra_ap_mbe v0.0.22
+        Compiling ra_ap_project_model v0.0.22
+        Compiling ra_ap_hir_expand v0.0.22
+        Compiling chalk-recursive v0.36.0
+        Compiling ra_ap_hir_def v0.0.22
+        Compiling ra_ap_hir_ty v0.0.22
+        Compiling ra_ap_hir v0.0.22
+        Compiling ra_ap_ide_db v0.0.22
+        Compiling ra_ap_ssr v0.0.22
+        Compiling ra_ap_completion v0.0.22
+        Compiling ra_ap_assists v0.0.22
+        Compiling ra_ap_ide v0.0.22
+        Compiling evcxr v0.6.0
+        Compiling evcxr_repl v0.6.0
+         Finished release [optimized] target(s) in 4m 20s
+       Installing /home/tilo/.cargo/bin/evcxr
+        Installed package `evcxr_repl v0.6.0` (executable `evcxr`)
+     [tilo@holm play-rust]$ evcxr
+     bash: evcxr: Kommando nicht gefunden.
+     [tilo@holm play-rust]$ 
+     [tilo@holm play-rust]$ which rustup
+     /usr/bin/rustup
+     [tilo@holm play-rust]$ 
+     [tilo@holm play-rust]$ which rustc
+     /usr/bin/rustc
+     [tilo@holm play-rust]$ which rustfmt
+     /usr/bin/rustfmt
+     [tilo@holm play-rust]$ which cargo
+     /usr/bin/cargo
+     [tilo@holm play-rust]$ ls ~/.cargo/bin/
+     evcxr  rustlings
+     [tilo@holm play-rust]$ 
+     [tilo@holm play-rust]$ 
+     [tilo@holm play-rust]$ ~/.cargo/bin/evcxr 
+     Welcome to evcxr. For help, type :help
+     >> :help
+     :vars             List bound variables and their types
+     :opt [level]      Toggle/set optimization level
+     :fmt [format]     Set output formatter (default: {:?}). 
+     :efmt [format]    Set the formatter for errors returned by ?
+     :explain          Print explanation of last error
+     :clear            Clear all state, keeping compilation cache
+     :dep              Add dependency. e.g. :dep regex = "1.0"
+     :sccache [0|1]    Set whether to use sccache.
+     :linker [linker]  Set/print linker. Supported: system, lld
+     :version          Print Evcxr version
+     :quit             Quit evaluation and exit
+     :preserve_vars_on_panic [0|1]  Try to keep vars on panic
+
+     Mostly for development / debugging purposes:
+     :last_compile_dir Print the directory in which we last compiled
+     :timing           Toggle printing of how long evaluations take
+     :last_error_json  Print the last compilation error as JSON (for debugging)
+     :time_passes      Toggle printing of rustc pass times (requires nightly)
+     :internal_debug   Toggle various internal debugging code
+
+     >> 
+     [tilo@holm play-rust]$ 
+     [tilo@holm play-rust]$ 
+     [tilo@holm play-rust]$ ~/.cargo/bin/evcxr 
+     Welcome to evcxr. For help, type :help
+     >> :version
+     0.6.0
+
+     >> :linker
+     linker: system
+
+     >> :vars
+
+     >> :fmt
+     Output format: {:?}
+
+     >> println!("Tilo")
+     ()
+     Tilo
+     >> vec!("Tilo")
+     ["Tilo"]
+     >> vec!(1,2,3)
+     [1, 2, 3]
+     >> i32(4)
+        ^^^ not a function
+     expected function, found builtin type `i32`
+     >> I32(4)
+        ^^^ not found in this scope
+     cannot find function, tuple struct or tuple variant `I32` in this scope
+     >> Integer(4)
+        ^^^^^^^ not found in this scope
+     cannot find function, tuple struct or tuple variant `Integer` in this scope
+     >> i32("4")
+        ^^^ not a function
+     expected function, found builtin type `i32`
+     >> let x: i32 = -4
+     The variable `x` has a type (i32) that can't be persisted. You can try wrapping your code in braces so that the variable goes out of scope before the end of the code to be executed.
+     >> :vars
+
+     >> {let x: i32 = -4}
+                        ^ expected one of `.`, `;`, `?`, or an operator
+     expected one of `.`, `;`, `?`, or an operator, found `}`
+        ^^^^^^^^^^^^^^^^^ 
+     unnecessary braces around block return value
+     help: remove these braces
+     >> let x: i32 = -4;
+     >> :vars
+     x: i32
+
+     >> type(x)
+            ^ expected identifier
+     expected identifier, found `(`
+     >> x.sub(2)
+          ^^^ method not found in `i32`
+     no method named `sub` found for type `i32` in the current scope
+     help: items from traits can only be used if the trait is in scope
+     help: the following trait is implemented but not in scope; perhaps add a `use` for it:
+     >> use std
+     The variable `x` has a type (i32) that can't be persisted. You can try wrapping your code in braces so that the variable goes out of scope before the end of the code to be executed.
+     >> use std;
+     >> :vars
+     x: i32
+
+     >> x.sub(2)
+    
+     the following trait is implemented but not in scope; perhaps add a `use` for it:
+     >> x.std::sub(2)
+             ^^ expected one of `(`, `.`, `;`, `?`, `}`, or an operator
+     expected one of `(`, `.`, `;`, `?`, `}`, or an operator, found `::`
+     >> x.sub(2);
+          ^^^ method not found in `i32`
+     no method named `sub` found for type `i32` in the current scope
+     help: items from traits can only be used if the trait is in scope
+     help: the following trait is implemented but not in scope; perhaps add a `use` for it:
+     >> std::sub(2);
+             ^^^ not found in `std`
+     cannot find function `sub` in crate `std`
+     >> x.std::Sub(2);
+             ^^ expected one of `(`, `.`, `;`, `?`, `}`, or an operator
+     expected one of `(`, `.`, `;`, `?`, `}`, or an operator, found `::`
+     >> x - 2
+     -6
+     >> x::std::Sub(2);
+        ^ use of undeclared crate or module `x`
+     failed to resolve: use of undeclared crate or module `x`
+     >> x::sub(2);
+        ^ use of undeclared crate or module `x`
+     failed to resolve: use of undeclared crate or module `x`
+     >> x::Sub(2);
+        ^ use of undeclared crate or module `x`
+     failed to resolve: use of undeclared crate or module `x`
+     >> pub struct User {
+     username: String }
+     >> :vars
+     x: i32
+
+     >> let user: User = { username: String::from("Tilo") }
+     The variable `user` has a type (User) that can't be persisted. You can try wrapping your code in braces so that the variable goes out of scope before the end of the code to be executed.
+     >> {let user: User = { username: String::from("Tilo") }}
+                                                   ^^^^^^ expected type
+     expected type, found `"Tilo"`
+     help: maybe write a path separator here
+                                                            ^ expected one of `.`, `;`, `?`, or an operator
+     expected one of `.`, `;`, `?`, or an operator, found `}`
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
+     unnecessary braces around block return value
+     help: remove these braces
+     >> {let user = User { username: String::from("Tilo") }}
+                                                           ^ expected one of `.`, `;`, `?`, or an operator
+     expected one of `.`, `;`, `?`, or an operator, found `}`
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
+     unnecessary braces around block return value
+     help: remove these braces
+     >> let user = User { username: String::from("Tilo") }
+     The variable `user` has a type (User) that can't be persisted. You can try wrapping your code in braces so that the variable goes out of scope before the end of the code to be executed.
+     >> 
+     >> {let user = User { username: String::from("Tilo") };}
+     ()
+     >> :var
+     Unrecognised command :var
+     >> :vars
+     x: i32
+
+     >> 
+     >> 
+     >> 
+     >> let user = User { username: String::from("Tilo") };
+     >> 
+     >> :vars
+     user: User
+     x: i32
+
+     >> user
+        ^^^^ `User` cannot be formatted using `{:?}`
+     `User` doesn't implement `Debug`
+     help: the trait `Debug` is not implemented for `User`
+     >> println!("{}", user)
+                       ^^^^ `User` cannot be formatted with the default formatter
+     `User` doesn't implement `std::fmt::Display`
+     help: the trait `std::fmt::Display` is not implemented for `User`
+     >> user.username
+     "Tilo"
+     >> "Tilo"
+     "Tilo"
+     >> "Tilo".Display()
+               ^^^^^^^ method not found in `&'static str`
+     no method named `Display` found for reference `&'static str` in the current scope
+     >> "Tilo".Debug()
+               ^^^^^ method not found in `&'static str`
+     no method named `Debug` found for reference `&'static str` in the current scope
+     >> "Tilo".fmt()
+    
+    
+     the following traits are implemented but not in scope; perhaps add a `use` for one of them:
+     >> "Tilo".fmt();
+               ^^^ method not found in `&'static str`
+     no method named `fmt` found for reference `&'static str` in the current scope
+     help: items from traits can only be used if the trait is in scope
+     help: the following traits are implemented but not in scope; perhaps add a `use` for one of them:
+     >> user
+        ^^^^ `User` cannot be formatted using `{:?}`
+     `User` doesn't implement `Debug`
+     help: the trait `Debug` is not implemented for `User`
+     >> println!("{}", user)
+                       ^^^^ `User` cannot be formatted with the default formatter
+     `User` doesn't implement `std::fmt::Display`
+     help: the trait `std::fmt::Display` is not implemented for `User`
+     >> println!("{}", user);
+                       ^^^^ `User` cannot be formatted with the default formatter
+     `User` doesn't implement `std::fmt::Display`
+     help: the trait `std::fmt::Display` is not implemented for `User`
+     >> user;
+     >> user
+        ^^^^ not found in this scope
+     cannot find value `user` in this scope
+     >> :vars
+     x: i32
+
+     >> 
+     >> let user: User = User { username: String::from("Tilo") };
+     >> user
+        ^^^^ `User` cannot be formatted using `{:?}`
+     `User` doesn't implement `Debug`
+     help: the trait `Debug` is not implemented for `User`
+     >> user.username
+     "Tilo"
+     >> user: User = User { username: String::from("Tilo") };
+        ^^^^^^^^^^ 
+     type ascription is experimental
+     >> :vars
+     user: User
+     x: i32
+
+     >> 
+     >> 
+     >> 
+     >> user: User = User { username: "Tilo" };
+        ^^^^^^^^^^ 
+     type ascription is experimental
+                                      ^^^^^^ expected struct `String`, found `&str`
+     mismatched types
+     help: try using a conversion method
+     >>
+   #+END_EXAMPLE
+   
+
+* Visual Studio Code on Manjaro
+
+  https://snapcraft.io/install/code/manjaro
+
+  Describes to enable snaps on Manjaro Linux and install Visual Studio Code.
+
+  On my Manajaro system I left out step "Enabled snapd"
+  and went straight to "Install Visual Studio Code".
+  But there has been some change made by the system
+  before actual installation procedure has been started.
+
+  #+BEGIN_EXAMPLE
+    [tilo@holm ~]$ 
+    [tilo@holm ~]$ snap help
+    The snap command lets you install, configure, refresh and remove snaps.
+    Snaps are packages that work across many different Linux distributions,
+    enabling secure delivery and operation of the latest apps and utilities.
+
+    Usage: snap <command> [<options>...]
+
+    Commonly used commands can be classified as follows:
+
+             Basics: find, info, install, remove, list
+            ...more: refresh, revert, switch, disable, enable, create-cohort
+            History: changes, tasks, abort, watch
+            Daemons: services, start, stop, restart, logs
+        Permissions: connections, interface, connect, disconnect
+      Configuration: get, set, unset, wait
+        App Aliases: alias, aliases, unalias, prefer
+            Account: login, logout, whoami
+          Snapshots: saved, save, check-snapshot, restore, forget
+             Device: model, reboot, recovery
+          ... Other: warnings, okay, known, ack, version
+        Development: download, pack, run, try
+
+    For more information about a command, run 'snap help <command>'.
+    For a short summary of all commands, run 'snap help --all'.
+    [tilo@holm ~]$ 
+    [tilo@holm ~]$ su hauptb
+    Passwort: 
+    [hauptb@holm tilo]$ 
+    [hauptb@holm tilo]$ 
+    [hauptb@holm tilo]$ sudo snap install code --classic
+    [sudo] Passwort für hauptb: 
+    2020-12-22T14:36:09+01:00 INFO Waiting for automatic snapd restart...
+    code ea3859d4 from Visual Studio Code (vscode✓) installed
+    [hauptb@holm tilo]$ 
+    [hauptb@holm tilo]$ 
+    [hauptb@holm tilo]$ snap list
+    Name  Version   Rev    Tracking       Publisher   Notes
+    code  ea3859d4  52     latest/stable  vscode✓     classic
+    core  16-2.48   10577  latest/stable  canonical✓  core
+    [hauptb@holm tilo]$ 
+  #+END_EXAMPLE
+
+
