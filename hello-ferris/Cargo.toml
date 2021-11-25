@@ -1,5 +1,5 @@
 [package]
-name = "hello-rust"
+name = "hello-ferris"
 version = "0.1.0"
 authors = ["Tilo Wirkner <tilo@tilofix.de>"]
 edition = "2018"
