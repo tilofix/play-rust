@@ -4,19 +4,19 @@
 
 //! # Crate to learn hello world
 //!
-/*! 
+/*!
 Let's see where this block documentation comment `/*! ... */` goes ...
 look!, it's an inner comment and applies to the parent which is the crate.
 
-By the way - to have the link available - `rustdoc` uses the 
+By the way - to have the link available - `rustdoc` uses the
 [CommonMark Markdown specification](https://commonmark.org/).
 
-See!, for documentation comments the same notation is applied 
-to distiguish between [inner and outer comments](https://doc.rust-lang.org/reference/comments.html) 
+See!, for documentation comments the same notation is applied
+to distiguish between [inner and outer comments](https://doc.rust-lang.org/reference/comments.html)
 as for [inner and outer attributes](https://doc.rust-lang.org/reference/attributes.html), respectivily:
-- __Inner attributes/doc comments__, written with a bang (`!`) after the hash (`#`), 
-  apply to the item that the attribute is declared within, apply to the parent of the comment/attribute. 
-- __Outer attributes/doc comments__, written without the bang after the hash, 
+- __Inner attributes/doc comments__, written with a bang (`!`) after the hash (`#`),
+  apply to the item that the attribute is declared within, apply to the parent of the comment/attribute.
+- __Outer attributes/doc comments__, written without the bang after the hash,
 apply to the thing that follows the attribute.
 
 |       | attributes | line comments | block comments |
@@ -41,7 +41,7 @@ apply to the thing that follows the attribute.
 ///
 /// A line documentation outer comment with _three_ slashes `///`
 ///
-/** 
+/**
 A block documentation outer comment can be nested `/** ... */`
 
 File `hello.md` is included here in `main.rs` but belongs to module `hello`.
@@ -50,7 +50,7 @@ File `hello.md` is included here in `main.rs` but belongs to module `hello`.
 mod hello;
 
 /// `play_rust`'s `main` function to play with rust.
-/// 
+///
 // Including documentation from a text file requires 2021 edition (Version 1.54.0)
 #[doc = include_str!("./main.md")]
 fn main() -> () {
