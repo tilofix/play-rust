@@ -309,7 +309,90 @@ Which creates an *.ll file in directory ~./target/debug/deps/debugging.ll~.
 
 For unknown reason I'm not able to have two tasks of type ~cargo~ in tasks.json.
 
+** Editions and Versions
 
+   When I learnt documentation comments I added a doc-comment which
+   includes a markdown file with text contributing to the
+   documentation. The changes compiled but ~rustfmt~ (~cargo fmt~)
+   created an error regardless if I compile with 'nightly':
+   #+BEGIN_EXAMPLE
+     [tilo@holm play-rust]$ 
+     [tilo@holm play-rust]$ cargo fmt --verbose
+     [bin (2018)] "/home/tilo/Projects/play-rust/src/main.rs"
+     [lib (2018)] "/home/tilo/Projects/play-rust/world/src/lib.rs"
+     rustfmt --edition 2018 /home/tilo/Projects/play-rust/src/main.rs /home/tilo/Projects/play-rust/world/src/lib.rs
+     error: unexpected token: `include_str`
+       --> /home/tilo/Projects/play-rust/src/main.rs:31:9
+        |
+     31 | #[doc = include_str!("./hello.md")]
+        |         ^^^^^^^^^^^
+
+     [tilo@holm play-rust]$ 
+     [tilo@holm play-rust]$ 
+     [tilo@holm play-rust]$ rustup show
+     Default host: x86_64-unknown-linux-gnu
+     rustup home:  /home/tilo/.rustup
+
+     installed toolchains
+     --------------------
+
+     stable-x86_64-unknown-linux-gnu (default)
+     nightly-x86_64-unknown-linux-gnu
+
+     active toolchain
+     ----------------
+
+     nightly-x86_64-unknown-linux-gnu (directory override for '/home/tilo/Projects/play-rust')
+     rustc 1.51.0-nightly (a62a76047 2021-01-13)
+
+     [tilo@holm play-rust]$ 
+   #+END_EXAMPLE
+
+   I found [[https://blog.rust-lang.org/2021/07/29/Rust-1.54.0.html#attributes-can-invoke-function-like-macros][Attributes can invoke function-like macros]] in release notes
+   of Rust 1.54.0.
+   
+   I started an update and got following versions:
+   #+BEGIN_EXAMPLE
+     [tilo@holm play-rust]$ 
+     [tilo@holm play-rust]$ rustup update
+     info: syncing channel updates for 'stable-x86_64-unknown-linux-gnu'
+     info: latest update on 2021-12-02, rust version 1.57.0 (f1edd0429 2021-11-29)
+     ...
+     info: installing component 'rls'
+     info: installing component 'rust-analysis'
+     info: installing component 'rust-src'
+     info: installing component 'cargo'
+     info: installing component 'clippy'
+     info: installing component 'rust-docs'
+     info: installing component 'rust-std'
+     info: installing component 'rustc'
+     info: installing component 'rustfmt'
+     info: syncing channel updates for 'nightly-x86_64-unknown-linux-gnu'
+     info: latest update on 2021-12-05, rust version 1.59.0-nightly (efec54529 2021-12-04)
+     ...
+     info: installing component 'rust-src'
+     info: installing component 'cargo'
+     info: installing component 'clippy'
+     info: installing component 'rust-docs'
+     info: installing component 'rust-std'
+     info: installing component 'rustc'
+     info: installing component 'rustfmt'
+
+     stable-x86_64-unknown-linux-gnu updated - rustc 1.57.0 (f1edd0429 2021-11-29) (from rustc 1.49.0 (e1884a8e3 2020-12-29))
+     nightly-x86_64-unknown-linux-gnu updated - rustc 1.59.0-nightly (efec54529 2021-12-04) (from rustc 1.51.0-nightly (a62a76047 2021-01-13))
+   #+END_EXAMPLE
+
+   Now the code with =include_str!= marco in a documentation comment
+   can be formatted, even though the ~edition~ key is still set to '2018'.
+   #+BEGIN_EXAMPLE
+     [tilo@holm play-rust]$ 
+     [tilo@holm play-rust]$ cargo fmt --verbose
+     [bin (2018)] "/home/tilo/Projects/play-rust/src/main.rs"
+     [lib (2018)] "/home/tilo/Projects/play-rust/world/src/lib.rs"
+     rustfmt --edition 2018 /home/tilo/Projects/play-rust/src/main.rs /home/tilo/Projects/play-rust/world/src/lib.rs
+     [tilo@holm play-rust]$ 
+   #+END_EXAMPLE
+   
 * Org-Babel Rust
 
 Cargo's subcommand [[https://crates.io/search?q=cargo-script][cargo-script]] let's you run Rust "scripts",
