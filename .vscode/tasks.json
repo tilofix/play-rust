@@ -1,0 +1,23 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+        {
+            "type":"shell",
+			"command":["cargo test --workspace"],
+			"group": "build",
+			"label": "Rust: Test Macro play-rust",
+        },
+		{
+			"type": "shell",
+			"command": "cargo doc --workspace",
+			"group": "build",
+			"label": "Rust: Documentation - play-rust"
+		},
+        {
+            "type":"shell",
+			"command":["cargo clean && cargo +nightly rustc -- -Z unpretty=expanded > play-rust_expanded.rs && rustfmt play-rust_expanded.rs"],
+			"group": "build",
+			"label": "Rust: Expand Macro play-rust",
+        },
+	]
+}

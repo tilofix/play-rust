@@ -31,10 +31,10 @@ apply to the thing that follows the attribute.
 - use M-x 'compile' to get expanded version of the source code
 - use M-x 'rust-compile' to actually compile the source code
 - option '--pretty' requires rustc's unstable options which requires 'nightly'.
-  - cargo +nightly rustc -- -Z unpretty=expanded > main_expanded.rs
-  - cargo +nightly rustc -- -Z unpretty=hir > main_hir.txt
-  - cargo +nightly rustc -- -Z unpretty=hir,typed > main_thir.txt
-  - cargo +nightly rustc -- -Z unpretty=mir > main_mir.txt
+  - cargo +nightly rustc -- -Z unpretty=expanded  > play-rust_expanded.rs
+  - cargo +nightly rustc -- -Z unpretty=hir       > play-rust_hir.txt
+  - cargo +nightly rustc -- -Z unpretty=hir,typed > play-rust_thir.txt
+  - cargo +nightly rustc -- -Z unpretty=mir       > play-rust_mir.txt
  */
 
 /// # Module to say Hello, World!
