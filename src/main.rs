@@ -1,4 +1,4 @@
-// -*- compile-command: "cargo +nightly rustc -- -Z unstable-options --pretty expanded" -*-
+// -*- compile-command: "cargo +nightly rustc -- -Z unpretty=expanded" -*-
 // Required to generate "run" button
 #![doc(html_playground_url = "https://play.rust-lang.org/")]
 
@@ -31,7 +31,7 @@ apply to the thing that follows the attribute.
 - use M-x 'compile' to get expanded version of the source code
 - use M-x 'rust-compile' to actually compile the source code
 - option '--pretty' requires rustc's unstable options which requires 'nightly'.
-  - cargo +nightly rustc -- -Z unstable-options --pretty expanded > main_expanded.rs
+  - cargo +nightly rustc -- -Z unpretty=expanded > main_expanded.rs
   - cargo +nightly rustc -- -Z unpretty=hir > main_hir.txt
   - cargo +nightly rustc -- -Z unpretty=hir,typed > main_thir.txt
   - cargo +nightly rustc -- -Z unpretty=mir > main_mir.txt
@@ -47,19 +47,31 @@ A block documentation outer comment can be nested `/** ... */`
 File `hello.md` is included here in `main.rs` but belongs to module `hello`.
 */
 #[doc = include_str!("./hello.md")]
+// Module provides "Hello" portion of the output
 mod hello;
 
-/// `play_rust`'s `main` function to play with rust.
+#[doc = include_str!("./world/mod.md")]
+// Module provides "World" portion of the output
+mod world;
+
+/// `play-rust`'s `main` function to play with rust.
 ///
 // Including documentation from a text file requires 2021 edition (Version 1.54.0)
 #[doc = include_str!("./main.md")]
 fn main() -> () {
-    // Call function `hello()` from module `hello`.
-    hello::hello();
-    // Hello-World is created with library module ('world')
-    println!("Hello, {}! From Library 'world'", world::world());
+    // Hello-World's part "World" is created by module `hello` and `world`.
+    println!(
+        "{}, {}! From Modules 'hello' and 'world'",
+        hello::hello(),
+        world::world()
+    );
+    // Hello-World's part "World" is created by crate-library `world`
+    println!("Hello, {}! From Library 'world'", ::world::world());
 
     let a_char: char = '❤'; // UTF-8
-    let a_str: &str = "Tilo";
-    println!("Hello, World! comes with {} from {}", a_char, a_str);
+    std::assert!(
+        4 == std::mem::size_of::<char>(),
+        "Type 'char' has no length of 4 on this platform"
+    );
+    println!("Hello, World! comes with {} from Tilo", a_char);
 }

@@ -1,4 +1,4 @@
-//! ## Module to print Hello, World!
+//! ## Module to return Hello
 //!
 #![doc = "Here is an inner doc-attribute comment 
 to document its parent, the file and thus module `hello.rs`."]
@@ -33,6 +33,22 @@ to document its ."]
 /// hello();
 /// ```
 
-pub fn hello() {
-    println!("Hello, World! From Module 'hello'")
+pub fn hello() -> String {
+    let a_string_ref: std::string::String = String::from("Hello");
+
+    /*
+    As String is growable, and thus not a sized type
+    but a struct which is made of three components:
+    - a pointer to some bytes,
+    - a length,
+    - and a capacity.
+    */
+    std::assert_eq!(
+        std::any::TypeId::of::<*const u8>(),
+        std::any::Any::type_id(&a_string_ref.as_ptr())
+    );
+    std::assert_eq!(5, a_string_ref.len());
+    std::assert_eq!(5, a_string_ref.capacity());
+
+    a_string_ref
 }
