@@ -15,7 +15,8 @@ pub fn world() -> &'static str {
     // We need to declare the reference with static region
     // as we cannot return a local variable (from the stack) of function
     let a_u8_slice_ref: &'static [u8; 11] = &[87, 111, 114, 108, 100, 32, 40, 109, 111, 100, 41];
-    assert_eq!(
+
+    std::assert_eq!(
         std::mem::size_of::<[u8; 11]>(),
         std::mem::size_of_val(a_u8_slice_ref)
     );

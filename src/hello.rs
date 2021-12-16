@@ -37,7 +37,7 @@ pub fn hello() -> String {
     let a_string: std::string::String = String::from("Hello");
 
     /*
-    As String is growable, and thus not a sized type
+    A `String` is growable, and thus not a sized type
     but a struct which is made of three components:
     - a pointer to some bytes,
     - a length,
