@@ -34,7 +34,7 @@ to document its ."]
 /// ```
 
 pub fn hello() -> String {
-    let a_string_ref: std::string::String = String::from("Hello");
+    let a_string: std::string::String = String::from("Hello");
 
     /*
     As String is growable, and thus not a sized type
@@ -45,10 +45,10 @@ pub fn hello() -> String {
     */
     std::assert_eq!(
         std::any::TypeId::of::<*const u8>(),
-        std::any::Any::type_id(&a_string_ref.as_ptr())
+        std::any::Any::type_id(&a_string.as_ptr())
     );
-    std::assert_eq!(5, a_string_ref.len());
-    std::assert_eq!(5, a_string_ref.capacity());
+    std::assert_eq!(5, a_string.len());
+    std::assert_eq!(5, a_string.capacity());
 
-    a_string_ref
+    a_string
 }
