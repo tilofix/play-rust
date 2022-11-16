@@ -66,7 +66,10 @@ fn main() -> () {
         world::world()
     );
     // Hello-World's part "World" is created by crate-library `world`
-    println!("Hello, {}! From Library 'world'", ::world::world());
+    println!(
+        "Hello, {}! From Library 'world'", 
+        ::world::world()
+    );
 
     let a_char: char = '❤'; // UTF-8
     std::assert!(
