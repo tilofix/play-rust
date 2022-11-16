@@ -440,7 +440,8 @@ Desktop development with C++
 - Optional (TILO: but somehow required when you try to deselect)
   - MSVC v143 - VS 2022 C++ x64/x86 build tools (Latest)
   - (TILO: following I deselected)
-    - Windows 10 SDK (10.0.19041.0)
+    - Windows 10 SDK (10.0.19041.0) 
+      [UPDATE: below I found that SDK is required for rustc to compile against ~x86_64-pc-windows-msvc~]
     - C++ CMake tools for Windows
     - Testing tools core features - Build Tools
     - C++ AddressSanitizer
@@ -477,7 +478,7 @@ error: could not compile `play-rust` due to previous error
 PS C:\Users\twirkner\Projects\play-rust> 
 #+END_EXAMPLE
 
-Double checked with old installation anf found that all sub-items of the BuildTools Installation
+Double checked with old installation and found that all sub-items of the BuildTools Installation
 had been installed, see above "(TILO: following I deselected)".
 The Rust install guide for Windows says "For Visual Studio, 
 make sure to check the "C++ tools" and "Windows 10 SDK" option."
@@ -490,6 +491,95 @@ PS C:\Users\twirkner\Projects\play-rust> cargo build
     Finished dev [unoptimized + debuginfo] target(s) in 12.46s
 PS C:\Users\twirkner\Projects\play-rust>
 #+END_EXAMPLE
+
+** Trouble with rust-analyzer 
+~rust-analyzer failed to run build scripts Check the server logs for additional info.~
+
+I don't trust in my rustup, cargo installation as I copied over from my old disk.
+
+Here is what rustup tells me on updates and what is says then it has been self-updated:
+#+BEGIN_EXAMPLE
+2PP4QN3[rust@rust-lang]$
+2PP4QN3[rust@rust-lang]$ rustup check
+stable-x86_64-pc-windows-msvc - Update available : 1.57.0 (f1edd0429 2021-11-29) -> 1.62.1 (e092d0b6b 2022-07-16)
+nightly-x86_64-pc-windows-msvc - Update available : 1.59.0-nightly (c5ecc1570 2021-12-15) -> 1.64.0-nightly (2643b1646 2022-07-27)
+rustup - Update available : 1.24.3 -> 1.25.1
+2PP4QN3[rust@rust-lang]$
+2PP4QN3[rust@rust-lang]$
+2PP4QN3[rust@rust-lang]$ rustup self update
+info: checking for self-updates
+info: downloading self-update
+  rustup updated - 1.25.1 (from 1.24.3)
+
+warning: tool `rustfmt` is already installed, remove it from `C:\Users\twirkner\.cargo\bin`, then run `rustup update` to have rustup manage this tool.
+warning: tool `cargo-fmt` is already installed, remove it from `C:\Users\twirkner\.cargo\bin`, then run `rustup update` to have rustup manage this tool.
+
+2PP4QN3[rust@rust-lang]$ 
+#+END_EXAMPLE
+
+Most trouble ~rust-analyzer~ has is with Rust's language project folder ~rust@rust-lang~, 
+I put next to mine ~play-rust~. Previous error disappeared after I ~deinit~ git-submodules for the moment.
+There is another error 
+#+BEGIN_EXAMPLE
+rust-analyzer failed to load workspace: Failed to read Cargo metadata from Cargo.toml file c:\Users\twirkner\Projects\rust@rust-lang\Cargo.toml, 
+cargo 1.59.0-nightly (a359ce160 2021-12-14): Failed to run 
+`"cargo" "metadata" "--format-version" "1" "--manifest-path" "c:\\Users\\twirkner\\Projects\\rust@rust-lang\\Cargo.toml" "--filter-platform" "x86_64-pc-windows-msvc"`: 
+`cargo metadata` exited with an error: error: failed to load manifest for workspace member 
+`c:\Users\twirkner\Projects\rust@rust-lang\src\tools\rust-installer` 
+Caused by: failed to read `c:\Users\twirkner\Projects\rust@rust-lang\src\tools\rust-installer\Cargo.toml` 
+Caused by: The system cannot find the file specified. (os error 2)
+#+END_EXAMPLE
+
+
+#+BEGIN_EXAMPLE
+rust-analyzer failed to load workspace: Failed to read Cargo metadata from Cargo.toml file c:\Users\twirkner\Projects\rust@rust-lang\Cargo.toml, 
+cargo 1.59.0-nightly (a359ce160 2021-12-14): Failed to run 
+`"cargo" "metadata" "--format-version" "1" "--manifest-path" "c:\\Users\\twirkner\\Projects\\rust@rust-lang\\Cargo.toml" "--filter-platform" "x86_64-pc-windows-msvc"`: 
+`cargo metadata` exited with an error: Updating crates.io index Downloading crates ... 
+Downloaded futures-core v0.3.19 
+Downloaded indexmap v1.9.1 
+Downloaded pathdiff v0.2.1 
+Downloaded matchers v0.1.0 
+Downloaded intl_pluralrules v7.0.1 
+Downloaded git2 v0.14.2 
+Downloaded thread_local v1.1.4 
+Downloaded tinystr v0.3.4 
+Downloaded tendril v0.4.3 
+Downloaded unic-langid-macros v0.9.0 
+Downloaded unicode-segmentation v1.9.0 
+Downloaded unic-langid-macros-impl v0.9.0 
+Downloaded itoa v1.0.2 
+Downloaded askama v0.11.0 
+Downloaded clap v3.2.5 
+Downloaded libc v0.2.126 
+Downloaded kstring v2.0.0 
+Down...
+#+END_EXAMPLE
+
+
+#+BEGIN_EXAMPLE
+2PP4QN3[rust@rust-lang]$ 
+2PP4QN3[rust@rust-lang]$ cargo metadata --format-version 1 --filter-platform x86_64-pc-windows-msvc --manifest-path ./Cargo.toml 
+error: failed to download `minifier v0.2.1`
+
+Caused by:
+  unable to get packages from source
+
+Caused by:
+  failed to parse manifest at `C:\Users\twirkner\.cargo\registry\src\github.com-1ecc6299db9ec823\minifier-0.2.1\Cargo.toml`
+
+Caused by:
+  feature `strip` is required
+
+  The package requires the Cargo feature called `strip`, but that feature is not stabilized in this version of Cargo (1.59.0-nightly (a359ce160 2021-12-14)).
+  Consider trying a more recent nightly release.
+  See https://doc.rust-lang.org/nightly/cargo/reference/unstable.html#profile-strip-option for more information about the status of this feature.
+2PP4QN3[rust@rust-lang]$ 
+#+END_EXAMPLE
+
+After I updated both toolchains - wanted 'nightly' only, but executed wrong command ~rustup +nightly update~ - above 
+command ~cargo metadata~ finished with a lot of output.
+(shall have executed ~rustup update nightly~)
 
 
 * Org-Babel Rust
