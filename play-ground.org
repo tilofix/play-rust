@@ -378,6 +378,195 @@ can be formatted, even though the ~edition~ key is still set to '2018'.
   [tilo@holm play-rust]$ 
 #+END_EXAMPLE
 
+** After Moving to a new Windows 10 Host
+I simply copied following directories from old disk to new disk
+- =~/.cardo=
+- =~/.rustup=
+and found Rust is not working yet.
+
+I need to add the =~/.cargo/bin= directory to my PATH variable.
+
+I have been faced with a linker error. I'm surprized that cargo has this not installed ...
+or I had the Visual C++ option already intalled on my old disk.
+
+#+BEGIN_EXAMPLE
+  Executing task: CodeLLDB: cargo 
+
+  Running `cargo build --bin=play-rust --package=play-rust --message-format=json`...
+     Compiling play-rust v0.1.0 (C:\Users\twirkner\Projects\play-rust)
+  error: linker `link.exe` not found
+    |
+    = note: The system cannot find the file specified. (os error 2)
+
+  note: the msvc targets depend on the msvc linker but `link.exe` was not found
+
+  note: please ensure that VS 2013, VS 2015, VS 2017 or VS 2019 was installed with the Visual C++ option
+
+  error: aborting due to previous error
+
+  error: could not compile `play-rust` due to 2 previous errors
+
+   ,*  The terminal process terminated with exit code: 1. 
+   ,*  Terminal will be reused by tasks, press any key to close it. 
+#+END_EXAMPLE
+
+Ah, I see ([[https://rust-lang.github.io/rustup/installation/windows.html][The rustup book | Installation Windows]]), I guess I had it installed on my old disk: 
+"When targeting the MSVC ABI, Rust additionally requires an [[https://visualstudio.microsoft.com/downloads/][installation of Visual Studio 2013 (or later)]] 
+or the Visual C++ Build Tools 2019 so rustc can use its linker and libraries. "
+The link has a paragraph at the end "Build Tools for Visual Studio 2022".
+This is also installs the Installer 
+but does not install Google Chrome next to the Visual Studio installer Installer.
+
+Desktop development with C++
+- Included
+  - C++ Build Tools core features
+  - C++ 2022 Redistributeable Update
+  - C++ core desktop features
+- Optional (TILO: but somehow required when you try to deselect)
+  - MSVC v143 - VS 2022 C++ x64/x86 build tools (Latest)
+  - (TILO: following I deselected)
+    - Windows 10 SDK (10.0.19041.0) 
+      [UPDATE: below I found that SDK is required for rustc to compile against ~x86_64-pc-windows-msvc~]
+    - C++ CMake tools for Windows
+    - Testing tools core features - Build Tools
+    - C++ AddressSanitizer
+
+This allown did not help yet, rustc still don't finds the linker.
+It is stalled here:
+#+BEGIN_EXAMPLE
+2PP4QN3[play-rust]$
+2PP4QN3[play-rust]$ find /c/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio/ -type f -name 'link.exe' -print
+/c/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.32.31326/bin/Hostx64/x64/link.exe
+/c/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.32.31326/bin/Hostx64/x86/link.exe
+/c/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.32.31326/bin/Hostx86/x64/link.exe
+/c/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.32.31326/bin/Hostx86/x86/link.exe
+2PP4QN3[play-rust]$
+#+END_EXAMPLE
+
+Double checked with old disk and found I need to add path to BuildTools.
+- BuildTools were installed to =C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools=
+- The path element I added : =C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.32.31326\bin\Hostx64\x64;=
+
+Ups, know Windows linker is found but I've got a link error:
+#+BEGIN_EXAMPLE
+PS C:\Users\twirkner\Projects\play-rust> cargo clean
+PS C:\Users\twirkner\Projects\play-rust> cargo build
+   Compiling world v0.1.0 (C:\Users\twirkner\Projects\play-rust\world)
+   Compiling play-rust v0.1.0 (C:\Users\twirkner\Projects\play-rust)
+error: linking with `link.exe` failed: exit code: 1181
+  |
+  = note: "link.exe" "/NOLOGO" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.10oey0plxlt7e6mz.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.11di2yi4wu43pzsn.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.128x28vcgcmz7agy.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.1566zhu5q65xtun4.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.162wl6dbtd9lq07v.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.18sd5lictytqfrx.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.1el9pnpeo2trchuy.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.1iw90d5d4lte0t62.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.1nysisjw1tjkmws4.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.20qdc2ru92iexihh.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.24wz1p5t23g72pev.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.25aw58koa9f55mxz.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.2dzrwtgu12fmmyzt.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.2lroojoknqwwldeu.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.2tvhzr5kg8mlgewz.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.2uhb1sutyevcjx6z.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.2v43osdpo60p0l3m.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.2wpq1aenet9o5xqb.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.33yt7bfq04e0wjoy.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.38t91foxdkehpem8.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.3bcz117rsxdfewdn.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.3j6yh0k31m9pr711.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.3md7ponmveyt5x6u.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.3sb5fapnhhik4rjo.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.3xctxcytn6com36y.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.458w0o8debbvrzzs.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.4ecze1audktbz6xc.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.4gz1d9az0lyy9sdr.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.4i7w62440dly015b.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.4ix9athbajfwjfce.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.4n3mwgv1kp0hey2e.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.4tir7d0x8r9vs4g9.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.4vjxjbm2lwcf0vcu.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.4vnexk2gxju4ox3t.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.4zxroof9lasu7hle.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.56sq7h1hp4tvj1jk.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.5aoxplxkm2o357ug.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.5p39f6j3zp9oe1e.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.8otpjfx4f3mks3y.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.j30rh4oibhi9urv.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.kkwixyxbry6p9y3.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.pjddi9ubmc163ti.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.vgb9acrrgjdh0x2.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.whaic24pe76c061.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.ye44qgmbdvsc6n4.rcgu.o" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.38117kwbfriwl0cb.rcgu.o" "/LIBPATH:C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps" "/LIBPATH:C:\\Users\\twirkner\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\lib\\rustlib\\x86_64-pc-windows-msvc\\lib" "C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\libworld-63cf1b9e390a0670.rlib" "C:\\Users\\twirkner\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\lib\\rustlib\\x86_64-pc-windows-msvc\\lib\\libstd-f87c887dcbebcf7e.rlib" "C:\\Users\\twirkner\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\lib\\rustlib\\x86_64-pc-windows-msvc\\lib\\libpanic_unwind-1fa243f7b8fbcf2e.rlib" "C:\\Users\\twirkner\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\lib\\rustlib\\x86_64-pc-windows-msvc\\lib\\libstd_detect-d2a68ffd7d6cc9bc.rlib" "C:\\Users\\twirkner\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\lib\\rustlib\\x86_64-pc-windows-msvc\\lib\\librustc_demangle-2782cb7261e00d26.rlib" "C:\\Users\\twirkner\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\lib\\rustlib\\x86_64-pc-windows-msvc\\lib\\libhashbrown-6d344c5ae5c98d1d.rlib" "C:\\Users\\twirkner\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\lib\\rustlib\\x86_64-pc-windows-msvc\\lib\\librustc_std_workspace_alloc-2a2853eff3f28cae.rlib" "C:\\Users\\twirkner\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\lib\\rustlib\\x86_64-pc-windows-msvc\\lib\\libunwind-05b2534b6ba863f9.rlib" "C:\\Users\\twirkner\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\lib\\rustlib\\x86_64-pc-windows-msvc\\lib\\libcfg_if-a2fd5bfe4190f6ed.rlib" "C:\\Users\\twirkner\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\lib\\rustlib\\x86_64-pc-windows-msvc\\lib\\liblibc-65f001829f37d4a3.rlib" "C:\\Users\\twirkner\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\lib\\rustlib\\x86_64-pc-windows-msvc\\lib\\liballoc-bb4e367f9c8cb3b1.rlib" "C:\\Users\\twirkner\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\lib\\rustlib\\x86_64-pc-windows-msvc\\lib\\librustc_std_workspace_core-cb5a4f54c7fe0156.rlib" "C:\\Users\\twirkner\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\lib\\rustlib\\x86_64-pc-windows-msvc\\lib\\libcore-fb53e48c93c8e8d8.rlib" "C:\\Users\\twirkner\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\lib\\rustlib\\x86_64-pc-windows-msvc\\lib\\libcompiler_builtins-284b570407e6ba82.rlib" "kernel32.lib" "ws2_32.lib" "bcrypt.lib" "advapi32.lib" "userenv.lib" "kernel32.lib" "msvcrt.lib" "/NXCOMPAT" "/LIBPATH:C:\\Users\\twirkner\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\lib\\rustlib\\x86_64-pc-windows-msvc\\lib" "/OUT:C:\\Users\\twirkner\\Projects\\play-rust\\target\\debug\\deps\\play_rust.exe" "/OPT:REF,NOICF" "/DEBUG" "/NATVIS:C:\\Users\\twirkner\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\lib\\rustlib\\etc\\intrinsic.natvis" "/NATVIS:C:\\Users\\twirkner\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\lib\\rustlib\\etc\\liballoc.natvis" "/NATVIS:C:\\Users\\twirkner\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\lib\\rustlib\\etc\\libcore.natvis" "/NATVIS:C:\\Users\\twirkner\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\lib\\rustlib\\etc\\libstd.natvis"   
+  = note: LINK : fatal error LNK1181: cannot open input file 'kernel32.lib'
+
+
+error: could not compile `play-rust` due to previous error
+PS C:\Users\twirkner\Projects\play-rust> 
+#+END_EXAMPLE
+
+Double checked with old installation and found that all sub-items of the BuildTools Installation
+had been installed, see above "(TILO: following I deselected)".
+The Rust install guide for Windows says "For Visual Studio, 
+make sure to check the "C++ tools" and "Windows 10 SDK" option."
+I'm going to install Windows 10 SDK.
+
+Hurray! I'm back with Rust on my new Windows host :-)
+#+BEGIN_EXAMPLE
+PS C:\Users\twirkner\Projects\play-rust> cargo build
+   Compiling play-rust v0.1.0 (C:\Users\twirkner\Projects\play-rust)
+    Finished dev [unoptimized + debuginfo] target(s) in 12.46s
+PS C:\Users\twirkner\Projects\play-rust>
+#+END_EXAMPLE
+
+** Trouble with rust-analyzer 
+~rust-analyzer failed to run build scripts Check the server logs for additional info.~
+
+I don't trust in my rustup, cargo installation as I copied over from my old disk.
+
+Here is what rustup tells me on updates and what is says then it has been self-updated:
+#+BEGIN_EXAMPLE
+2PP4QN3[rust@rust-lang]$
+2PP4QN3[rust@rust-lang]$ rustup check
+stable-x86_64-pc-windows-msvc - Update available : 1.57.0 (f1edd0429 2021-11-29) -> 1.62.1 (e092d0b6b 2022-07-16)
+nightly-x86_64-pc-windows-msvc - Update available : 1.59.0-nightly (c5ecc1570 2021-12-15) -> 1.64.0-nightly (2643b1646 2022-07-27)
+rustup - Update available : 1.24.3 -> 1.25.1
+2PP4QN3[rust@rust-lang]$
+2PP4QN3[rust@rust-lang]$
+2PP4QN3[rust@rust-lang]$ rustup self update
+info: checking for self-updates
+info: downloading self-update
+  rustup updated - 1.25.1 (from 1.24.3)
+
+warning: tool `rustfmt` is already installed, remove it from `C:\Users\twirkner\.cargo\bin`, then run `rustup update` to have rustup manage this tool.
+warning: tool `cargo-fmt` is already installed, remove it from `C:\Users\twirkner\.cargo\bin`, then run `rustup update` to have rustup manage this tool.
+
+2PP4QN3[rust@rust-lang]$ 
+#+END_EXAMPLE
+
+Most trouble ~rust-analyzer~ has is with Rust's language project folder ~rust@rust-lang~, 
+I put next to mine ~play-rust~. Previous error disappeared after I ~deinit~ git-submodules for the moment.
+There is another error 
+#+BEGIN_EXAMPLE
+rust-analyzer failed to load workspace: Failed to read Cargo metadata from Cargo.toml file c:\Users\twirkner\Projects\rust@rust-lang\Cargo.toml, 
+cargo 1.59.0-nightly (a359ce160 2021-12-14): Failed to run 
+`"cargo" "metadata" "--format-version" "1" "--manifest-path" "c:\\Users\\twirkner\\Projects\\rust@rust-lang\\Cargo.toml" "--filter-platform" "x86_64-pc-windows-msvc"`: 
+`cargo metadata` exited with an error: error: failed to load manifest for workspace member 
+`c:\Users\twirkner\Projects\rust@rust-lang\src\tools\rust-installer` 
+Caused by: failed to read `c:\Users\twirkner\Projects\rust@rust-lang\src\tools\rust-installer\Cargo.toml` 
+Caused by: The system cannot find the file specified. (os error 2)
+#+END_EXAMPLE
+
+
+#+BEGIN_EXAMPLE
+rust-analyzer failed to load workspace: Failed to read Cargo metadata from Cargo.toml file c:\Users\twirkner\Projects\rust@rust-lang\Cargo.toml, 
+cargo 1.59.0-nightly (a359ce160 2021-12-14): Failed to run 
+`"cargo" "metadata" "--format-version" "1" "--manifest-path" "c:\\Users\\twirkner\\Projects\\rust@rust-lang\\Cargo.toml" "--filter-platform" "x86_64-pc-windows-msvc"`: 
+`cargo metadata` exited with an error: Updating crates.io index Downloading crates ... 
+Downloaded futures-core v0.3.19 
+Downloaded indexmap v1.9.1 
+Downloaded pathdiff v0.2.1 
+Downloaded matchers v0.1.0 
+Downloaded intl_pluralrules v7.0.1 
+Downloaded git2 v0.14.2 
+Downloaded thread_local v1.1.4 
+Downloaded tinystr v0.3.4 
+Downloaded tendril v0.4.3 
+Downloaded unic-langid-macros v0.9.0 
+Downloaded unicode-segmentation v1.9.0 
+Downloaded unic-langid-macros-impl v0.9.0 
+Downloaded itoa v1.0.2 
+Downloaded askama v0.11.0 
+Downloaded clap v3.2.5 
+Downloaded libc v0.2.126 
+Downloaded kstring v2.0.0 
+Down...
+#+END_EXAMPLE
+
+
+#+BEGIN_EXAMPLE
+2PP4QN3[rust@rust-lang]$ 
+2PP4QN3[rust@rust-lang]$ cargo metadata --format-version 1 --filter-platform x86_64-pc-windows-msvc --manifest-path ./Cargo.toml 
+error: failed to download `minifier v0.2.1`
+
+Caused by:
+  unable to get packages from source
+
+Caused by:
+  failed to parse manifest at `C:\Users\twirkner\.cargo\registry\src\github.com-1ecc6299db9ec823\minifier-0.2.1\Cargo.toml`
+
+Caused by:
+  feature `strip` is required
+
+  The package requires the Cargo feature called `strip`, but that feature is not stabilized in this version of Cargo (1.59.0-nightly (a359ce160 2021-12-14)).
+  Consider trying a more recent nightly release.
+  See https://doc.rust-lang.org/nightly/cargo/reference/unstable.html#profile-strip-option for more information about the status of this feature.
+2PP4QN3[rust@rust-lang]$ 
+#+END_EXAMPLE
+
+After I updated both toolchains - wanted 'nightly' only, but executed wrong command ~rustup +nightly update~ - above 
+command ~cargo metadata~ finished with a lot of output.
+(shall have executed ~rustup update nightly~)
+
+
 * Org-Babel Rust
 
 Cargo's subcommand [[https://crates.io/search?q=cargo-script][cargo-script]] let's you run Rust "scripts",
