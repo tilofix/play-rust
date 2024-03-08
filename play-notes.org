@@ -31,12 +31,14 @@ Cargo follows basic rules of [[https://semver.org/][Semantic Versioning]] [1]
 Something to be studied:
 - Output format: ={:?}= 
 
-Cryptic as Perl isn't it: ='_=, ='_=, ='a=
+Cryptic as Perl isn't it: ='_=, ='a=, =?=
 - Go and cheat: References & Pointers
 - Go and cheat: Language Sugar 
 
 ** The Plumber
-** The Difference Between Macros and Functions
+** Macros & Functions
+
+The Difference Between Macros and Functions
 
 [3] p. 530 "19 ADVANCED FEATURES":
 
@@ -174,11 +176,11 @@ Rust language cheat sheet contains clickable links to
 
 ** The Eyes Opening Twins
 
-Ownership and Lifetime
+*** Ownership & Lifetime
 
 https://www.reddit.com/r/rust/comments/4iup0d/i_wish_there_were_a_book_named_thinking_in_rust/d31p65z/?utm_source=reddit&utm_medium=web2x&context=3
 
-References and Borrowing
+*** References & Borrowing
 
 https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html
 
@@ -219,7 +221,9 @@ they refer to overlapping regions of memory.
 "The lifetime (sometimes called a borrow) is alive from the place it
 is created to its last use." 
 
-** Treat Types like Characteristic Traits
+*** Types & Traits
+
+Treat Types like Characteristic Traits
 
 A Trait defines a Types Ability(ies)
 - a type is addible when it implements [[https://doc.rust-lang.org/std/ops/trait.Add.html][std::ops::Add]]
@@ -598,9 +602,9 @@ For example,
 
 Refer to [[https://github.com/rust-lang/rfcs/blob/master/text/0132-ufcs.md][RFC 132]] for further details and motivations."
 
-**** Visibility & Privacy
+*** Visibility & Privacy
 
-- [[https://doc.rust-lang.org/stable/reference/visibility-and-privacy.html][Visibility and Privacy]]
+[[https://doc.rust-lang.org/stable/reference/visibility-and-privacy.html][Visibility and Privacy]]
 
 Interchangeably terms to answer the question:
 "Can this item be used at this location?"
@@ -627,7 +631,7 @@ external crates. Declaring or defining a new module can be thought of
 as inserting a new tree into the hierarchy at the location of the
 definition." 
 
-** Desugar 
+** Desugar the Language
 
 TODO: steal information from
 http://stackoverflow.com/questions/28519997/what-are-rusts-exact-auto-dereferencing-rules/28552082#28552082 
@@ -648,7 +652,7 @@ The Rustonomicon
 [[https://doc.rust-lang.org/stable/nomicon/lifetime-mismatch.html?highlight=desugar#limits-of-lifetimes][Ownership » Limits of Lifetimes » Limits of Lifetimes]]
 [[https://doc.rust-lang.org/stable/nomicon/lifetimes.html?highlight=desugar#example-references-that-outlive-referents][Ownership » Lifetimes » Example: references that outlive referents]]
 
-**** Dot Operator
+*** Dot Operator and Use Statement
       
 [[https://doc.rust-lang.org/stable/nomicon/dot-operator.html][The Dot Operator]]
 
@@ -656,7 +660,12 @@ The dot operator will perform a lot of magic to convert types. It will
 perform auto-referencing, auto-dereferencing, and coercion until types
 match. 
 
-**** Closure
+[[https://doc.rust-lang.org/reference/items/use-declarations.html?highlight=use#use-declarations][The Use Declaration]]
+
+A use declaration creates one or more local name bindings synonymous
+with some other [[https://doc.rust-lang.org/reference/paths.html][path]].
+
+*** Closure
 
 Recently I ran over following page:
 [[https://www.rubyguides.com/2016/02/ruby-procs-and-lambdas/][Ruby Blocks, Procs & Lambdas - The Ultimate Guide!]].
@@ -695,7 +704,7 @@ behavior when they’re called.
 
 The [[https://doc.rust-lang.org/stable/reference/][REF]] speaks on [[https://doc.rust-lang.org/stable/reference/expressions/closure-expr.html][Closure expressions]].
 
-**** Match Expression
+** Match Expression
 
 A [[https://doc.rust-lang.org/stable/reference/glossary.html#scrutinee][scrutinee]] is the expression that is matched on in ~match~ expressions
 and similar pattern matching constructs. For example,
@@ -721,7 +730,7 @@ match VALUE {
 exhaustive in the sense that all possibilities for the value in the
 match expression must be accounted for." Chapters 6, and 18.1 in [3]
 
-** Operator
+** Operator Expression
 
 Rust operators are overloadable when a Trait is defined.
 
