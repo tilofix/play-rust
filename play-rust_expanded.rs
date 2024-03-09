@@ -52,8 +52,7 @@ A block documentation outer comment can be nested `/** ... */`
 
 File `hello.md` is included here in `main.rs` but belongs to module `hello`.
 */
-#[doc =
-  "## Module hello to learn including modules\n\nThis text is in file `hello.md`\nand is included in source module `main.rs`\nto document module `hello`.\n\n"]
+#[doc = "## Module hello to learn including modules\n\nThis text is in file `hello.md`\nand is included in source module `main.rs`\nto document module `hello`.\n\n"]
 mod hello {
 
     // Module provides "World" portion of the output
@@ -65,27 +64,26 @@ mod hello {
     // UTF-8
     //! ## Module to return Hello
     //!
-    #![doc =
-       "Here is an inner doc-attribute comment 
+    #![doc = "Here is an inner doc-attribute comment 
 to document its parent, the file and thus module `hello.rs`."]
     //!
     /*!
-A module is a container for zero or more __items__.
+    A module is a container for zero or more __items__.
 
-This module defined in file `hello.rs`
-could have also been defined in `hello/mod.rs`.
-As file `main.rs` "includes" this with statement `mod hello;`
-the definition in file `hello.rs` becomes a module.
+    This module defined in file `hello.rs`
+    could have also been defined in `hello/mod.rs`.
+    As file `main.rs` "includes" this with statement `mod hello;`
+    the definition in file `hello.rs` becomes a module.
 
-Alternatively module `hello` could have also been defined
-with help of
-```no_run
-mod hello {
-  pub fn hello() {
-  }
-}
-```
-*/
+    Alternatively module `hello` could have also been defined
+    with help of
+    ```no_run
+    mod hello {
+      pub fn hello() {
+      }
+    }
+    ```
+    */
     /// Function that print line 'Hello, World!' from module `hello`
     ///
     /// This is a line documentation outer comment.
@@ -99,14 +97,19 @@ to document its ."]
     pub fn hello() -> String {
         let a_string: std::string::String = String::from("Hello");
         {
-            match (&std::any::TypeId::of::<*const u8>(),
-                   &std::any::Any::type_id(&a_string.as_ptr())) {
+            match (
+                &std::any::TypeId::of::<*const u8>(),
+                &std::any::Any::type_id(&a_string.as_ptr()),
+            ) {
                 (left_val, right_val) => {
                     if !(*left_val == *right_val) {
                         let kind = ::core::panicking::AssertKind::Eq;
-                        ::core::panicking::assert_failed(kind, &*left_val,
-                                                         &*right_val,
-                                                         ::core::option::Option::None);
+                        ::core::panicking::assert_failed(
+                            kind,
+                            &*left_val,
+                            &*right_val,
+                            ::core::option::Option::None,
+                        );
                     }
                 }
             }
@@ -116,9 +119,12 @@ to document its ."]
                 (left_val, right_val) => {
                     if !(*left_val == *right_val) {
                         let kind = ::core::panicking::AssertKind::Eq;
-                        ::core::panicking::assert_failed(kind, &*left_val,
-                                                         &*right_val,
-                                                         ::core::option::Option::None);
+                        ::core::panicking::assert_failed(
+                            kind,
+                            &*left_val,
+                            &*right_val,
+                            ::core::option::Option::None,
+                        );
                     }
                 }
             }
@@ -128,9 +134,12 @@ to document its ."]
                 (left_val, right_val) => {
                     if !(*left_val == *right_val) {
                         let kind = ::core::panicking::AssertKind::Eq;
-                        ::core::panicking::assert_failed(kind, &*left_val,
-                                                         &*right_val,
-                                                         ::core::option::Option::None);
+                        ::core::panicking::assert_failed(
+                            kind,
+                            &*left_val,
+                            &*right_val,
+                            ::core::option::Option::None,
+                        );
                     }
                 }
             }
@@ -138,8 +147,7 @@ to document its ."]
         a_string
     }
 }
-#[doc =
-  "## Module world to learn including modules\n\nThis text is in file `world.md`\nand is included in source module `main.rs`\nto document module `world`.\n\n"]
+#[doc = "## Module world to learn including modules\n\nThis text is in file `world.md`\nand is included in source module `main.rs`\nto document module `world`.\n\n"]
 mod world {
     //! ## Module to return World
     //!
@@ -156,14 +164,19 @@ mod world {
         let a_u8_slice_ref: &'static [u8; 11] =
             &[87, 111, 114, 108, 100, 32, 40, 109, 111, 100, 41];
         {
-            match (&std::mem::size_of::<[u8; 11]>(),
-                   &std::mem::size_of_val(a_u8_slice_ref)) {
+            match (
+                &std::mem::size_of::<[u8; 11]>(),
+                &std::mem::size_of_val(a_u8_slice_ref),
+            ) {
                 (left_val, right_val) => {
                     if !(*left_val == *right_val) {
                         let kind = ::core::panicking::AssertKind::Eq;
-                        ::core::panicking::assert_failed(kind, &*left_val,
-                                                         &*right_val,
-                                                         ::core::option::Option::None);
+                        ::core::panicking::assert_failed(
+                            kind,
+                            &*left_val,
+                            &*right_val,
+                            ::core::option::Option::None,
+                        );
                     }
                 }
             }
@@ -173,31 +186,29 @@ mod world {
 }
 /// `play-rust`'s `main` function to play with rust.
 ///
-#[doc =
-  "## Some explanation of rust-code in documentation.\n\nWhat do you think, is rust a simple language?\n\nI don\'t think so, please press the \"Run\" button,\nselect `TOOLS` from the right hand drop down menu,\nand execute `Expand marcos`.\n```rust\nprintln!(\"{}\", \"Hello, World!\");\n```\n\nNow you see the truth,\nwhat rust is really about.\nPrint line \"Hello World\" is a complicated think in rust, isn\'t it?\n```rust\n# #![feature(fmt_internals)]\n# #![feature(print_internals)]\n#![feature(prelude_import)]\n#[prelude_import]\nuse std::prelude::rust_2018::*;\n#[macro_use]\nextern crate std;\nfn main() {\n    {\n        ::std::io::_print(::core::fmt::Arguments::new_v1(\n            &[\"\", \"\\n\"],\n            &match (&\"Hello, World!\",) {\n                _args => [::core::fmt::ArgumentV1::new(\n                    _args.0,\n                    ::core::fmt::Display::fmt,\n                )],\n            },\n        ));\n    };\n}\n```\n"]
+#[doc = "## Some explanation of rust-code in documentation.\n\nWhat do you think, is rust a simple language?\n\nI don\'t think so, please press the \"Run\" button,\nselect `TOOLS` from the right hand drop down menu,\nand execute `Expand marcos`.\n```rust\nprintln!(\"{}\", \"Hello, World!\");\n```\n\nNow you see the truth,\nwhat rust is really about.\nPrint line \"Hello World\" is a complicated think in rust, isn\'t it?\n```rust\n# #![feature(fmt_internals)]\n# #![feature(print_internals)]\n#![feature(prelude_import)]\n#[prelude_import]\nuse std::prelude::rust_2018::*;\n#[macro_use]\nextern crate std;\nfn main() {\n    {\n        ::std::io::_print(::core::fmt::Arguments::new_v1(\n            &[\"\", \"\\n\"],\n            &match (&\"Hello, World!\",) {\n                _args => [::core::fmt::ArgumentV1::new(\n                    _args.0,\n                    ::core::fmt::Display::fmt,\n                )],\n            },\n        ));\n    };\n}\n```\n"]
 fn main() -> () {
     {
-        ::std::io::_print(::core::fmt::Arguments::new_v1(&["", ", ",
-                                                           "! From Modules \'hello\' and \'world\'\n"],
-                                                         &match (&hello::hello(),
-                                                                 &world::world())
-                                                              {
-                                                              _args =>
-                                                              [::core::fmt::ArgumentV1::new(_args.0,
-                                                                                            ::core::fmt::Display::fmt),
-                                                               ::core::fmt::ArgumentV1::new(_args.1,
-                                                                                            ::core::fmt::Display::fmt)],
-                                                          }));
+        ::std::io::_print(::core::fmt::Arguments::new_v1(
+            &["", ", ", "! From Modules \'hello\' and \'world\'\n"],
+            &match (&hello::hello(), &world::world()) {
+                _args => [
+                    ::core::fmt::ArgumentV1::new(_args.0, ::core::fmt::Display::fmt),
+                    ::core::fmt::ArgumentV1::new(_args.1, ::core::fmt::Display::fmt),
+                ],
+            },
+        ));
     };
     {
-        ::std::io::_print(::core::fmt::Arguments::new_v1(&["Hello, ",
-                                                           "! From Library \'world\'\n"],
-                                                         &match (&::world::world(),)
-                                                              {
-                                                              _args =>
-                                                              [::core::fmt::ArgumentV1::new(_args.0,
-                                                                                            ::core::fmt::Display::fmt)],
-                                                          }));
+        ::std::io::_print(::core::fmt::Arguments::new_v1(
+            &["Hello, ", "! From Library \'world\'\n"],
+            &match (&::world::world(),) {
+                _args => [::core::fmt::ArgumentV1::new(
+                    _args.0,
+                    ::core::fmt::Display::fmt,
+                )],
+            },
+        ));
     };
     let a_char: char = '❤';
     if !(4 == std::mem::size_of::<char>()) {
@@ -206,12 +217,14 @@ fn main() -> () {
         }
     };
     {
-        ::std::io::_print(::core::fmt::Arguments::new_v1(&["Hello, World! comes with ",
-                                                           " from Tilo\n"],
-                                                         &match (&a_char,) {
-                                                              _args =>
-                                                              [::core::fmt::ArgumentV1::new(_args.0,
-                                                                                            ::core::fmt::Display::fmt)],
-                                                          }));
+        ::std::io::_print(::core::fmt::Arguments::new_v1(
+            &["Hello, World! comes with ", " from Tilo\n"],
+            &match (&a_char,) {
+                _args => [::core::fmt::ArgumentV1::new(
+                    _args.0,
+                    ::core::fmt::Display::fmt,
+                )],
+            },
+        ));
     };
 }
