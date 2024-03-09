@@ -119,7 +119,7 @@ and finally the kind of capture, the [[https://doc.rust-lang.org/reference/macro
 - ~expr~: an [[https://doc.rust-lang.org/reference/expressions/block-expr.html][Expression]]
 - ~ty~: a [[https://doc.rust-lang.org/reference/types.html#type-expressions][Type]]
 - ~ident~: an [[https://doc.rust-lang.org/reference/identifiers.html][Identifier]]
-- ~path~: a [[https://doc.rust-lang.org/reference/identifiers.html][Path]] in types (e.g. ~foo~, ~::std::mem::replace~, ~transmute::<_, int>~, ...)
+- ~path~: a [[https://doc.rust-lang.org/reference/paths.html][Path]] in types (e.g. ~foo~, ~::std::mem::replace~, ~transmute::<_, int>~, ...)
 - ~meta~: a meta item, an [[https://doc.rust-lang.org/reference/attributes.html][Attr]]; the things that go inside #[...] and #![...] attributes
 - ~tt~: a single [[https://doc.rust-lang.org/reference/macros.html#macro-invocation][TokenTree]] (a single token or tokens in matching delimiters ~()~, ~[]~, or ~{}~)
 - and three more in [5]: ~lifetime~, ~vis~, ~literal~
@@ -614,14 +614,14 @@ Associated items in a pub Trait are public by default;
 Enum variants in a pub enum are also public by default." 
 
 /Visibility/ :
-- pub
-- | pub ( in [[https://doc.rust-lang.org/stable/reference/paths.html#simple-paths][SimplePath]] ) :: makes an item visible within the provided
+- ~pub~
+- | ~pub~ ( in [[https://doc.rust-lang.org/stable/reference/paths.html#simple-paths][SimplePath]] ) : makes an item visible within the provided
   ~path~. ~path~ must be an ancestor module of the item whose visibility
   is being declared. 
-- | pub ( crate ) :: makes an item visible within the current crate.
-- | pub ( super ) :: makes an item visible to the parent module. This
+- | ~pub~ ( ~crate~ ) : makes an item visible within the current crate.
+- | ~pub~ ( ~super~ ) : makes an item visible to the parent module. This
   is equivalent to ~pub(in super)~. 
-- | pub ( self ) :: makes an item visible to the current module. This
+- | ~pub~ ( self ) : makes an item visible to the current module. This
   is equivalent to ~pub(in self)~ or not using ~pub~ at all. 
 
 "Rust's name resolution operates on a global hierarchy of
