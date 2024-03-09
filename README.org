@@ -39,12 +39,12 @@ two of them were with Steve Klabnik an author of the book:
 
 ** The Common Start - Read a Book
 
-   Thanks to Steve Klabnik's talk and to contribute to his personal efforts
-   beside being a Member of Mozilla I bought the book:
-   The Rust Programming Language by Steve Klabnik and Carol Nichols.
-   - [[https://nostarch.com/Rust2018][No Starch Press Link]]
-   - [[https://github.com/rust-lang/book][Github Repository Link]]
-   it is also the [[https://doc.rust-lang.org/book/][book]] referenced by [[https://www.rust-lang.org/learn][Grow with Rust]] page
+Thanks to Steve Klabnik's talk and to contribute to his personal efforts
+beside being a Member of Mozilla I bought the book:
+The Rust Programming Language by Steve Klabnik and Carol Nichols.
+- [[https://nostarch.com/Rust2018][No Starch Press Link]]
+- [[https://github.com/rust-lang/book][Github Repository Link]]
+it is also the [[https://doc.rust-lang.org/book/][book]] referenced by [[https://www.rust-lang.org/learn][Grow with Rust]] page
      
 *** Bought Book "The Rust Programming Language (Covers Rust 2018)"
 
@@ -86,57 +86,62 @@ Later I found [[https://doc.rust-lang.org/book/][READ THE BOOK!]] online for fre
 
 ** The Plumber's Guide to Rust
 
-   Inspired by the preparation material for a talk of Jessy Pelletier-Lemire
-   I stopped studying the book within chapter 3
-   but started to jump through the book by topic's of curiosity.
+Inspired by the preparation material for a talk of Jessy Pelletier-Lemire
+I stopped studying the book within chapter 3
+but started to jump through the book by topic's of curiosity.
 
-   What I learnt from Jessy's page: [[http://jadpole.github.io/rust/type-system][Visualizing Rust's type-system]]?
-   "Well, [[https://doc.rust-lang.org/std/keyword.trait.html][traits]] and values are really all there is; 
-   the deeper you go, the more precise you get, 
-   until you reach [[https://doc.rust-lang.org/std/index.html#primitives][types]] which are nothing more than subsets of [[https://doc.rust-lang.org/std/marker/trait.Sized.html][Sized]] 
-   with a special syntax to manipulate the underlying memory 
-   and from where you cannot go deeper.
+What I learnt from Jessy's page: [[http://jadpole.github.io/rust/type-system][Visualizing Rust's type-system]]?
+"Well, [[https://doc.rust-lang.org/std/keyword.trait.html][traits]] and values are really all there is; 
+the deeper you go, the more precise you get, 
+until you reach [[https://doc.rust-lang.org/std/index.html#primitives][types]] which are nothing more than subsets of [[https://doc.rust-lang.org/std/marker/trait.Sized.html][Sized]] 
+with a special syntax to manipulate the underlying memory 
+and from where you cannot go deeper.
 
 ** The Standard Libraries's Tour
 
-The [[https://github.com/rust-lang/rust/blob/1.48.0/library/std/src/lib.rs][Standard Library 's source module]] is ~std/lib.rs~ 
-which includes 
+The [[https://github.com/rust-lang/rust/blob/1.48.0/library/std/src/lib.rs][Standard Library 's source module]] is ~std/lib.rs~ which includes
 - =include!("primitive_docs.rs");= --> [[https://doc.rust-lang.org/std/index.html#primitives][Primitive Types]]
 - =include!("keyword_docs.rs");= --> [[https://doc.rust-lang.org/std/index.html#keywords][Keywords]]
 
-First The Rust Standard Library divided into a number of [[https://doc.rust-lang.org/std/index.html#modules][focused modules]].
+*First* The Rust Standard Library divided into a number of [[https://doc.rust-lang.org/std/index.html#modules][focused modules]].
 
 For example 
-- the ~option~ and ~result~ modules define optional and error-handling types,
+- the [[https://doc.rust-lang.org/std/option/index.html][~option~]] and [[https://doc.rust-lang.org/std/result/index.html][~result~]] modules define optional and error-handling types,
   ~Option<T>~ and ~Result<T, E>~;
-- the ~iter~ module defines Rust's iterator /trait/, ~Iterator~, 
+- the [[https://doc.rust-lang.org/std/iter/index.html][~iter~]] module defines Rust's iterator /trait/, ~Iterator~, 
   which works with the ~for~ loop [9] to access collections.
 
-Second, The Rust Standard Library documents implicit methods on primitive types [8]
-(implicit because primitives are implemented by the compiler)
-and exports many modules with same name as primitive types.
+*Second*, The Rust Standard Library documents implicit methods on
+primitive types [8] (implicit because primitives are implemented by 
+the compiler) and exports many modules with same name as primitive
+types. 
 
 For example 
 - there is a page [[https://doc.rust-lang.org/std/primitive.i32.html][std/primitive.i32.html]] for primitive type ~i32~,
 - and there is a page [[https://doc.rust-lang.org/std/i32/index.html][std/i32/index.html]] for the module ~std::i32~.
+  Note: as of ~std 1.76.0 (07dca489a 2024-02-04)~ modules like
+  ~std::i32~ are marked as "Deprecation planned" because "Redundant
+  constants module for the [[https://doc.rust-lang.org/std/primitive.i32.html][~i32~ primitive type]]."
 
-Third, The Standard Library defines the The Rust Prelude,
+*Third*, The Standard Library defines module [[https://doc.rust-lang.org/std/prelude/index.html][~prelude~]], The Rust [[https://doc.rust-lang.org/reference/names/preludes.html][Prelude]],
 a small collection of items - mostly /traits/ - that are imported 
 into every /module/ of every /crate/.
 
+*Fourth* finally, The Standard Library exports a number of [[https://doc.rust-lang.org/std/index.html#macros][standard macros]].
+
 *** Containers and collections
 
-The Standard Library exposes three common ways 
-to deal with contiguous regions of memory:
+The Standard Library exposes three common ways to deal with contiguous
+regions of memory: 
 - =Vec<T>= - A heap-allocated /vector/ that is resizable at runtime.
 - =[T; n]= - A inline /array/ with a fixed size at compile time.
-- =[T]= - A dynamically sized /[[https://doc.rust-lang.org/std/primitive.slice.html][slice]]/ into any other kind of contiguous storage, 
-  whether heap-allocated or not.
-
-/Slices/ can only be handled through some kind of /pointer/, ...
-- =&[T]= - /shared slice/
-- =&mut [T]= - /mutable slice/
-- =Box<T>= - /owned slice/
+- =[T]= - A dynamically sized /[[https://doc.rust-lang.org/std/primitive.slice.html][slice]]/ into any other kind of
+  contiguous storage, whether heap-allocated or not. /Slices/ can only
+  be handled through some kind of /pointer/, and as such come in many
+  flavors such as: 
+  - =&[T]= - /shared slice/
+  - =&mut [T]= - /mutable slice/
+  - =Box<T>= - /owned slice/
 
 The Standard Library defines many methods for primitive type ~str~, 
 a UTF-8 string /slice/.
@@ -167,6 +172,39 @@ Common types of I/O are defined in the modules ~io~, ~fs~, and ~net~.
 [[https://doc.rust-lang.org/std/sync/index.html][The ~sync~ module]] contains further primitve shared memory types
 and channel types for message passing.
 
+** Rust Preludium
+
+[[https://doc.rust-lang.org/reference/names/preludes.html#the-no_implicit_prelude-attribute][The ~no_implicit_prelude~ attribute]]
+
+The ~no_implicit_prelude~ [[https://doc.rust-lang.org/reference/attributes.html][attribute]] may be applied at the crate level or
+on a module to indicate that it should not automatically bring the
+[[https://doc.rust-lang.org/reference/names/preludes.html#standard-library-prelude][standard library prelude]], [[https://doc.rust-lang.org/reference/names/preludes.html#extern-prelude][extern prelude]], or [[https://doc.rust-lang.org/reference/names/preludes.html#tool-prelude][tool prelude]] into scope
+for that module or any of its descendants. Starting in the 2018
+edition, it will remove the [[https://doc.rust-lang.org/reference/names/preludes.html#macro_use-prelude][~macro_use~ prelude]]. 
+
+This attribute does not affect the [[https://doc.rust-lang.org/reference/names/preludes.html#language-prelude][language prelude]].
+
+*** Language prelude
+
+The language prelude includes names of types and attributes that are
+built-in to the language. The language prelude is always in scope. It
+includes the following: 
+- Type namespace
+  - [[https://doc.rust-lang.org/reference/types/boolean.html][Boolean type]] - ~bool~
+  - [[https://doc.rust-lang.org/reference/types/textual.html][Textual types]] - ~char~ and ~str~
+  - [[https://doc.rust-lang.org/reference/types/numeric.html][Numerical types]]
+    - [[https://doc.rust-lang.org/reference/types/numeric.html#integer-types][Integer types]] - ~i8~, ~i16~, ~i32~, ~i64~, ~i128~, ~u8~, ~u16~,
+      ~u32~, ~u64~, ~u128~ 
+    - [[https://doc.rust-lang.org/reference/types/numeric.html#machine-dependent-integer-types][Machine-dependent integer types]] - ~usize~ and ~isize~; ~usize~
+      and ~isize~ are at least 16-bits wide. Note: Many pieces of Rust
+      code may assume that pointers, ~usize~, and ~isize~ are either
+      32-bit or 64-bit. As a consequence, 16-bit pointer support is
+      limited and may require explicit care and acknowledgment from a
+      library to support. 
+    - [[https://doc.rust-lang.org/reference/types/numeric.html#floating-point-types][floating-point types]] - ~f32~ and ~f64~
+  - Macro namespace
+    - [[https://doc.rust-lang.org/reference/attributes.html#built-in-attributes-index][Built-in attributes]]
+
 ** The Servo's Basic Rust
 
 The quickstart guide for hacking servo lists some basic things 
@@ -180,7 +218,7 @@ one must know to read Servo's code.
 
 ** The Lucky Couple - Rust and Python
 
-   Python as glue-code for Rust modules.
+Python as glue-code for Rust modules.
 
 ** The Rust Controversy
 
