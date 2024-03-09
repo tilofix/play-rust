@@ -13,8 +13,9 @@ rust-version = "1.56"
 world = { path = "./world" }
 
 [workspace]
-
 members = [
         "world",
         ]
-
+exclude = [
+        "hello-ferris",
+        ]

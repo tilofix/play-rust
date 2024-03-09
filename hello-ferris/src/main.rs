@@ -3,6 +3,7 @@
 // https://www.rust-lang.org/learn/get-started
 
 // use std::io::{stdout, Write, BufWriter};
+// #![no_implicit_prelude]
 
 fn main() {
     // stdout : a handle to a shared global buffer whose access is synchronized via a mutex
