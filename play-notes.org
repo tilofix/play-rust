@@ -28,9 +28,9 @@ and thus determine API compatibility between major and minor version
 Cargo follows basic rules of [[https://semver.org/][Semantic Versioning]] [1]
 
 Something to be studied:
-- Output format: ={:?}= 
+- Output format: ~{:?}~
 
-Cryptic as Perl isn't it: ='_=, ='a=, =?=
+Cryptic as Perl isn't it: ~'_~, ~'a~, ~?~
 - Go and cheat: References & Pointers
 - Go and cheat: Language Sugar 
 
