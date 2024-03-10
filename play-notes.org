@@ -178,7 +178,7 @@ Rust language cheat sheet contains clickable links to
 
 *** Ownership & Lifetime
 
-https://www.reddit.com/r/rust/comments/4iup0d/i_wish_there_were_a_book_named_thinking_in_rust/d31p65z/?utm_source=reddit&utm_medium=web2x&context=3
+[[https://www.reddit.com/r/rust/comments/4iup0d/i_wish_there_were_a_book_named_thinking_in_rust/d31p65z/?utm_source=reddit&utm_medium=web2x&context=3][I wish there were a book named Thinking In Rust]]
 
 *** References & Borrowing
 
@@ -638,19 +638,17 @@ http://stackoverflow.com/questions/28519997/what-are-rusts-exact-auto-dereferenc
 
     
 The Rust Reference
-
-[[https://doc.rust-lang.org/stable/reference/expressions/await-expr.html?highlight=desugar#approximate-desugaring][Statements and expressions » Expressions » Await expressions » Approximate desugaring]]
-[[https://doc.rust-lang.org/stable/reference/items/functions.html?highlight=desugar#async-functions][Items » Functions » Async functions]]
-[[https://doc.rust-lang.org/stable/reference/items/functions.html?highlight=desugar#combining-async-and-unsafe][Items » Functions » Combining async and unsafe]]
-[[https://doc.rust-lang.org/stable/reference/expressions/call-expr.html?highlight=desugar#disambiguating-function-calls][Statements and expressions » Expressions » Call expressions » Disambiguating Function Calls]]
+- [[https://doc.rust-lang.org/stable/reference/expressions/await-expr.html?highlight=desugar#approximate-desugaring][Statements and expressions » Expressions » Await expressions » Approximate desugaring]]
+- [[https://doc.rust-lang.org/stable/reference/items/functions.html?highlight=desugar#async-functions][Items » Functions » Async functions]]
+- [[https://doc.rust-lang.org/stable/reference/items/functions.html?highlight=desugar#combining-async-and-unsafe][Items » Functions » Combining async and unsafe]]
+- [[https://doc.rust-lang.org/stable/reference/expressions/call-expr.html?highlight=desugar#disambiguating-function-calls][Statements and expressions » Expressions » Call expressions » Disambiguating Function Calls]]
 
 The Rustonomicon
-
-[[https://doc.rust-lang.org/stable/nomicon/lifetimes.html?highlight=desugar#lifetimes][Ownership » Lifetimes » Lifetimes]]
-[[https://doc.rust-lang.org/stable/nomicon/dropck.html?highlight=desugar#drop-check][Ownership » Drop Check » Drop Check]]
-[[https://doc.rust-lang.org/stable/nomicon/hrtb.html?highlight=desugar#higher-rank-trait-bounds-hrtbs][Ownership » Higher-Rank Trait Bounds » Higher-Rank Trait Bounds (HRTBs)]]
-[[https://doc.rust-lang.org/stable/nomicon/lifetime-mismatch.html?highlight=desugar#limits-of-lifetimes][Ownership » Limits of Lifetimes » Limits of Lifetimes]]
-[[https://doc.rust-lang.org/stable/nomicon/lifetimes.html?highlight=desugar#example-references-that-outlive-referents][Ownership » Lifetimes » Example: references that outlive referents]]
+- [[https://doc.rust-lang.org/stable/nomicon/lifetimes.html?highlight=desugar#lifetimes][Ownership » Lifetimes » Lifetimes]]
+- [[https://doc.rust-lang.org/stable/nomicon/dropck.html?highlight=desugar#drop-check][Ownership » Drop Check » Drop Check]]
+- [[https://doc.rust-lang.org/stable/nomicon/hrtb.html?highlight=desugar#higher-rank-trait-bounds-hrtbs][Ownership » Higher-Rank Trait Bounds » Higher-Rank Trait Bounds (HRTBs)]]
+- [[https://doc.rust-lang.org/stable/nomicon/lifetime-mismatch.html?highlight=desugar#limits-of-lifetimes][Ownership » Limits of Lifetimes » Limits of Lifetimes]]
+- [[https://doc.rust-lang.org/stable/nomicon/lifetimes.html?highlight=desugar#example-references-that-outlive-referents][Ownership » Lifetimes » Example: references that outlive referents]]
 
 *** Dot Operator and Use Statement
       
