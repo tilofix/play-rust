@@ -2,20 +2,19 @@
 
 * My Notes on Rust
 
-Statements and Expressions
+** Statements and Expressions
 
 Rust is primarilly an expression language. [5]
 
 Syntax category /expression/ 
 
-evaluation of expressions produces a value and causes an effect.
+Evaluation of expressions produces a value and causes an effect.
 
-evaluation of expressions involve specifying both 
+Evaluation of expressions involve specifying both 
 - the value produced by the expression 
 - and the order in which its sub-expressions are themselves evaluated
 
 Statements in Rust serve mostly to contain and explicitly sequence expression evaluation.
-
 
 Rust defining constructs forming an API,
 and thus determine API compatibility between major and minor version
@@ -35,7 +34,6 @@ Cryptic as Perl isn't it: ='_=, ='a=, =?=
 - Go and cheat: References & Pointers
 - Go and cheat: Language Sugar 
 
-** The Plumber
 ** Macros & Functions
 
 The Difference Between Macros and Functions
