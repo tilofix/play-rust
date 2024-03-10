@@ -21,7 +21,7 @@ mod hello {
 ```
 */
 
-/// Function that print line 'Hello, World!' from module `hello`
+/// Function that print line 'Hello' from module `hello`
 ///
 /// This is a line documentation outer comment.
 #[doc = "This is an outer doc-attribute comment
@@ -33,8 +33,8 @@ to document its ."]
 /// hello();
 /// ```
 
-pub fn hello() -> String {
-    let a_string: std::string::String = String::from("Hello");
+pub fn hello() -> ::std::string::String {
+    let a_string: ::std::string::String = ::std::convert::From::from("Hello");
 
     /*
     A `String` is growable, and thus not a sized type
@@ -43,12 +43,12 @@ pub fn hello() -> String {
     - a length,
     - and a capacity.
     */
-    std::assert_eq!(
-        std::any::TypeId::of::<*const u8>(),
-        std::any::Any::type_id(&a_string.as_ptr())
+    ::std::assert_eq!(
+        ::std::any::TypeId::of::<*const u8>(),
+        ::std::any::Any::type_id(&a_string.as_ptr())
     );
-    std::assert_eq!(5, a_string.len());
-    std::assert_eq!(5, a_string.capacity());
+    ::std::assert_eq!(5, a_string.len());
+    ::std::assert_eq!(5, a_string.capacity());
 
     a_string
 }

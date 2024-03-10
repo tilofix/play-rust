@@ -16,12 +16,12 @@ pub fn world() -> &'static str {
     // as we cannot return a local variable (from the stack) of function
     let a_u8_slice_ref: &'static [u8; 11] = &[87, 111, 114, 108, 100, 32, 40, 109, 111, 100, 41];
 
-    std::assert_eq!(
-        std::mem::size_of::<[u8; 11]>(),
-        std::mem::size_of_val(a_u8_slice_ref)
+    ::std::assert_eq!(
+        ::std::mem::size_of::<[u8; 11]>(),
+        ::std::mem::size_of_val(a_u8_slice_ref)
     );
 
     // Need to unwrap refernce to str from Result<&str, std::str::Utf8Error>
     // which returns a str slice instead of 'Ok("World (mod)")'
-    std::result::Result::unwrap(std::str::from_utf8(a_u8_slice_ref))
+    ::std::result::Result::unwrap(::std::str::from_utf8(a_u8_slice_ref))
 }
