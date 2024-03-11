@@ -219,6 +219,8 @@ one must know to read Servo's code.
 ** The Lucky Couple - Rust and Python
 
 Python as glue-code for Rust modules.
+- [RustPython](https://rustpython.github.io/)
+- [PyO3](https://pyo3.rs/)
 
 ** The Rust Controversy
 
