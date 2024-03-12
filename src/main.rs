@@ -208,11 +208,66 @@ Fix invalid special casing of the unreachable! macro
 
 ```
 
+On my Windows host I've got rust versions `1.62.1 (e092d0b6b 2022-07-16)` and `1.64.0-nightly (f9cba6374 2022-07-31)`.
+Whereas on my Gnu/Linux host I have versions `1.57.0 (f1edd0429 2021-11-29)` and `1.59.0-nightly (efec54529 2021-12-04)`.
+So I gave it try. New Rust version isn't sufficient, I needed also to move the project from edition `2018` to `2021`.
+
+```text
+PS C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust>
+PS C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust> rustup check
+warning: Signature verification failed for 'https://static.rust-lang.org/dist/channel-rust-stable.toml'
+stable-x86_64-pc-windows-msvc - Update available : 1.62.1 (e092d0b6b 2022-07-16) -> 1.76.0 (07dca489a 2024-02-04)
+warning: Signature verification failed for 'https://static.rust-lang.org/dist/channel-rust-nightly.toml'
+nightly-x86_64-pc-windows-msvc - Update available : 1.64.0-nightly (f9cba6374 2022-07-31) -> 1.78.0-nightly (4a0cc881d 2024-03-11)
+rustup - Update available : 1.25.1 -> 1.27.0
+PS C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust>
+
+PS C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust> cargo +nightly -v clean
+    Removing C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust\target
+PS C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust>
+
+PS C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust>
+PS C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust> cargo +nightly -v build
+p\c_twirkner\Projects\play-rust\target\debug\deps -C incremental=C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust\target\debug\incremental -L dependency=C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust\target\debug\deps --extern world=C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust\target\debug\deps\libworld-5e506bbab6a5ce27.rlib`
+error: cannot find macro `panic` in this scope
+   --> src\main.rs:216:5
+    |
+216 | /     ::std::assert!(
+217 | |         len == ::std::mem::size_of::<::std::primitive::char>(),
+218 | |         "Type 'char' has no length of 4 on this platform"
+219 | |     );
+    | |_____^
+    |
+    = note: consider importing one of these items:
+            std::panic
+            core::panic
+    = note: this error originates in the macro `::std::assert` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: could not compile `play-rust` due to previous error
+
+Caused by:
+  process didn't exit successfully: `rustc --crate-name play_rust --edition=2018 src\main.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --crate-type bin --emit=dep-info,link -C embed-bitcode=no -C debuginfo=2 -C metadata=94440001cf4e6dbf --out-dir C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust\target\debug\deps -C incremental=C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust\target\debug\incremental -L dependency=C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust\target\debug\deps --extern world=C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust\target\debug\deps\libworld-5e506bbab6a5ce27.rlib` (exit code: 1)
+PS C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust>
+PS C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust>
+PS C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust> cargo +nightly -v clean
+    Removing C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust\target
+PS C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust>
+
+PS C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust>
+PS C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust> cargo +nightly -v build
+   Compiling world v0.1.0 (C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust\world)
+     Running `rustc --crate-name world --edition=2018 world\src\lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --crate-type lib --emit=dep-info,metadata,link -C embed-bitcode=no -C debuginfo=2 -C metadata=5e506bbab6a5ce27 -C extra-filename=-5e506bbab6a5ce27 --out-dir C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust\target\debug\deps -C incremental=C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust\target\debug\incremental -L dependency=C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust\target\debug\deps`
+   Compiling play-rust v0.2.0 (C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust)
+     Running `rustc --crate-name play_rust --edition=2021 src\main.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --crate-type bin --emit=dep-info,link -C embed-bitcode=no -C debuginfo=2 -C metadata=94440001cf4e6dbf --out-dir C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust\target\debug\deps -C incremental=C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust\target\debug\incremental -L dependency=C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust\target\debug\deps --extern world=C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust\target\debug\deps\libworld-5e506bbab6a5ce27.rlib`
+    Finished dev [unoptimized + debuginfo] target(s) in 3.38s
+PS C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust> 
+```
+
 PS: zum wegmerken : MBE: more checks at definition time [#61053](https://github.com/rust-lang/rust/issues/61053)
 
  */
 fn is_char_len(len: usize) -> () {
-    use ::std::panic;
+    //use ::std::panic;
     ::std::assert!(
         len == ::std::mem::size_of::<::std::primitive::char>(),
         "Type 'char' has no length of 4 on this platform"

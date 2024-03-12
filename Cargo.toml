@@ -2,10 +2,10 @@
 name = "play-rust"
 version = "0.2.0"
 authors = ["Tilo Wirkner <tilo@tilofix.de>"]
-edition = "2018"
+edition = "2021"
 # for marco `include_str` we need rust-version = "1.54",
 # but package.rust-version field has been introduced with  
-rust-version = "1.56"
+#rust-version = "1.56"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
