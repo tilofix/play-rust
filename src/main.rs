@@ -94,6 +94,8 @@ fn main() -> () {
 
 /// Checks the length of type 'char'
 ///
+/// ## Rust error with my attempt to do `no_implicit_prelude`
+///
 /// Usage of macro [`std::assert!`](https://doc.rust-lang.org/std/macro.assert.html) 
 /// has let me run in an Rust error with my attempt to do `no_implicit_prelude`
 /// "error: cannot find macro panic in this scope [#78333](https://github.com/rust-lang/rust/issues/78333)"
@@ -262,6 +264,27 @@ PS C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust> cargo +nightl
     Finished dev [unoptimized + debuginfo] target(s) in 3.38s
 PS C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust> 
 ```
+
+On my GNU/Linux host the same version compiled with Rust edition 2021.
+So my Rust source code investigation (master (#93179); 1.76.0 ... 1.60.0)
+had been wrong with respect to issue `error: cannot find macro `panic` in this scope`.
+It is not only solved in version `1.60.0` but already in `1.59.0` as well as `1.57.0`.
+
+## Rust Editions
+
+Rust 2015
+- It commenced with the release of 1.0, and is the "default edition".
+- The edition system was conceived in late 2017, but Rust 1.0 was released in May of 2015.
+- As such, 2015 is the edition that you get when you don't specify any particular edition,
+  for backwards compatibility reasons.
+
+Rust 2018
+- RFC : [#2052](https://rust-lang.github.io/rfcs/2052-epochs.html), which also proposed the Edition system
+- Release version : [1.31.0](https://blog.rust-lang.org/2018/12/06/Rust-1.31-and-rust-2018.html)
+
+Rust 2021
+- RFC : [#3085](https://github.com/rust-lang/rfcs/pull/3085)
+- Release version : [1.56.0](https://blog.rust-lang.org/2021/10/21/Rust-1.56.0.html)
 
 PS: zum wegmerken : MBE: more checks at definition time [#61053](https://github.com/rust-lang/rust/issues/61053)
 
