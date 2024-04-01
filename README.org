@@ -7,7 +7,7 @@ When I'm right than Mozilla implemented stepwise starting with Quantum CSS Engin
 Since then I have been a little shy to spent efforts to learn
 a new programming language.
 I started with Basic (Commodore, KC 85/2), Pascal (PC 1750),
-Modular (Novell Network connected IBM-PC),
+Modular-2 (Novell Network connected IBM-PC),
 C, Java, TCL, C++, (E)Lisp, and finally Python.
 
 Why now, that I start to spent time to lean Rust.
@@ -90,12 +90,12 @@ Inspired by the preparation material for a talk of Jessy Pelletier-Lemire
 I stopped studying the book within chapter 3
 but started to jump through the book by topic's of curiosity.
 
-What I learnt from Jessy's page: [[http://jadpole.github.io/rust/type-system][Visualizing Rust's type-system]]?
+What I learnt from Jessy's page: [[https://web.archive.org/web/20200918155402/http://jadpole.github.io/rust/type-system][Visualizing Rust's type-system]]?
 "Well, [[https://doc.rust-lang.org/std/keyword.trait.html][traits]] and values are really all there is; 
 the deeper you go, the more precise you get, 
 until you reach [[https://doc.rust-lang.org/std/index.html#primitives][types]] which are nothing more than subsets of [[https://doc.rust-lang.org/std/marker/trait.Sized.html][Sized]] 
 with a special syntax to manipulate the underlying memory 
-and from where you cannot go deeper.
+and from where you cannot go deeper."
 
 ** The Standard Libraries's Tour
 
