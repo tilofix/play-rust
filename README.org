@@ -59,6 +59,8 @@ and from where you cannot go deeper."
 
 *** The Periodic Table of Rust Types
 
+My local copy of [[http://cosmic.mearie.org/2014/01/periodic-table-of-rust-types/][The Periodic Table of Rust Types]].
+
 #+CAPTION: http://cosmic.mearie.org/2014/01/periodic-table-of-rust-types/
 |----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
 |          | Immutable Pointer        | Mutable Pointer         | Owned Pointer            | Bare                 | Unsized             |
@@ -81,6 +83,8 @@ and from where you cannot go deeper."
 
 *** (Un)sized Rust Types
 
+This is a table created based on [[https://doc.rust-lang.org/reference/dynamically-sized-types.html][Dynamically Sized Types]].
+
 #+CAPTION: https://doc.rust-lang.org/reference/dynamically-sized-types.html
 | Sized Types                          | Unsized Types (dynamically sized types - DSTs)                       |
 |--------------------------------------+----------------------------------------------------------------------|
@@ -101,7 +105,7 @@ The  [[https://doc.rust-lang.org/book/ch17-02-trait-objects.html#defining-a-trai
 
 *** The Rust's sugar table
 
-Is a copy from the great "Rust Language Cheat Sheet [4]
+Is a copy from the great [[https://cheats.rs/][Rust Language Cheat Sheet]].
 
 #+CAPTION: https://cheats.rs/
 | Name                          | Description                                                               |
