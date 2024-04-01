@@ -1,0 +1,47 @@
+#+TITLE: Rust's Play-Book
+
+Thanks to Steve Klabnik's talk and to contribute to his personal efforts
+beside being a Member of Mozilla I bought the book:
+The Rust Programming Language by Steve Klabnik and Carol Nichols.
+- [[https://nostarch.com/Rust2018][No Starch Press Link]]
+- [[https://github.com/rust-lang/book][Github Repository Link]]
+it is also the [[https://doc.rust-lang.org/book/][book]] referenced by [[https://www.rust-lang.org/learn][Grow with Rust]] page
+     
+** Bought Book "The Rust Programming Language (Covers Rust 2018)"
+
+Later I found [[https://doc.rust-lang.org/book/][READ THE BOOK!]] online for free, OK, so I supported Rust ;-).
+
+- Concept-Chapters: all other chapters
+  - Chapter 3: covers Rust features similar to those of other programming languages
+    - In Rust by default variables are immutable. 
+      See also "The Value of Values with Rich Hickey",
+      [[https://www.youtube.com/watch?v=-6BsiVyC1kM][keynote speech]] from JaxConf 2012
+    - Constants aren’t just immutable by default—they’re always immutable.
+    - Data Types
+      - Scalar Types: Integer Types, Floating-Point Types, Boolean Type, Character Type
+      - Compound Types: Tuple Type, Array Type
+    - Functions
+      - F. are pervasive in Rust code, 
+        uses /snake case/ as conventional style for function and variable names.
+      - F. bodies are made up of a series of 
+        *statements* optionally ending in an *expression*.
+        See also [[https://programming.guide/statements-vs-expressions.html][Statements vs Expressions]].
+      - Rust is an expression-based language.
+      - Statements (Anweisung) are instructions performing some *action*
+        and do _not return_ a value.
+      - Expressions (Ausdruck) evaluate to some _resulting_ value.
+  - Chapter 4: learn about Rust’s ownership system
+  - Chapter 5: discusses structs and methods
+  - Chapter 6: covers enums, ~match~ expressions, and the ~if let~ control flow construct
+  - Chapter 7: learn about Rust’s module system and about privacy rules for organizing your code
+  - Chapter 8: discusses some common collection data structures that the standard library provides, 
+    such as vectors, strings, and hash maps
+  - Chapter 9: explores Rust’s error-handling philosophy and techniques
+  - Chapter 10: digs into generics, traits, and lifetimes, 
+    which give you the power to define code that applies to multiple types
+  - Chapter 11: is all about testing, 
+    which even with Rust’s safety guarantees is necessary to ensure your program’s logic is correct
+  - Chapter 13: explores closures and iterators, 
+    features of Rust that come from functional programming languages
+- Project-Chapters: 2, 12, 20
+

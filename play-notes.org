@@ -151,27 +151,6 @@ which would need otherwise be defined with ~cargo +nightly~.
 "/home/tilo/Projects/play-rust" = "nightly-x86_64-unknown-linux-gnu"
 #+END_EXAMPLE
 
-** The Language Sugar 
-
-The Rust's sugar table [4]
-
-| Name                          | Description                                                               |
-|-------------------------------+---------------------------------------------------------------------------|
-| Coercions [[https://doc.rust-lang.org/nightly/nomicon/coercions.html][NOM]]                 | 'Weaken' types to match signature, e.g., ~&mut T~ to ~&T~.                |
-| Deref [[https://doc.rust-lang.org/nightly/nomicon/vec-deref.html#deref][NOM]], [[https://stackoverflow.com/questions/28519997/what-are-rusts-exact-auto-dereferencing-rules][SvF]]                | [[https://doc.rust-lang.org/std/ops/trait.Deref.html][Deref]] ~x: T~ until ~*x~, ~**x~, ... compatible with some target ~S~.      |
-| Prelude [[https://doc.rust-lang.org/std/prelude/index.html][STD]]                   | Automatic import of basic types.                                          |
-| Reborrow                      | Since ~x: &mut T~ can't be copied; move new ~&mut *x~ instead.            |
-| Lifetime Elision [[https://doc.rust-lang.org/book/ch10-03-lifetime-syntax.html#lifetime-elision][BK]], [[https://doc.rust-lang.org/nightly/nomicon/lifetime-elision.html#lifetime-elision][NOM]], [[https://doc.rust-lang.org/stable/reference/lifetime-elision.html#lifetime-elision][REF]] | Automatically annotate ~f(x: &T)~ to ~f<'a>(x: &'a T)~.                   |
-| Method Resolution [[https://doc.rust-lang.org/stable/reference/expressions/method-call-expr.html][REF]]         | Deref or borrow ~x~ until ~x.f()~ works.                                  |
-| Match Ergonomics [[https://rust-lang.github.io/rfcs/2005-match-ergonomics.html][RFC]]          | Repeatedly dereference [[https://doc.rust-lang.org/stable/reference/glossary.html#scrutinee][scrutinee]] and add ~ref~ and ~ref mut~ to bindings. |
-
-Rust language cheat sheet contains clickable links to
-- The Rust Programming Language Book [[https://doc.rust-lang.org/book/][BK]],
-- Rust by Example [[https://doc.rust-lang.org/stable/rust-by-example/][EX]],
-- The Rust Standard Library Docs [[https://doc.rust-lang.org/std][STD]],
-- The Rustonomicon [[https://doc.rust-lang.org/nightly/nomicon/][NOM]],
-- The Rust Reference [[https://doc.rust-lang.org/stable/reference/][REF]].
-
 ** The Eyes Opening Twins
 
 *** Ownership & Lifetime
@@ -228,46 +207,7 @@ A Trait defines a Types Ability(ies)
 - a type is debugable when it implements std::fmt::Debug
 - a type is callable when it implements std::ops::Fn
 
-**** The Periodic Table of Rust Types
-
-#+CAPTION: http://cosmic.mearie.org/2014/01/periodic-table-of-rust-types/
-|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
-|          | Immutable Pointer        | Mutable Pointer         | Owned Pointer            | Bare                 | Unsized             |
-|          | (by-immutable-reference) | (by-mutable-reference)  |                          | (by-value)           | (dynamically sized) |
-|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
-| Raw      | * const ~T~              | *mut ~T~                | N/A                      |                      |                     |
-|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
-| Simple   | & ~T~                    | &mut ~T~                | Box < ~T~ >              | ~T~                  |                     |
-|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
-| Array    | & [ ~T~ ]                | &mut [ ~T~ ]            | Box <[ ~T~ ]>            | [ ~T~; ~n~ ]         | [ ~T~ ]             |
-|          |                          |                         | std::vec::Vector < ~T~ > |                      |                     |
-|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
-| String   | & ~str~                  | &mut ~str~              | Box < ~str~ >            | N/A                  | ~str~               |
-|          |                          |                         | std::string::String      | N/A                  |                     |
-|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
-| Trait    | & ~Trait~                | &mut ~Trait~            | Box < ~Trait~ >          |                      | ~Trait~             |
-|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
-| Callable | Fn ( ~T...~ ) -> ~U~     | FnMut ( ~T...~ ) -> ~U~ | FnOnce ( ~T...~ ) -> ~U~ | fn ( ~T...~ ) -> ~U~ |                     |
-|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
-
-
-#+CAPTION: https://doc.rust-lang.org/reference/dynamically-sized-types.html
-| Sized Types                          | Unsized Types (dynamically sized types - DSTs)                       |
-|--------------------------------------+----------------------------------------------------------------------|
-| size known at compile-time           | size only known at run-time                                          |
-| implement the trait [[https://doc.rust-lang.org/reference/special-types-and-traits.html#sized][Sized]]            | Pointer types to DSTs have twice the size of pointers to sized types |
-| Sized is implemented by the compiler | - Pointers to slices also store the number of elements of the slice  |
-|                                      | - Pointers to trait objects also store a pointer to a vtable         |
-|--------------------------------------+----------------------------------------------------------------------|
-| ~std::mem::size_of::<T>()~           | when ~T~ has no statically-known size, e.g.,                         |
-| Returns the size of a type in bytes. | a slice ~[T]~ or a [[https://doc.rust-lang.org/book/ch17-02-trait-objects.html][trait object]],                                     |
-|                                      | then ~std::mem::size_of_val(&T)~ can be used                         |
-|                                      | to get the dynamically-known size.                                   |
-
-The  [[https://doc.rust-lang.org/book/ch17-02-trait-objects.html#defining-a-trait-for-common-behavior][BK]], explains trait-object: A trait object points to both 
-- an instance of a type implementing our specified trait 
-- as well as a table used to look up trait methods on that type at
-  runtime.   
+**** Callables
 
 Callable(s) for a case when taking a closure as an input parameter of
 a function. [[https://doc.rust-lang.org/stable/rust-by-example/fn/closures/input_parameters.html][EX]] explains that the closure's complete type must be
@@ -797,6 +737,12 @@ Sorry, the type [closure@src/lib.rs:109:14: 109:23] cannot currently be persiste
 >> 
 [tilo@holm ~]$ 
 #+END_EXAMPLE
+
+** The Lucky Couple - Rust and Python
+
+Python as glue-code for Rust modules.
+- [RustPython](https://rustpython.github.io/)
+- [PyO3](https://pyo3.rs/)
 
 
 * Rust-Compiler under the hood

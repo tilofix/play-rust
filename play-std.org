@@ -1,0 +1,75 @@
+#+TITLE: Rust's Standard Libraries's Tour
+
+The [[https://github.com/rust-lang/rust/blob/1.48.0/library/std/src/lib.rs][Standard Library 's source module]] is ~std/lib.rs~ which includes
+- =include!("primitive_docs.rs");= --> [[https://doc.rust-lang.org/std/index.html#primitives][Primitive Types]]
+- =include!("keyword_docs.rs");= --> [[https://doc.rust-lang.org/std/index.html#keywords][Keywords]]
+
+*First* The Rust Standard Library divided into a number of [[https://doc.rust-lang.org/std/index.html#modules][focused modules]].
+
+For example 
+- the [[https://doc.rust-lang.org/std/option/index.html][~option~]] and [[https://doc.rust-lang.org/std/result/index.html][~result~]] modules define optional and error-handling types,
+  ~Option<T>~ and ~Result<T, E>~;
+- the [[https://doc.rust-lang.org/std/iter/index.html][~iter~]] module defines Rust's iterator /trait/, ~Iterator~, 
+  which works with the ~for~ loop [9] to access collections.
+
+*Second*, The Rust Standard Library documents implicit methods on
+primitive types [8] (implicit because primitives are implemented by 
+the compiler) and exports many modules with same name as primitive
+types. 
+
+For example 
+- there is a page [[https://doc.rust-lang.org/std/primitive.i32.html][std/primitive.i32.html]] for primitive type ~i32~,
+- and there is a page [[https://doc.rust-lang.org/std/i32/index.html][std/i32/index.html]] for the module ~std::i32~.
+  Note: as of ~std 1.76.0 (07dca489a 2024-02-04)~ modules like
+  ~std::i32~ are marked as "Deprecation planned" because "Redundant
+  constants module for the [[https://doc.rust-lang.org/std/primitive.i32.html][~i32~ primitive type]]."
+
+*Third*, The Standard Library defines module [[https://doc.rust-lang.org/std/prelude/index.html][~prelude~]], The Rust [[https://doc.rust-lang.org/reference/names/preludes.html][Prelude]],
+a small collection of items - mostly /traits/ - that are imported 
+into every /module/ of every /crate/.
+
+*Fourth* finally, The Standard Library exports a number of [[https://doc.rust-lang.org/std/index.html#macros][standard macros]].
+
+** Containers and collections
+
+The Standard Library exposes three common ways to deal with contiguous
+regions of memory: 
+- =Vec<T>= - A heap-allocated /vector/ that is resizable at runtime.
+- =[T; n]= - A inline /array/ with a fixed size at compile time.
+- =[T]= - A dynamically sized /[[https://doc.rust-lang.org/std/primitive.slice.html][slice]]/ into any other kind of
+  contiguous storage, whether heap-allocated or not. /Slices/ can only
+  be handled through some kind of /pointer/, and as such come in many
+  flavors such as: 
+  - =&[T]= - /shared slice/
+  - =&mut [T]= - /mutable slice/
+  - =Box<T>= - /owned slice/
+
+The Standard Library defines many methods for primitive type ~str~, 
+a UTF-8 string /slice/.
+Rust ~str~ is typically accessed as immutable reference: ~&str~. 
+Use the /owned/ [[https://doc.rust-lang.org/std/string/struct.String.html][String]] for building and mutating strings.
+For converting to strings use [[https://doc.rust-lang.org/std/macro.format.html][the ~format!~ macro]], 
+and for converting from strings use [[https://doc.rust-lang.org/std/str/trait.FromStr.html][the ~FromStr~ trait]].
+
+Data may be shared in a single-threaded setting by placing it 
+in a reference-counted ('Rc') box, [[https://doc.rust-lang.org/std/rc/struct.Rc.html][the Rc<T> struct]].
+If the data is further contained in a [[https://doc.rust-lang.org/std/cell/struct.Cell.html][Cell]] or [[https://doc.rust-lang.org/std/cell/struct.RefCell.html][RefCell]], it may be mutated as well.
+In a concurrent stetting data may be shared by placing it
+in a atomically-reference-counted ('Arc') box, [[https://doc.rust-lang.org/std/sync/struct.Arc.html][the Arc<T> struct]], 
+with a [[https://doc.rust-lang.org/std/sync/struct.Mutex.html][Mutex]] to get the same effect.
+
+The [[https://doc.rust-lang.org/std/collections/index.html][collections]] /module/ defines 
+maps like [[https://doc.rust-lang.org/std/collections/struct.HashMap.html][HashMap]], sets like [[https://doc.rust-lang.org/std/collections/struct.HashSet.html][HashSet]], sequences like [[https://doc.rust-lang.org/std/collections/struct.LinkedList.html][LinkedLists]] 
+and other typical collection types.
+
+** Platform abstractions and I/O
+
+The Standard Library is largely concerned with abstracting over differences 
+in common platforms, most notably Windows and Unix derivatives.
+
+Common types of I/O are defined in the modules ~io~, ~fs~, and ~net~.
+
+[[https://doc.rust-lang.org/std/thread/index.html][The ~thread~ module]] contains Rust's threading abstractions.
+[[https://doc.rust-lang.org/std/sync/index.html][The ~sync~ module]] contains further primitve shared memory types
+and channel types for message passing.
+

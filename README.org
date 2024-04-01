@@ -37,140 +37,89 @@ two of them were with Steve Klabnik an author of the book:
 - 2019: rust, webassembly, future of serverless (same conference which had Lin Clark for WA+SI) at DevFest
 - 2016: the his-story of rust at ACM
 
-** The Common Start - Read a Book
 
-Thanks to Steve Klabnik's talk and to contribute to his personal efforts
-beside being a Member of Mozilla I bought the book:
-The Rust Programming Language by Steve Klabnik and Carol Nichols.
-- [[https://nostarch.com/Rust2018][No Starch Press Link]]
-- [[https://github.com/rust-lang/book][Github Repository Link]]
-it is also the [[https://doc.rust-lang.org/book/][book]] referenced by [[https://www.rust-lang.org/learn][Grow with Rust]] page
-     
-*** Bought Book "The Rust Programming Language (Covers Rust 2018)"
+Ways to "Dive into Rust"
+- The Plumber's Guide To Rust with "Periodic System" and Sugar
+- The Rust Preludium before the "Intermezzo"
+- [[play-book.org][The Common Start - Read a Book]]
+- [[play-std.org][The Standard Libraries's Tour]]
+- The Servo's Bullet List
 
-Later I found [[https://doc.rust-lang.org/book/][READ THE BOOK!]] online for free, OK, so I supported Rust ;-).
-
-- Concept-Chapters: all other chapters
-  - Chapter 3: covers Rust features similar to those of other programming languages
-    - In Rust by default variables are immutable. 
-      See also "The Value of Values with Rich Hickey",
-      [[https://www.youtube.com/watch?v=-6BsiVyC1kM][keynote speech]] from JaxConf 2012
-    - Constants aren’t just immutable by default—they’re always immutable.
-    - Data Types
-      - Scalar Types: Integer Types, Floating-Point Types, Boolean Type, Character Type
-      - Compound Types: Tuple Type, Array Type
-    - Functions
-      - F. are pervasive in Rust code, 
-        uses /snake case/ as conventional style for function and variable names.
-      - F. bodies are made up of a series of 
-        *statements* optionally ending in an *expression*.
-        See also [[https://programming.guide/statements-vs-expressions.html][Statements vs Expressions]].
-      - Rust is an expression-based language.
-      - Statements (Anweisung) are instructions performing some *action*
-        and do _not return_ a value.
-      - Expressions (Ausdruck) evaluate to some _resulting_ value.
-  - Chapter 4: learn about Rust’s ownership system
-  - Chapter 5: discusses structs and methods
-  - Chapter 6: covers enums, ~match~ expressions, and the ~if let~ control flow construct
-  - Chapter 7: learn about Rust’s module system and about privacy rules for organizing your code
-  - Chapter 8: discusses some common collection data structures that the standard library provides, 
-    such as vectors, strings, and hash maps
-  - Chapter 9: explores Rust’s error-handling philosophy and techniques
-  - Chapter 10: digs into generics, traits, and lifetimes, 
-    which give you the power to define code that applies to multiple types
-  - Chapter 11: is all about testing, 
-    which even with Rust’s safety guarantees is necessary to ensure your program’s logic is correct
-  - Chapter 13: explores closures and iterators, 
-    features of Rust that come from functional programming languages
-- Project-Chapters: 2, 12, 20
+Took some [[play-notes.org][Notes on Rust]] and documented my [[play-ground.org][play ground]].
 
 ** The Plumber's Guide to Rust
 
 Inspired by the preparation material for a talk of Jessy Pelletier-Lemire
-I stopped studying the book within chapter 3
-but started to jump through the book by topic's of curiosity.
-
-What I learnt from Jessy's page: [[https://web.archive.org/web/20200918155402/http://jadpole.github.io/rust/type-system][Visualizing Rust's type-system]]?
+I learnt from his page: [[https://web.archive.org/web/20200918155402/http://jadpole.github.io/rust/type-system][Visualizing Rust's type-system]]:
 "Well, [[https://doc.rust-lang.org/std/keyword.trait.html][traits]] and values are really all there is; 
 the deeper you go, the more precise you get, 
 until you reach [[https://doc.rust-lang.org/std/index.html#primitives][types]] which are nothing more than subsets of [[https://doc.rust-lang.org/std/marker/trait.Sized.html][Sized]] 
 with a special syntax to manipulate the underlying memory 
 and from where you cannot go deeper."
 
-** The Standard Libraries's Tour
+*** The Periodic Table of Rust Types
 
-The [[https://github.com/rust-lang/rust/blob/1.48.0/library/std/src/lib.rs][Standard Library 's source module]] is ~std/lib.rs~ which includes
-- =include!("primitive_docs.rs");= --> [[https://doc.rust-lang.org/std/index.html#primitives][Primitive Types]]
-- =include!("keyword_docs.rs");= --> [[https://doc.rust-lang.org/std/index.html#keywords][Keywords]]
+#+CAPTION: http://cosmic.mearie.org/2014/01/periodic-table-of-rust-types/
+|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
+|          | Immutable Pointer        | Mutable Pointer         | Owned Pointer            | Bare                 | Unsized             |
+|          | (by-immutable-reference) | (by-mutable-reference)  |                          | (by-value)           | (dynamically sized) |
+|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
+| Raw      | * const ~T~              | *mut ~T~                | N/A                      |                      |                     |
+|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
+| Simple   | & ~T~                    | &mut ~T~                | Box < ~T~ >              | ~T~                  |                     |
+|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
+| Array    | & [ ~T~ ]                | &mut [ ~T~ ]            | Box <[ ~T~ ]>            | [ ~T~; ~n~ ]         | [ ~T~ ]             |
+|          |                          |                         | std::vec::Vector < ~T~ > |                      |                     |
+|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
+| String   | & ~str~                  | &mut ~str~              | Box < ~str~ >            | N/A                  | ~str~               |
+|          |                          |                         | std::string::String      | N/A                  |                     |
+|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
+| Trait    | & ~Trait~                | &mut ~Trait~            | Box < ~Trait~ >          |                      | ~Trait~             |
+|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
+| Callable | Fn ( ~T...~ ) -> ~U~     | FnMut ( ~T...~ ) -> ~U~ | FnOnce ( ~T...~ ) -> ~U~ | fn ( ~T...~ ) -> ~U~ |                     |
+|----------+--------------------------+-------------------------+--------------------------+----------------------+---------------------|
 
-*First* The Rust Standard Library divided into a number of [[https://doc.rust-lang.org/std/index.html#modules][focused modules]].
+*** (Un)sized Rust Types
 
-For example 
-- the [[https://doc.rust-lang.org/std/option/index.html][~option~]] and [[https://doc.rust-lang.org/std/result/index.html][~result~]] modules define optional and error-handling types,
-  ~Option<T>~ and ~Result<T, E>~;
-- the [[https://doc.rust-lang.org/std/iter/index.html][~iter~]] module defines Rust's iterator /trait/, ~Iterator~, 
-  which works with the ~for~ loop [9] to access collections.
+#+CAPTION: https://doc.rust-lang.org/reference/dynamically-sized-types.html
+| Sized Types                          | Unsized Types (dynamically sized types - DSTs)                       |
+|--------------------------------------+----------------------------------------------------------------------|
+| size known at compile-time           | size only known at run-time                                          |
+| implement the trait [[https://doc.rust-lang.org/reference/special-types-and-traits.html#sized][Sized]]            | Pointer types to DSTs have twice the size of pointers to sized types |
+| Sized is implemented by the compiler | - Pointers to slices also store the number of elements of the slice  |
+|                                      | - Pointers to trait objects also store a pointer to a vtable         |
+|--------------------------------------+----------------------------------------------------------------------|
+| ~std::mem::size_of::<T>()~           | when ~T~ has no statically-known size, e.g.,                         |
+| Returns the size of a type in bytes. | a slice ~[T]~ or a [[https://doc.rust-lang.org/book/ch17-02-trait-objects.html][trait object]],                                     |
+|                                      | then ~std::mem::size_of_val(&T)~ can be used                         |
+|                                      | to get the dynamically-known size.                                   |
 
-*Second*, The Rust Standard Library documents implicit methods on
-primitive types [8] (implicit because primitives are implemented by 
-the compiler) and exports many modules with same name as primitive
-types. 
+The  [[https://doc.rust-lang.org/book/ch17-02-trait-objects.html#defining-a-trait-for-common-behavior][BK]], explains trait-object: A trait object points to both 
+- an instance of a type implementing our specified trait 
+- as well as a table used to look up trait methods on that type at
+  runtime.   
 
-For example 
-- there is a page [[https://doc.rust-lang.org/std/primitive.i32.html][std/primitive.i32.html]] for primitive type ~i32~,
-- and there is a page [[https://doc.rust-lang.org/std/i32/index.html][std/i32/index.html]] for the module ~std::i32~.
-  Note: as of ~std 1.76.0 (07dca489a 2024-02-04)~ modules like
-  ~std::i32~ are marked as "Deprecation planned" because "Redundant
-  constants module for the [[https://doc.rust-lang.org/std/primitive.i32.html][~i32~ primitive type]]."
+*** The Rust's sugar table
 
-*Third*, The Standard Library defines module [[https://doc.rust-lang.org/std/prelude/index.html][~prelude~]], The Rust [[https://doc.rust-lang.org/reference/names/preludes.html][Prelude]],
-a small collection of items - mostly /traits/ - that are imported 
-into every /module/ of every /crate/.
+Is a copy from the great "Rust Language Cheat Sheet [4]
 
-*Fourth* finally, The Standard Library exports a number of [[https://doc.rust-lang.org/std/index.html#macros][standard macros]].
+#+CAPTION: https://cheats.rs/
+| Name                          | Description                                                               |
+|-------------------------------+---------------------------------------------------------------------------|
+| Coercions [[https://doc.rust-lang.org/nightly/nomicon/coercions.html][NOM]]                 | 'Weaken' types to match signature, e.g., ~&mut T~ to ~&T~.                |
+| Deref [[https://doc.rust-lang.org/nightly/nomicon/vec-deref.html#deref][NOM]], [[https://stackoverflow.com/questions/28519997/what-are-rusts-exact-auto-dereferencing-rules][SvF]]                | [[https://doc.rust-lang.org/std/ops/trait.Deref.html][Deref]] ~x: T~ until ~*x~, ~**x~, ... compatible with some target ~S~.      |
+| Prelude [[https://doc.rust-lang.org/std/prelude/index.html][STD]]                   | Automatic import of basic types.                                          |
+| Reborrow                      | Since ~x: &mut T~ can't be copied; move new ~&mut *x~ instead.            |
+| Lifetime Elision [[https://doc.rust-lang.org/book/ch10-03-lifetime-syntax.html#lifetime-elision][BK]], [[https://doc.rust-lang.org/nightly/nomicon/lifetime-elision.html#lifetime-elision][NOM]], [[https://doc.rust-lang.org/stable/reference/lifetime-elision.html#lifetime-elision][REF]] | Automatically annotate ~f(x: &T)~ to ~f<'a>(x: &'a T)~.                   |
+| Method Resolution [[https://doc.rust-lang.org/stable/reference/expressions/method-call-expr.html][REF]]         | Deref or borrow ~x~ until ~x.f()~ works.                                  |
+| Match Ergonomics [[https://rust-lang.github.io/rfcs/2005-match-ergonomics.html][RFC]]          | Repeatedly dereference [[https://doc.rust-lang.org/stable/reference/glossary.html#scrutinee][scrutinee]] and add ~ref~ and ~ref mut~ to bindings. |
 
-*** Containers and collections
-
-The Standard Library exposes three common ways to deal with contiguous
-regions of memory: 
-- =Vec<T>= - A heap-allocated /vector/ that is resizable at runtime.
-- =[T; n]= - A inline /array/ with a fixed size at compile time.
-- =[T]= - A dynamically sized /[[https://doc.rust-lang.org/std/primitive.slice.html][slice]]/ into any other kind of
-  contiguous storage, whether heap-allocated or not. /Slices/ can only
-  be handled through some kind of /pointer/, and as such come in many
-  flavors such as: 
-  - =&[T]= - /shared slice/
-  - =&mut [T]= - /mutable slice/
-  - =Box<T>= - /owned slice/
-
-The Standard Library defines many methods for primitive type ~str~, 
-a UTF-8 string /slice/.
-Rust ~str~ is typically accessed as immutable reference: ~&str~. 
-Use the /owned/ [[https://doc.rust-lang.org/std/string/struct.String.html][String]] for building and mutating strings.
-For converting to strings use [[https://doc.rust-lang.org/std/macro.format.html][the ~format!~ macro]], 
-and for converting from strings use [[https://doc.rust-lang.org/std/str/trait.FromStr.html][the ~FromStr~ trait]].
-
-Data may be shared in a single-threaded setting by placing it 
-in a reference-counted ('Rc') box, [[https://doc.rust-lang.org/std/rc/struct.Rc.html][the Rc<T> struct]].
-If the data is further contained in a [[https://doc.rust-lang.org/std/cell/struct.Cell.html][Cell]] or [[https://doc.rust-lang.org/std/cell/struct.RefCell.html][RefCell]], it may be mutated as well.
-In a concurrent stetting data may be shared by placing it
-in a atomically-reference-counted ('Arc') box, [[https://doc.rust-lang.org/std/sync/struct.Arc.html][the Arc<T> struct]], 
-with a [[https://doc.rust-lang.org/std/sync/struct.Mutex.html][Mutex]] to get the same effect.
-
-The [[https://doc.rust-lang.org/std/collections/index.html][collections]] /module/ defines 
-maps like [[https://doc.rust-lang.org/std/collections/struct.HashMap.html][HashMap]], sets like [[https://doc.rust-lang.org/std/collections/struct.HashSet.html][HashSet]], sequences like [[https://doc.rust-lang.org/std/collections/struct.LinkedList.html][LinkedLists]] 
-and other typical collection types.
-
-*** Platform abstractions and I/O
-
-The Standard Library is largely concerned with abstracting over differences 
-in common platforms, most notably Windows and Unix derivatives.
-
-Common types of I/O are defined in the modules ~io~, ~fs~, and ~net~.
-
-[[https://doc.rust-lang.org/std/thread/index.html][The ~thread~ module]] contains Rust's threading abstractions.
-[[https://doc.rust-lang.org/std/sync/index.html][The ~sync~ module]] contains further primitve shared memory types
-and channel types for message passing.
+Rust language cheat sheet contains clickable links to
+- The Rust Programming Language Book [[https://doc.rust-lang.org/book/][BK]],
+- Rust by Example [[https://doc.rust-lang.org/stable/rust-by-example/][EX]],
+- The Rust Standard Library Docs [[https://doc.rust-lang.org/std][STD]],
+- The Rustonomicon [[https://doc.rust-lang.org/nightly/nomicon/][NOM]],
+- The Rust Reference [[https://doc.rust-lang.org/stable/reference/][REF]].
 
 ** Rust Preludium
 
@@ -215,16 +164,6 @@ one must know to read Servo's code.
 - [[https://doc.rust-lang.org/stable/rust-by-example/expression.html][Expression]]
 - [[https://doc.rust-lang.org/stable/rust-by-example/trait.html][Traits]]
 - Understand how ~println!()~ works, especially the [[https://doc.rust-lang.org/std/fmt/#formatting-traits][formatting traits]].
-
-** The Lucky Couple - Rust and Python
-
-Python as glue-code for Rust modules.
-- [RustPython](https://rustpython.github.io/)
-- [PyO3](https://pyo3.rs/)
-
-** The Rust Controversy
-
-A hackernoon.com's auther dropped Rust after ported ~nanogui~ to Rust.
 
 ** Foodnotes
 
