@@ -103,10 +103,8 @@ fn main() -> () {
 /// Macro `std::assert!` asserts that a boolean expression is true at runtime.
 /// This will invoke the [`panic!` macro](https://doc.rust-lang.org/core/macro.panic.html)
 /// if the provided expression cannot be evaluated to true at runtime.
+///
 /**
-There had been more issues, here is another one closed to "mine"
-"`::core::assert!` in `#![no_implicit_prelude]` fails to compile because
-it calls `panic!` instead of `::core::panic!` [#84357](https://github.com/rust-lang/rust/issues/84357)
 
 Here is compiler's output with verbose information.
 ```text
@@ -142,6 +140,18 @@ error: could not compile `play-rust` due to previous error
 
 ```
 
+ *Issue* "error: cannot find macro panic in this scope"
+[#78333](https://github.com/rust-lang/rust/issues/78333)
+is fixed by *Pull-Request* "Qualify panic! as core::panic! in non-built-in core macros"
+[#78343](https://github.com/rust-lang/rust/pull/78343)
+which [bors](https://github.com/bors)
+merged with *Commit* "Auto merge of #78343 - camelid:macros-qualify-panic, r=m-ou-se"
+[f32a0cc](https://github.com/rust-lang/rust/commit/f32a0cce2fd5aaf5f361192af59cf1f2afa5f0ac)
+into rust-lang:master on Nov 24, 2020.
+and finally [rustbot](https://github.com/rustbot)
+added this to the [1.50.0](https://github.com/rust-lang/rust/milestone/77)
+milestone on Nov 24, 2020
+
 Following `rustc` version has been used.
 ```text
 
@@ -157,10 +167,6 @@ LLVM version: 13.0.0
 
 ```
 
-[bors](https://github.com/bors) (Bot managed by the *@rust-lang* infrastructure team.)
-merged commit [f32a0cc](https://github.com/rust-lang/rust/commit/f32a0cce2fd5aaf5f361192af59cf1f2afa5f0ac)
-into `rust-lang:master` on Nov 24, 2020
-
 Here is what I have installed. Couldn't get version information of rustup's installed components.
 ```text
 
@@ -173,7 +179,6 @@ rustup - Up to date : 1.26.0
 
 Oh, this commit has first release tag [1.50.0](https://github.com/rust-lang/rust/releases/tag/1.50.0).
 So it is already in my stable and nightly installation.
-Then "my" issue isn't related to the issues I referred to.
 
 Indeed output of "Nightly builds, run with -Z macro-backtrace for more info"
 says `compiler built-in`, means `panic` is not called by library but compiler.
@@ -191,28 +196,15 @@ Source code analysis:
 Also muss ich mit `--edition=2018` die Use-Deklaration vor der Vewendung von `::std::assert!`
 einsetzen:
 ```rust
-
 use ::std::panic;
-
-```
-Mit Hilfe von Github Blame habe ich folgende Änderung gefunden.
-Tja, mal sehen, ob diese die Korrektur sein könnte:
-Fix invalid special casing of the unreachable! macro
-[#93179](https://github.com/rust-lang/rust/pull/93179).
-
-Zugeliefert mit [Commit](https://github.com/rust-lang/rust/commit/565710b33cb20c901b8b3371d1364cf7fb11e79b#diff-b0192ce0e102bae70912f585c368ec217113b27db05ad241302b048a29171b10)
-```text
-
-Fix invalid special casing of the unreachable! macro
-  master (#93179)
-  1.76.0 ... 1.60.0
-  Urgau committed on Jan 31, 2022 
-
 ```
 
-On my Windows host I've got rust versions `1.62.1 (e092d0b6b 2022-07-16)` and `1.64.0-nightly (f9cba6374 2022-07-31)`.
-Whereas on my Gnu/Linux host I have versions `1.57.0 (f1edd0429 2021-11-29)` and `1.59.0-nightly (efec54529 2021-12-04)`.
-So I gave it try. New Rust version isn't sufficient, I needed also to move the project from edition `2018` to `2021`.
+On my Windows host I've got rust versions
+`1.62.1 (e092d0b6b 2022-07-16)` and `1.64.0-nightly (f9cba6374 2022-07-31)`.
+Whereas on my Gnu/Linux host I have versions
+`1.57.0 (f1edd0429 2021-11-29)` and `1.59.0-nightly (efec54529 2021-12-04)`.
+So I gave it try. New Rust version isn't sufficient,
+I needed also to move the project from edition `2018` to `2021`.
 
 ```text
 PS C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust>
@@ -266,7 +258,13 @@ PS C:\Users\Public\Downloads\Backup\c_twirkner\Projects\play-rust>
 ```
 
 On my GNU/Linux host the same version compiled with Rust edition 2021.
-So my Rust source code investigation (master (#93179); 1.76.0 ... 1.60.0)
+
+There had been more issues, here is another one closed to "mine"
+"`::core::assert!` in `#![no_implicit_prelude]` fails to compile because
+it calls `panic!` instead of `::core::panic!` [#84357](https://github.com/rust-lang/rust/issues/84357)
+
+So my Rust source code investigation
+(master ([#93179](https://github.com/rust-lang/rust/pull/93179)); 1.76.0 ... 1.60.0)
 had been wrong with respect to issue `error: cannot find macro `panic` in this scope`.
 It is not only solved in version `1.60.0` but already in `1.59.0` as well as `1.57.0`.
 
