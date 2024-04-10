@@ -125,7 +125,7 @@ Rust language cheat sheet contains clickable links to
 - The Rustonomicon [[https://doc.rust-lang.org/nightly/nomicon/][NOM]],
 - The Rust Reference [[https://doc.rust-lang.org/stable/reference/][REF]].
 
-** Rust Preludium
+** The Rust Preludium
 
 [[https://doc.rust-lang.org/reference/names/preludes.html#the-no_implicit_prelude-attribute][The ~no_implicit_prelude~ attribute]]
 
@@ -168,6 +168,45 @@ one must know to read Servo's code.
 - [[https://doc.rust-lang.org/stable/rust-by-example/expression.html][Expression]]
 - [[https://doc.rust-lang.org/stable/rust-by-example/trait.html][Traits]]
 - Understand how ~println!()~ works, especially the [[https://doc.rust-lang.org/std/fmt/#formatting-traits][formatting traits]].
+
+** The Rust.unwrap() Guide
+
+There is an comprehensive collection of programmer's recipes in [[https://rust-lang-nursery.github.io/rust-cookbook/about.html#a-note-about-error-handling][Cookin'
+with Rust]] with a wise sentence on Rust's error handling: "Error
+handling in Rust is robust when done correctly, but in today's Rust it
+requires a fair bit of boilerplate. Because of this one often sees
+Rust examples *filled with ~unwrap~ calls* instead of proper error
+handling." Thus Rust's chefs maintain(ed) crate [[https://crates.io/crates/error-chain][error-chain]].
+
+Look's as I am late : [[https://internals.rust-lang.org/t/end-of-days-for-the-rust-lang-nursery/8750][End of days for the rust-lang nursery]]! 
+So finally [[https://internals.rust-lang.org/t/rust-lang-nursery-deprecation/11205][it looks]] as if the nurses were people closed to the
+language developers. Finally some repositories where moved to 
+the core language's repo ~rust-lang~ and some to
+~rust-lang-deprecated~.
+
+But the cookbook has a nice systematic [[https://rust-lang-nursery.github.io/rust-cookbook/intro.html][index]] with following sections:
+- [[https://rust-lang-nursery.github.io/rust-cookbook/intro.html#algorithms][Algorithms]]
+- Command Line
+- Compression
+- Concurrency
+- Data Structures
+- Database
+- [[https://rust-lang-nursery.github.io/rust-cookbook/intro.html#date-and-time][Date and Time]]
+- Development Tools
+- Encoding
+- File System
+- Hardware Support
+- Memory Management
+- Networking
+- Operating System
+- Science
+- Text Processing
+- [[https://rust-lang-nursery.github.io/rust-cookbook/intro.html#web-programming][Web Programming]]
+  - Scraping Web Pages
+  - Uniform Resource Locations (URL)
+  - Media Types (MIME)
+  - Clients
+  - Web Authentication
 
 ** Foodnotes
 
